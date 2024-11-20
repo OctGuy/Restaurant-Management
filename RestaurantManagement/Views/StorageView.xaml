@@ -1,0 +1,238 @@
+﻿<UserControl x:Class="RestaurantManagement.Views.StorageView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:RestaurantManagement.Views"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             mc:Ignorable="d" 
+             TextElement.FontSize="15"
+             d:DesignHeight="670" d:DesignWidth="1070">
+    <Grid Background="White">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="5*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0"
+                  Margin="10 0 10 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox x:Name="txtSearch"
+                         Grid.Column="0"
+                         Foreground="#701c1c"
+                         Margin="20 20 50 20"
+                         materialDesign:HintAssist.Hint="Tìm kiếm"/>
+
+                <Button Name="deleteIngredientsBtn"
+                        Background="#701c1c"
+                        Grid.Column="2"
+                        Margin="5 5 5 10"
+                        Foreground="White"
+                        FontSize="16"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        Content="Xóa"/>
+
+                <Button Name="checkIngredients"
+                        Grid.Column="1"
+                        Background="#701c1c"
+                        Margin="5 5 10 10"
+                        Foreground="White"
+                        FontSize="16"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        Content="???"/>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ListView ItemsSource="{Binding ListWareHouse}"
+                              SelectedItem="{Binding Selected, Mode=OneWayToSource}"
+                              FontSize="16"
+                              Margin="20 0 20 20">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn DisplayMemberBinding="{Binding TenSanPham}"
+                                                Width="200"
+                                                Header="Tên sản phẩm" />
+                                <GridViewColumn DisplayMemberBinding="{Binding TonDu}"
+                                                Width="130"
+                                                Header="Tồn dư" />
+                                <GridViewColumn DisplayMemberBinding="{Binding DonVi}"
+                                                Width="130"
+                                                Header="Đơn vị" />
+                                <GridViewColumn DisplayMemberBinding="{Binding DonGia}"
+                                                Width="190"
+                                                Header="Đơn giá(VNĐ)" />
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+
+        <Grid Grid.Column="1" Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="3*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Margin="10">
+                <Border Background="#EEEE" CornerRadius="20"/>
+                <Label Foreground="Black" Margin="10 20 0 0">
+                    Thông tin nhập gần đây :
+                </Label>
+                <Grid>
+                    <ComboBox materialDesign:HintAssist.Hint="Thời gian"
+                              Margin="15 60 15 0"
+                              Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                              VerticalAlignment="Top"/>
+                    <!-- Binding ItemsSource, Text, SelectedIndex-->
+                </Grid>
+            </Grid>
+
+            <Grid Grid.Row="1" Margin="10">
+                <Border Background="#EEEE" Margin="10" CornerRadius="20"/>
+
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="0 5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox materialDesign:HintAssist.Hint="Mã nhập"
+                                 Grid.Column="0"
+                                 Margin="15"
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
+                        <!-- Binding Text -->
+
+                        <TextBox materialDesign:HintAssist.Hint="Tên sản phẩm"
+                                 Grid.Column="1"
+                                 Margin="15"
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
+                        <!-- Binding Text -->
+                    </Grid>
+
+                    <Grid Grid.Row="1" Margin="0 5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox materialDesign:HintAssist.Hint="Số lượng"
+                                 Grid.Column="0"
+                                 Margin="15"
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>   
+                        <!-- Binding Text -->
+
+                        <DatePicker materialDesign:HintAssist.Hint="Ngày nhập"
+                                    Grid.Column="1"
+                                    Margin="15"
+                                    Style="{StaticResource MaterialDesignFloatingHintDatePicker}"/>       
+                        <!-- Binding SelectedDate -->
+                    </Grid>
+
+                    <Grid Grid.Row="2" Margin="0 5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox materialDesign:HintAssist.Hint="Giá nhập (VNĐ)"
+                                 Grid.Column="0"
+                                 Margin="15"
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>       
+                        <!-- Binding Text -->
+
+                        <ComboBox materialDesign:HintAssist.Hint="Đơn vị"
+                                  Grid.Column="1"
+                                  Margin="15"
+                                  Style="{StaticResource MaterialDesignFloatingHintComboBox}">
+                            <ComboBoxItem>Kg</ComboBoxItem>
+                            <ComboBoxItem>Chai</ComboBoxItem>
+                            <ComboBoxItem>Quả</ComboBoxItem>
+                            <ComboBoxItem>Gói</ComboBoxItem>
+                            <ComboBoxItem>Con</ComboBoxItem>
+                            <ComboBoxItem>Lát</ComboBoxItem>
+                            <ComboBoxItem>Cây</ComboBoxItem>
+                            <ComboBoxItem>Lon</ComboBoxItem>
+                            <ComboBoxItem>Bó</ComboBoxItem>
+                        </ComboBox>
+                        <!-- Binding Text -->
+                    </Grid>
+
+                    <Grid Grid.Row="3" Margin="0 5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox materialDesign:HintAssist.Hint="Nguồn nhập"
+                                 Grid.Column="0"
+                                 Margin="15"
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>   
+                        <!-- Binding Text -->
+
+                        <TextBox materialDesign:HintAssist.Hint="Liên lạc"
+                                 Grid.Column="1"
+                                 Margin="15"
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>     
+                        <!-- Binding Text -->
+                    </Grid>
+
+                    <Grid Grid.Row="4" Margin="0 20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Name="btnAddStaff"
+                                Grid.Column="0"
+                                Command="{Binding AddCM}"
+                                Background="#701c1c"
+                                Margin="15"
+                                Foreground="White"
+                                FontSize="16"
+                                FontFamily="Comfortaa"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Content="Nhập"/>            
+                        <Button Name="btnEditStaff"
+                                Grid.Column="1"
+                                Command="{Binding EditCM}"
+                                Background="#701c1c"
+                                Margin="15"
+                                Foreground="White"
+                                FontSize="16"
+                                FontFamily="Comfortaa"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Content="Sửa"/> 
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

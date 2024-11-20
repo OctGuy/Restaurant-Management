@@ -3,11 +3,130 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
         xmlns:local="clr-namespace:RestaurantManagement"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:vm="clr-namespace:RestaurantManagement.ViewModels"
+        xmlns:uc="clr-namespace:RestaurantManagement.UserControls"
         mc:Ignorable="d"
+        AllowsTransparency="True"
+        Background="Transparent"
         Style="{StaticResource MaterialDesignWindow}"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Thông tin tài khoản nhân viên" 
+        Height="820" 
+        Width="1360"
+        WindowStyle="None"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized">
+        <!-- Window automatically go full screen -->
+        <!-- Remained DataContext from ViewModel -->
+        <!-- TextElement.FontFamily -->
+        <!-- xmlns:vm xmlns:uc -->
+        <!-- Add triggers -->
     <Grid>
+        <Grid>
+            <!-- Declare some properties for grid -->
+            <Grid.Resources>
+                <Style x:Key="ArrowDownButton" TargetType="Button">
+                    <Setter Property="Background" Value="#5b0000"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}"
+                                        BorderThickness="4 0 0 0"
+                                        BorderBrush="Transparent">
+                                    <ContentPresenter HorizontalAlignment="Stretch"
+                                                      VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#5b0000"/>
+                            <Setter Property="Cursor" Value="Hand"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            <!-- Style for icon... -->
+                <Style x:Key="ArrowDownIcon" TargetType="fa:IconImage">
+                    <Setter Property="Foreground" Value="#b26f6f"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="#791c1c"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Resources>
 
+            <!-- Define grid for full screen -->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Left menu bar -->
+            <Border Background="#791c1c" CornerRadius="10 0 0 10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="200"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="60"/>
+                    </Grid.RowDefinitions>
+                    
+                    <!-- Logo App -->
+                    <StackPanel Grid.Row="0"
+                                Orientation="Vertical"
+                                HorizontalAlignment="Center">
+                        <Image Source="pack://application:,,,/images/logo.png" Width="150" Height="150"/>
+                        <TextBlock Foreground="#e0acac"
+                                   TextAlignment="Center"
+                                   FontSize="20">
+                            Nhóm 29
+                        </TextBlock>
+                    </StackPanel>
+                    
+                    <!-- Sidebar for admin or employee -->
+                    <uc:EmployeeBar Grid.Row="1" 
+                                    DataContext="{Binding Navigator}" 
+                                    Visibility="{Binding EmployeeView}"/>
+                    <uc:AdminBar Grid.Row="1"
+                                 DataContext="{Binding Navigator}"
+                                 Visibility="{Binding AdminView}"/>
+                    
+                    <!-- Logout Button Start-->
+
+                    <!-- Logout Button End-->
+                </Grid>
+            </Border>
+            <!-- Content Display -->
+            <Border Grid.Column="1" CornerRadius="0 10 10 0" Background="#eeeeee">
+                <Grid x:Name="mainSection">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="110"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    
+                    <!-- Header -->
+                    <UserControl x:Name="HeaderControl">
+                        <Grid Background="#fff"
+                              Width="{Binding ActualWidth, ElementName=mainSection}"
+                              Margin="20 20 20 0">
+                            <Grid.Resources>
+                                <Style x:Key="PowerOffButton" TargetType="Button">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="Width" Value="25"/>
+                                    <Setter Property="Height" Value="25"/>
+                                    <Setter Property="Cursor" Value="Hand"/>
+                                </Style>
+                            </Grid.Resources>
+                        </Grid>
+                              
+                    </UserControl>
+                </Grid>
+            </Border>
+        </Grid>
     </Grid>
 </Window>
