@@ -1,0 +1,85 @@
+﻿<UserControl x:Class="RestaurantManagement.View.StatisticsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             Background="{DynamicResource MaterialDesignPaper}"
+             d:DesignHeight="660"
+             d:DesignWidth="1060">
+
+    <Grid>
+        <!-- Row Definitions -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1.5*" />
+            <RowDefinition Height="8*" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        <!-- Row 0: Thống kê chọn Tháng, Năm và nút Thống Kê -->
+        <Grid Grid.Row="0" HorizontalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="4*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Chọn Tháng -->
+            <StackPanel Grid.Column="0" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,20,0">
+                <ComboBox Width="120" HorizontalAlignment="Center" Style="{StaticResource MaterialDesignComboBox}"/>
+                <Label Content="Tháng"/>
+            </StackPanel>
+
+            <!-- Chọn Năm -->
+            <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <ComboBox Margin="0" Width="120" HorizontalAlignment="Center" Style="{StaticResource MaterialDesignComboBox}"/>
+                <Label Content="Năm"/>
+            </StackPanel>
+
+            <!-- Nút Thống Kê -->
+            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Button Margin="10" Width="250" Background="#1C3879" Foreground="White" Style="{StaticResource MaterialDesignFlatButton}">
+                    <TextBlock Text="Thống kê theo ngày trong tháng"/>
+                </Button>
+                <Button Margin="0" Width="250" Background="#FA1E0E" Foreground="White" Style="{StaticResource MaterialDesignFlatButton}">
+                    <TextBlock Text="Thống kê theo tháng trong năm"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <!-- Row 1: Biểu đồ -->
+        <Grid Grid.Row="1" Margin="20,0,20,20">
+            <lvc:CartesianChart LegendLocation="Bottom">
+                <lvc:CartesianChart.AxisX>
+                    <lvc:Axis FontFamily="Comfortaa" Foreground="#1C3879" FontSize="10"/>
+                </lvc:CartesianChart.AxisX>
+                <lvc:CartesianChart.AxisY>
+                    <lvc:Axis Title="Triệu đồng" Foreground="#1C3879" FontFamily="Comfortaa" FontSize="16"/>
+                </lvc:CartesianChart.AxisY>
+            </lvc:CartesianChart>
+        </Grid>
+
+        <!-- Row 2: Tổng thu và Tổng chi -->
+        <Grid Grid.Row="2" HorizontalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Tổng Thu -->
+            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Label Content="Tổng thu :" FontSize="19" Foreground="#2A3990" />
+                <TextBlock Margin="10,0,0,0" FontSize="19" Foreground="#2A3990" Text="0"/>
+                <!-- Binding sẽ thêm sau -->
+            </StackPanel>
+
+            <!-- Tổng Chi -->
+            <StackPanel Margin="50,0,0,0" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Label Content="Tổng chi :" FontSize="19" Foreground="#DC0000"/>
+                <TextBlock Margin="10,0,0,0" FontSize="19" Foreground="#DC0000" Text="0"/>
+                <!-- Binding sẽ thêm sau -->
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

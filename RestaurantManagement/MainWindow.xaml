@@ -8,6 +8,7 @@
         Style="{StaticResource MaterialDesignWindow}"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
+        <Button Content="Button" HorizontalAlignment="Left" Height="74" Margin="250,143,0,0" VerticalAlignment="Top" Width="202" Click="Button_Click"/>
 
     </Grid>
 </Window>
