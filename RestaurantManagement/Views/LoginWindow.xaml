@@ -1,0 +1,61 @@
+﻿<Window x:Class="RestaurantManagement.Views.LoginWindow"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RestaurantManagement.Views"
+        mc:Ignorable="d"
+        Title="LoginWindow" Height="450" Width="800"
+    
+TextElement.Foreground="#1C3879"
+TextElement.FontWeight="Regular"
+TextElement.FontSize="18"
+TextOptions.TextFormattingMode="Ideal"
+TextOptions.TextRenderingMode="Auto"
+Background="#FFFFD6D6"
+FontFamily="Comfortaa"
+ResizeMode="NoResize"
+WindowStyle="None"
+AllowsTransparency="True"
+WindowStartupLocation="CenterScreen">
+    <Grid Background="#FFA0D6FF" Margin="2,0,-4,0" UseLayoutRounding="False" Height="450" VerticalAlignment="Center">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="802"/>
+        </Grid.ColumnDefinitions>
+        <Border Background="White"
+        Margin="420,74,37,15"
+        CornerRadius="20,20,20,20">
+            <Grid Margin="0,-1,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBox materialDesign:HintAssist.Hint="Tên đăng nhập"
+                 Margin="0,88,27,0"
+                 Grid.Row="0"
+                 Style="{StaticResource MaterialDesignFloatingHintTextBox}" Grid.RowSpan="2" Height="43" VerticalAlignment="Top" HorizontalAlignment="Right" Width="292" Background="#00000000" BorderBrush="#7F000000" />
+                <PasswordBox materialDesign:HintAssist.Hint="Mật khẩu"
+                     x:Name="pwBox"
+                     Grid.Row="1"
+                     Margin="26,66,27,4"
+                     Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" BorderBrush="#7F000000" >
+
+                </PasswordBox>
+                <Button Grid.Row="2"
+                Margin="33,51,31,30"
+                Content="Đăng nhập"
+                Background="#8a4646" FontSize="16" Foreground="White"/>
+            </Grid>
+        </Border>
+        <TextBox HorizontalAlignment="Left" Height="73" Margin="550,85,0,0" TextWrapping="Wrap" Text="LOGIN" VerticalAlignment="Top" Width="112" FontSize="36" FontFamily="Algerian" IsReadOnly="True"/>
+        <Border BorderBrush="Black" BorderThickness="1,1,1,1" Margin="-16,-18,-14,-19" CornerRadius="30,30,30,30" Background="#FFADEAFF" Panel.ZIndex="-5" RenderTransformOrigin="0.5,0.5">
+            <materialDesign:PackIcon Kind="Power" Background="#00000000" Height="76" Width="83" Margin="714,13,0,0" RenderTransformOrigin="0.813,0.433" MouseDown="PackIcon_MouseDown" Foreground="#FF701C1C" />
+        </Border>
+    </Grid>
+</Window>
