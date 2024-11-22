@@ -134,6 +134,19 @@ CREATE TABLE [CHEBIEN]
 )
 
 
+-------------------------------THÊM---------------------------NGÀY 22/11/2024------------------
+CREATE TABLE [CHAMCONG] -- THÊM
+(
+    [ID] INT IDENTITY(1,1) CONSTRAINT [PK_CHAMCONG] PRIMARY KEY, -- Khóa chính
+    [MaChamCong] AS ('CC' + RIGHT('00000' + CAST([ID] AS VARCHAR(5)), 5)) PERSISTED, 
+    [IDNhanVien] INT NOT NULL, -- FK tham chiếu đến nhân viên
+    [NgayChamCong] DATE NOT NULL, -- Ngày chấm công
+    [GioVao] TIME NOT NULL, -- Giờ vào
+    [GioRa] TIME NOT NULL, -- Giờ ra
+    [SoGioLam] AS DATEDIFF(MINUTE, [GioVao], [GioRa]) / 60.0 PERSISTED -- Số giờ làm việc, tính tự động
+)
+-----------------------------------------------------------------------------------------------
+
 -- Foreign key
 alter table [TAIKHOAN] add constraint [FK_TAIKHOAN_IDNhanVien]
 foreign key ([IDNhanVien]) references [NHANVIEN]([ID]);
@@ -174,3 +187,14 @@ foreign key ([IDNguyenLieu]) references [NGUYENLIEU]([ID]);
 alter table [CHEBIEN] add constraint [FK_CHEBIEN_IDHoaDon]
 foreign key ([IDHoaDon]) references [HOADON]([ID]);
 
+
+---------------------- THÊM ------------------------ NGÀY 22/11/2024---------------------------------
+ALTER TABLE [CHAMCONG] ADD CONSTRAINT [FK_CHAMCONG_IDNhanVien] 
+FOREIGN KEY ([IDNhanVien]) REFERENCES [NHANVIEN]([ID]); --- THÊM
+
+ALTER TABLE [NHANVIEN] DROP CONSTRAINT DF__NHANVIEN__SoNgay__398D8EEE -- XÓA RÀNG BUỘC DEFAULT CHO SoNgayLamViec
+ALTER TABLE [NHANVIEN] DROP COLUMN [SoNgayLamViec]; -- XÓA CỘT SoNgayLamViec (part-time)
+
+ALTER TABLE [NHANVIEN] DROP CONSTRAINT DF__NHANVIEN__LuongC__38996AB5 -- XÓA RÀNG BUỘC DEFAULT CHO LuongCoBan
+ALTER TABLE [NHANVIEN] DROP COLUMN [LuongCoBan]; -- XÓA CỘT LuongCoBan (part-time)
+------------------------------------------------------------------------------------------------------------------
