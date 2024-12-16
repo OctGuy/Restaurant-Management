@@ -7,6 +7,8 @@
         xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:RestaurantManagement.Views"
+        xmlns:vm="clr-namespace:RestaurantManagement.ViewModels" 
+        d:DataContext="{d:DesignInstance Type=vm:AddIngredientViewModel}"
         mc:Ignorable="d"
         Height="600" Width="900"
         x:Name="Add_Ingredients_Window"
@@ -22,45 +24,86 @@
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="60"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
             <StackPanel Orientation="Horizontal" Margin="20 0 20 0" Grid.Row="0">
-                <TextBox FontSize="15"
+                <TextBox x:Name="FilterText"
+                         FontSize="15"
                          Margin="0 15 0 0"
                          materialDesign:HintAssist.Hint="Tìm kiếm nguyên liệu" 
                          Width="180"
-                         Height="35"/>
-                <!-- Binding -->
+                         Height="35"
+                         Text="{Binding IngredientFilterText, UpdateSourceTrigger=PropertyChanged}"/>
                 <Button Background="#701c1c"
                         Margin="20 0 0 0"
                         Width="100"
-                        Content="Lưu"/>
-                <!-- Binding -->
+                        Content="Lưu"
+                        Command="{Binding SaveDishIngredientCommand}"/>
                 <Button Background="#701c1c" 
                         Margin="20 0 0 0" 
                         Content="Thêm nguyên liệu" 
-                        Width="160"/>    
-                <!-- Binding -->
+                        Width="160"
+                        Command="{Binding AddIngredientsToDishCommand}"/>    
             </StackPanel>
 
-            <ListView SelectedIndex="0" 
-                      FontSize="14"
-                      Margin="20" 
-                      Grid.Row="1" 
-                      IsSynchronizedWithCurrentItem="True" 
-                      HorizontalAlignment="Center"
-                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                      VerticalAlignment="Stretch">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="Tên sản phẩm" Width="150"/>
-                        <GridViewColumn Header="Đơn vị" Width="140" />
-                        <GridViewColumn Header="Đơn giá" Width="140"/>
-                        <GridViewColumn Header="Tồn dư" Width="140"/>
-                    </GridView>
-                </ListView.View>
-            </ListView>
+            <TabControl Grid.Row="1"
+                        Style="{StaticResource MaterialDesignTabControl}"
+                        Margin="20 0 20 0"
+                        SelectionChanged="TabItem_SelectionChanged">
+                <TabItem Grid.Row="2"
+                         Header="Nguyên liệu thô"
+                         Cursor="Hand"
+                         Foreground="#791c1c">
+                    <ListView x:Name="RawIngredientsListView"
+                              SelectedIndex="0" 
+                              FontSize="14"
+                              Margin="20" 
+                              Grid.Row="1" 
+                              IsSynchronizedWithCurrentItem="True" 
+                              HorizontalAlignment="Center"
+                              ItemsSource="{Binding DisplayRawIngredient, UpdateSourceTrigger=PropertyChanged}"
+                              SelectedItem="{Binding SelectedRawIngredient}"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                              VerticalAlignment="Stretch">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Nguyên liệu" Width="150" DisplayMemberBinding="{Binding TenNguyenLieu}"/>
+                                <GridViewColumn Header="Đơn vị" Width="120" DisplayMemberBinding="{Binding DonVi}"/>
+                                <GridViewColumn Header="Đơn giá" Width="120" DisplayMemberBinding="{Binding DonGia}"/>
+                                <GridViewColumn Header="Tồn dư" Width="160" DisplayMemberBinding="{Binding TonDu}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </TabItem>
+
+                <TabItem Grid.Row="2"
+                         Header="Nước uống"
+                         Cursor="Hand"
+                         Foreground="#791c1c">
+                    <ListView x:Name="DrinkIngredientsListView"
+                              SelectedIndex="0" 
+                              FontSize="14"
+                              Margin="20" 
+                              Grid.Row="1" 
+                              IsSynchronizedWithCurrentItem="True" 
+                              HorizontalAlignment="Center"
+                              ItemsSource="{Binding DisplayDrinkIngredient, UpdateSourceTrigger=PropertyChanged}"
+                              SelectedItem="{Binding SelectedDrinkIngredient}" 
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                              VerticalAlignment="Stretch">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Loại" Width="100" DisplayMemberBinding="{Binding TenNguyenLieu}"/>
+                                <GridViewColumn Header="Đơn vị" Width="160" DisplayMemberBinding="{Binding DonVi}"/>
+                                <GridViewColumn Header="Đơn giá" Width="140" DisplayMemberBinding="{Binding DonGia}"/>
+                                <GridViewColumn Header="Tồn dư" Width="160" DisplayMemberBinding="{Binding TonDu}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </TabItem>
+            </TabControl>
         </Grid>
 
         <Grid Grid.Column="2" Margin="0 0 20 20">
@@ -74,7 +117,9 @@
             <Button Background="Transparent"
                     Grid.Row="0"
                     BorderThickness="0"
-                    HorizontalAlignment="Right">
+                    HorizontalAlignment="Right"
+                    Command="{Binding PowerOffAddIngredientViewCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
                 <fa:IconImage Icon="PowerOff" Foreground="#701c1c" />
             </Button>
             
@@ -93,7 +138,7 @@
                             x:Name="IngredientDetails">
                     <Border>
                         <StackPanel Orientation="Horizontal">
-                            <ItemsControl x:Name="Ingredient_Quantity"> <!-- Binding ItemSource -->
+                            <ItemsControl ItemsSource="{Binding IngredientOfDish}"> <!-- Binding ItemSource -->
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Border BorderThickness="0 0 0 1" 
@@ -108,7 +153,9 @@
                                                 </Grid.ColumnDefinitions>
 
                                                 <Button Background="Transparent"
-                                                        BorderThickness="0">
+                                                        BorderThickness="0"
+                                                        Command="{Binding Path=DataContext.RemoveIngredientFromDishCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                                        CommandParameter="{Binding}">
                                                     <fa:IconImage Icon="TrashCan"
                                                                   Foreground="#701c1c"
                                                                   Height="14"
@@ -120,7 +167,7 @@
                                                            VerticalAlignment="Center"
                                                            FontSize="14"
                                                            FontWeight="SemiBold"
-                                                           Text="Thịnh nè"/> <!-- Binding TenNL -->
+                                                           Text="{Binding TenNguyenLieu}"/> 
 
                                                 <StackPanel Grid.Column="2"
                                                             Orientation="Horizontal">
@@ -132,7 +179,8 @@
                                                              FontSize="14"
                                                              FontWeight="SemiBold"
                                                              VerticalAlignment="Center"
-                                                             Width="30"/> <!-- Binding SL -->
+                                                             Width="30"
+                                                             Text="{Binding SoLuongNguyenLieu, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/> 
                                                 </StackPanel>
                                             </Grid>
                                         </Border>

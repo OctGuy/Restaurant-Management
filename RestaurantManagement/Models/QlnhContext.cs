@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using System.Configuration;
 
 namespace RestaurantManagement.Models;
 
@@ -45,12 +44,8 @@ public partial class QlnhContext : DbContext
     public virtual DbSet<Taikhoan> Taikhoans { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        if (!optionsBuilder.IsConfigured)
-        {
-            optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["QLNH"].ConnectionString);
-        }
-    }
+
+        => optionsBuilder.UseSqlServer("Server=TDTPC;Database=QLNH;Trusted_Connection=True;TrustServerCertificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -70,7 +65,9 @@ public partial class QlnhContext : DbContext
             entity.ToTable("CHAMCONG");
 
             entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.GhiChu).HasMaxLength(100);
             entity.Property(e => e.IdnhanVien).HasColumnName("IDNhanVien");
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.MaChamCong)
                 .HasMaxLength(7)
                 .IsUnicode(false)
@@ -190,6 +187,7 @@ public partial class QlnhContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.DonGia).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.MaDoAnUong)
                 .HasMaxLength(8)
                 .IsUnicode(false)
@@ -204,6 +202,7 @@ public partial class QlnhContext : DbContext
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.Idban).HasColumnName("IDBan");
             entity.Property(e => e.IdnhanVien).HasColumnName("IDNhanVien");
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.MaHoaDon)
                 .HasMaxLength(7)
                 .IsUnicode(false)
@@ -256,8 +255,10 @@ public partial class QlnhContext : DbContext
             entity.Property(e => e.CongViec).HasMaxLength(20);
             entity.Property(e => e.DiaChi).HasMaxLength(50);
             entity.Property(e => e.HoTen).HasMaxLength(50);
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.LoaiNhanVien).HasMaxLength(20);
             entity.Property(e => e.LuongThang).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.LuongTheoGio).HasColumnType("decimal(10, 2)");
             entity.Property(e => e.MaNhanVien)
                 .HasMaxLength(7)
                 .IsUnicode(false)
@@ -276,6 +277,7 @@ public partial class QlnhContext : DbContext
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.GiaNhap).HasColumnType("decimal(18, 0)");
             entity.Property(e => e.Idkho).HasColumnName("IDKho");
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.MaNhapKho)
                 .HasMaxLength(7)
                 .IsUnicode(false)
@@ -296,10 +298,11 @@ public partial class QlnhContext : DbContext
         {
             entity.ToTable("TAIKHOAN");
 
-            entity.HasIndex(e => e.TenTaiKhoan, "UQ__TAIKHOAN__B106EAF830961192").IsUnique();
+            entity.HasIndex(e => e.TenTaiKhoan, "UQ__TAIKHOAN__B106EAF8FD55CA7C").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.IdnhanVien).HasColumnName("IDNhanVien");
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.MaTaiKhoan)
                 .HasMaxLength(7)
                 .IsUnicode(false)

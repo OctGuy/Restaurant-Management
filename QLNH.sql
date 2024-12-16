@@ -16,9 +16,10 @@ CREATE TABLE [NHANVIEN]
 	[Avatar] varbinary(max),
 	[NgayVaoLam] datetime not null,
 	[LoaiNhanVien] nvarchar(20) not null, -- Full-time or Part-time
-	[LuongThang] decimal(10,2) not null default 0, -- danh cho Fulltime
-	[LuongCoBan] decimal(10,2) not null default 0, -- part-time
-	[SoNgayLamViec] int not null default 0 -- part-time
+	[LuongThang] decimal(10,2), -- danh cho Fulltime, co the null đối với NV Partime 
+	[LuongTheoGio] decimal(10,2),-- danh cho part tume, có thể null đối với NV FUlltime
+	[SoNgayLamViec] int,  -- part-time
+	[IsDeleted] bit default 0
 )
 
 CREATE TABLE [TAIKHOAN]
@@ -28,7 +29,8 @@ CREATE TABLE [TAIKHOAN]
 	[TenTaiKhoan] nvarchar(20) unique not null,
 	[MatKhau] nvarchar(100) not null,
 	[PhanQuyen] int not null, -- 0 : admin, 1 : nhan vien
-	[IDNhanVien] int not null -- FK
+	[IDNhanVien] int not null, -- FK
+	[IsDeleted] bit default 0
 )
 
 CREATE TABLE [BAN]
@@ -44,11 +46,12 @@ CREATE TABLE [DOANUONG]
 	[ID] int identity(1,1) constraint[PK_DOANUONG] primary key,
 	[MaDoAnUong] as ('DAU' + RIGHT('00000' + CAST([ID] as varchar(5)), 5)) persisted,
 	[TenDoAnUong] nvarchar(100) not null,
-	[AnhDoAnUong] varbinary(max) not null,
+	[AnhDoAnUong] varbinary(max),
 	[DonGia] decimal(10,2) not null default 0,
 	[TinhTrang] bit not null, -- 0: het, 1: con
 	[ThoiGianChuanBi] int not null default 0,
-	[Loai] bit not null -- 0: do an, 1: do uong
+	[Loai] bit not null, -- 0: do an, 1: do uong
+	[IsDeleted] bit default 0
 )
 
 CREATE TABLE [HOADON]
@@ -58,7 +61,8 @@ CREATE TABLE [HOADON]
 	[IDBan] int not null, -- FK
 	[IDNhanVien] int not null, -- FK
 	[NgayHoaDon] datetime not null,
-	[TongGia] decimal(10,2) not null default 0 -- sum(CTHD.GiaMon)
+	[TongGia] decimal(10,2) not null default 0, -- sum(CTHD.GiaMon)
+	[IsDeleted] bit default 0
 )
 
 CREATE TABLE [CTHD]
@@ -77,6 +81,7 @@ CREATE TABLE [NGUYENLIEU]
 	[TenNguyenLieu] nvarchar(50) not null,
 	[DonVi] nvarchar(10) not null,
 	[DonGia] decimal(10,2) not null default 0,
+	--[TonDu] int not null,
 	[TinhTrang] bit not null, -- 0: het, 1: con
 	[Loai] bit not null -- 0: nguyen lieu tho (rau, ga, hai san,...), 1: do uong
 	-- Đồ uống cũng đc xem như là nguyên liệu, có thể truyền qua bảng DOANUONG với Loai = 1 (do uong)
@@ -105,7 +110,8 @@ CREATE TABLE [NHAPKHO]
 	[NgayNhap] datetime not null,
 	[GiaNhap] decimal not null default 0, -- sum(CTNhapKho.GiaNL)
 	[SDTLienLac] nvarchar(20) not null,
-	[IDKho] int not null -- FK
+	[IDKho] int not null, -- FK
+	[IsDeleted] bit default 0
 )
 
 CREATE TABLE [CTNHAPKHO]
@@ -143,7 +149,9 @@ CREATE TABLE [CHAMCONG] -- THÊM
     [NgayChamCong] DATE NOT NULL, -- Ngày chấm công
     [GioVao] TIME NOT NULL, -- Giờ vào
     [GioRa] TIME NOT NULL, -- Giờ ra
-    [SoGioLam] AS DATEDIFF(MINUTE, [GioVao], [GioRa]) / 60.0 PERSISTED -- Số giờ làm việc, tính tự động
+    [SoGioLam] AS DATEDIFF(MINUTE, [GioVao], [GioRa]) / 60.0 PERSISTED, -- Số giờ làm việc, tính tự động
+	[GhiChu] NVARCHAR(100),
+	[IsDeleted] bit default 0
 )
 -----------------------------------------------------------------------------------------------
 
@@ -187,14 +195,61 @@ foreign key ([IDNguyenLieu]) references [NGUYENLIEU]([ID]);
 alter table [CHEBIEN] add constraint [FK_CHEBIEN_IDHoaDon]
 foreign key ([IDHoaDon]) references [HOADON]([ID]);
 
-
----------------------- THÊM ------------------------ NGÀY 22/11/2024---------------------------------
 ALTER TABLE [CHAMCONG] ADD CONSTRAINT [FK_CHAMCONG_IDNhanVien] 
 FOREIGN KEY ([IDNhanVien]) REFERENCES [NHANVIEN]([ID]); --- THÊM
 
-ALTER TABLE [NHANVIEN] DROP CONSTRAINT DF__NHANVIEN__SoNgay__398D8EEE -- XÓA RÀNG BUỘC DEFAULT CHO SoNgayLamViec
-ALTER TABLE [NHANVIEN] DROP COLUMN [SoNgayLamViec]; -- XÓA CỘT SoNgayLamViec (part-time)
+alter table [NGUYENLIEU] DROP COLUMN [TonDu]
 
-ALTER TABLE [NHANVIEN] DROP CONSTRAINT DF__NHANVIEN__LuongC__38996AB5 -- XÓA RÀNG BUỘC DEFAULT CHO LuongCoBan
-ALTER TABLE [NHANVIEN] DROP COLUMN [LuongCoBan]; -- XÓA CỘT LuongCoBan (part-time)
-------------------------------------------------------------------------------------------------------------------
+
+Select * from [DOANUONG]
+Select * from [CTMONAN]
+
+
+select * from [NGUYENLIEU]
+select * from [KHO]
+select * from [NHAPKHO]
+select * from [CTKHO]
+select * from [CTNHAPKHO]
+
+insert into CTKHO (IDKho, IDNguyenLieu, SoLuongTonDu)
+values (1, 5, 200), (1, 6, 50), (1, 7, 20), (2, 8, 200), (2, 9, 250)
+insert into CTMONAN(IDDoAnUong, IDNguyenLieu, SoLuongNguyenLieu)
+values (1, 5, 4), (1, 6, 5), (1, 7, 10), (3, 5, 12), (3, 6, 28), (3, 7, 5)
+INSERT INTO [NGUYENLIEU] ([TenNguyenLieu], [DonVi], [DonGia], [TinhTrang], [Loai])
+VALUES
+(N'Rau cải', N'kg', 15000, 1, 0), -- Nguyên liệu thô
+(N'Thịt gà', N'kg', 70000, 1, 0), -- Nguyên liệu thô
+(N'Tôm sú', N'kg', 120000, 1, 0), -- Nguyên liệu thô
+(N'Nước ngọt Coca', N'chai', 10000, 1, 1), -- Đồ uống
+(N'Nước suối Lavie', N'chai', 8000, 1, 1); -- Đồ uống
+
+INSERT INTO NHAPKHO (NguonNhap, NgayNhap, SDTLienLac, IDKho)
+VALUES 
+('Công ty A', '2024-06-10', '0123456789', 1), -- Lần nhập 1
+('Công ty B', '2024-06-11', '0987654321', 1), -- Lần nhập 2
+('Công ty C', '2024-06-12', '0345678901', 1), -- Lần nhập 3
+('Công ty D', '2024-06-13', '0765432198', 2), -- Lần nhập 4
+('Công ty E', '2024-06-14', '0678901234', 2), -- Lần nhập 5
+('Công ty F', '2024-06-15', '0789123456', 1); -- Lần nhập 6
+
+INSERT INTO CTNHAPKHO (IDNhapKho, IDNguyenLieu, SoLuongNguyenLieu, GiaNguyenLieu)
+VALUES 
+(1, 2, 100, 20000.00 * 100), -- Lần nhập 1: Gạo (ID = 2)
+(2, 3, 50, 150000.00 * 50), -- Lần nhập 2: Bò (ID = 3)
+(3, 4, 200, 10000.00 * 200), -- Lần nhập 3: Nước ngọt (ID = 4)
+(4, 5, 150, 15000.00 * 150), -- Lần nhập 4: Rau cải (ID = 5)
+(5, 6, 30, 70000.00 * 30), -- Lần nhập 5: Thịt gà (ID = 6)
+(6, 7, 20, 120000.00 * 20); -- Lần nhập 6: Tôm sú (ID = 7)
+
+UPDATE NHAPKHO
+SET IDKho = 1
+where id in (4, 5)
+
+update NHAPKHO
+set IDKho = 2
+where id = 3
+
+UPDATE NHAPKHO
+SET GiaNhap = CT.GiaNguyenLieu
+FROM NHAPKHO NK
+JOIN CTNHAPKHO CT ON NK.ID = CT.IDNhapKho;

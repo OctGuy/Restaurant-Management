@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using RestaurantManagement.ViewModels;
+using RestaurantManagement.Models;
 
 namespace RestaurantManagement.Views
 {
@@ -23,6 +25,7 @@ namespace RestaurantManagement.Views
         public FoodMenuView()
         {
             InitializeComponent();
+            DataContext = new FoodMenuViewModel();
         }
     }
 }

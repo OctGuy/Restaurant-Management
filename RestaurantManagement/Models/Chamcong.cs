@@ -19,5 +19,9 @@ public partial class Chamcong
 
     public decimal? SoGioLam { get; set; }
 
+    public string? GhiChu { get; set; }
+
+    public bool? IsDeleted { get; set; }
+
     public virtual Nhanvien IdnhanVienNavigation { get; set; } = null!;
 }

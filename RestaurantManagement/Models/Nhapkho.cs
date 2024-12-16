@@ -19,6 +19,8 @@ public partial class Nhapkho
 
     public int Idkho { get; set; }
 
+    public bool? IsDeleted { get; set; }
+
     public virtual ICollection<Ctnhapkho> Ctnhapkhos { get; set; } = new List<Ctnhapkho>();
 
     public virtual Kho IdkhoNavigation { get; set; } = null!;
