@@ -24,7 +24,6 @@
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="60"/>
-                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
@@ -52,15 +51,13 @@
                         Style="{StaticResource MaterialDesignTabControl}"
                         Margin="20 0 20 0"
                         SelectionChanged="TabItem_SelectionChanged">
-                <TabItem Grid.Row="2"
-                         Header="Nguyên liệu thô"
+                <TabItem Header="Nguyên liệu thô"
                          Cursor="Hand"
                          Foreground="#791c1c">
                     <ListView x:Name="RawIngredientsListView"
                               SelectedIndex="0" 
                               FontSize="14"
                               Margin="20" 
-                              Grid.Row="1" 
                               IsSynchronizedWithCurrentItem="True" 
                               HorizontalAlignment="Center"
                               ItemsSource="{Binding DisplayRawIngredient, UpdateSourceTrigger=PropertyChanged}"
@@ -78,15 +75,13 @@
                     </ListView>
                 </TabItem>
 
-                <TabItem Grid.Row="2"
-                         Header="Nước uống"
+                <TabItem Header="Nước uống"
                          Cursor="Hand"
                          Foreground="#791c1c">
                     <ListView x:Name="DrinkIngredientsListView"
                               SelectedIndex="0" 
                               FontSize="14"
                               Margin="20" 
-                              Grid.Row="1" 
                               IsSynchronizedWithCurrentItem="True" 
                               HorizontalAlignment="Center"
                               ItemsSource="{Binding DisplayDrinkIngredient, UpdateSourceTrigger=PropertyChanged}"

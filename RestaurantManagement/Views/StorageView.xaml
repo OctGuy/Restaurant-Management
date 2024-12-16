@@ -21,7 +21,6 @@
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="*" />
                 <RowDefinition Height="8*"/>
             </Grid.RowDefinitions>
 
@@ -75,8 +74,7 @@
                         Style="{StaticResource MaterialDesignTabControl}"
                         Margin="20 0 20 0"
                         SelectionChanged="TabItem_SelectionChanged">
-                <TabItem Grid.Row="2"
-                         Header="Nguyên liệu thô"
+                <TabItem Header="Nguyên liệu thô"
                          Cursor="Hand"
                          Foreground="#791c1c">
                     <ListView x:Name="RawIngredientsListView"
@@ -107,8 +105,7 @@
                     </ListView>
                 </TabItem>
 
-                <TabItem Grid.Row="2"
-                         Header="Nước uống"
+                <TabItem Header="Nước uống"
                          Cursor="Hand"
                          Foreground="#791c1c">
                     <ListView x:Name="DrinkIngredientsListView"
