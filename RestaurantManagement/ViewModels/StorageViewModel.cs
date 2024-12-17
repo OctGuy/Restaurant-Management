@@ -31,7 +31,7 @@ namespace RestaurantManagement.ViewModels
         {
             public int importID { get; set; }
             public int ingredientID { get; set; }
-            public string? ingredientName { get; set; }
+            public string ingredientName { get; set; }
             public DateTime? supplyDate { get; set; }
             public string? unit { get; set; }
             public decimal? unitPrice { get; set; }
@@ -198,6 +198,28 @@ namespace RestaurantManagement.ViewModels
 
         public void LoadRawIngredients()
         {
+            //var getRawIngredient = (from nk in dbContext.Nhapkhos
+            //                        join ctnk in dbContext.Ctnhapkhos on nk.Id equals ctnk.IdnhapKho
+            //                        join nl in dbContext.Nguyenlieus on ctnk.IdnguyenLieu equals nl.Id
+            //                        join ctk in dbContext.Ctkhos on nl.Id equals ctk.IdnguyenLieu
+            //                        where nk.IsDeleted == false && ctk.Idkho == 1
+            //                        group new {nk, ctnk, nl, ctk} by new { ctnk.IdnguyenLieu } into grouped
+            //                        let latestEntry = grouped.OrderByDescending(g => g.nk.NgayNhap).FirstOrDefault() // chỗ này ???
+            //                        select new Ingredient
+            //                        {
+            //                            importID = latestEntry.nk.Id,
+            //                            ingredientID = latestEntry.nl.Id,
+            //                            ingredientName = latestEntry.nl.TenNguyenLieu,
+            //                            supplyDate = latestEntry.nk.NgayNhap,
+            //                            unit = latestEntry.nl.DonVi,
+            //                            unitPrice = latestEntry.nl.DonGia,
+            //                            quantity = latestEntry.ctnk.SoLuongNguyenLieu,
+            //                            type = latestEntry.nl.Loai,
+            //                            supplySource = latestEntry.nk.NguonNhap,
+            //                            phoneNumber = latestEntry.nk.SdtlienLac,
+            //                            remainQuantity = latestEntry.ctk.SoLuongTonDu
+            //                        }).ToList();
+            //RawIngredients = new ObservableCollection<Ingredient>(getRawIngredient);
             RawIngredients = new ObservableCollection<Ingredient>
             (
                 dbContext.Nhapkhos
@@ -216,16 +238,39 @@ namespace RestaurantManagement.ViewModels
                     supplySource = result.nk.NguonNhap,
                     phoneNumber = result.nk.SdtlienLac,
                     remainQuantity = dbContext.Ctkhos.Where(ctk => ctk.Idkho == result.nk.Idkho && ctk.IdnguyenLieu == result.ctnk.IdnguyenLieu)
-                                                     .Select(ctk => ctk.SoLuongTonDu).FirstOrDefault()
+                                                     .Select(ctk => ctk.SoLuongTonDu)
+                                                     .FirstOrDefault()
                 })
-                .ToList()
-            );
+                .ToList());
+            //);
 
             DisplayRawIngredients = new ObservableCollection<Ingredient>(RawIngredients);
         }
 
         public void LoadDrinkIngredients()
         {
+            //var getDrinkIngredient = (from nk in dbContext.Nhapkhos
+            //                        join ctnk in dbContext.Ctnhapkhos on nk.Id equals ctnk.IdnhapKho
+            //                        join nl in dbContext.Nguyenlieus on ctnk.IdnguyenLieu equals nl.Id
+            //                        join ctk in dbContext.Ctkhos on nl.Id equals ctk.IdnguyenLieu
+            //                        where nk.IsDeleted == false && ctk.Idkho == 2
+            //                        group new { nk, ctnk, nl, ctk } by new { ctnk.IdnguyenLieu } into grouped
+            //                        let latestEntry = grouped.OrderByDescending(g => g.nk.NgayNhap).FirstOrDefault()
+            //                        select new Ingredient
+            //                        {
+            //                            importID = latestEntry.nk.Id,
+            //                            ingredientID = latestEntry.nl.Id,
+            //                            ingredientName = latestEntry.nl.TenNguyenLieu,
+            //                            supplyDate = latestEntry.nk.NgayNhap,
+            //                            unit = latestEntry.nl.DonVi,
+            //                            unitPrice = latestEntry.nl.DonGia,
+            //                            quantity = latestEntry.ctnk.SoLuongNguyenLieu,
+            //                            type = latestEntry.nl.Loai,
+            //                            supplySource = latestEntry.nk.NguonNhap,
+            //                            phoneNumber = latestEntry.nk.SdtlienLac,
+            //                            remainQuantity = latestEntry.ctk.SoLuongTonDu
+            //                        }).ToList();
+            //DrinkIngredients = new ObservableCollection<Ingredient>(getDrinkIngredient);
             DrinkIngredients = new ObservableCollection<Ingredient>
             (
                 dbContext.Nhapkhos
@@ -266,6 +311,7 @@ namespace RestaurantManagement.ViewModels
             ResetFilterCommand = new RelayCommand(ResetFilter);
             OpenEditCommand = new RelayCommand<object>(CanExecuteOpenEditView, ExecuteOpenEditView);
             ImportIngredientCommand = new RelayCommand(ImportIngredient);
+            AddedIngredient = new Ingredient();
         }
 
         private void UpdateDays()
@@ -385,10 +431,40 @@ namespace RestaurantManagement.ViewModels
             {
                 if (string.IsNullOrWhiteSpace(AddedIngredient.ingredientName))
                 {
-                    System.Windows.Forms.MessageBox.Show("Vui lòng nhập tên món");
+                    System.Windows.Forms.MessageBox.Show("Vui lòng nhập tên nguyên liệu");
                     return;
                 }
-                
+
+                if (AddedIngredient.supplyDate == null)
+                {
+                    System.Windows.Forms.MessageBox.Show("Vui lòng chọn ngày nhập kho");
+                    return;
+                }
+
+                if (AddedIngredient.quantity <= 0 || AddedIngredient.quantity == null)
+                {
+                    System.Windows.Forms.MessageBox.Show("Vui lòng nhập lại số lượng");
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(AddedIngredient.unit))
+                {
+                    System.Windows.Forms.MessageBox.Show("Vui lòng nhập đơn vị");
+                    return;
+                }
+
+                if (AddedIngredient.unitPrice <= 0 || AddedIngredient.unitPrice == null)
+                {
+                    System.Windows.Forms.MessageBox.Show("Vui lòng nhập lại đơn giá");
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(SelectedIngredientType))
+                {
+                    System.Windows.Forms.MessageBox.Show("Vui lòng chọn loại nguyên liệu");
+                    return;
+                }
+
                 if (string.IsNullOrWhiteSpace(AddedIngredient.supplySource))
                 {
                     System.Windows.Forms.MessageBox.Show("Vui lòng nhập nguồn cung cấp");
@@ -401,34 +477,102 @@ namespace RestaurantManagement.ViewModels
                     return;
                 }
 
-                if (string.IsNullOrWhiteSpace(AddedIngredient.unit))
-                {
-                    System.Windows.Forms.MessageBox.Show("Vui lòng nhập đơn vị");
-                    return;
-                }
+                decimal? giaNhap = AddedIngredient.quantity * AddedIngredient.unitPrice;
 
-                if (AddedIngredient.supplyDate == null)
-                {
-                    System.Windows.Forms.MessageBox.Show("Vui lòng chọn ngày nhập kho");
-                    return;
-                }
+                // Hiển thị MessageBox để xác nhận Giá Nhập
+                var result = System.Windows.Forms.MessageBox.Show(
+                    $"Giá nhập cho lần nhập này là: {giaNhap}.\nBạn có đồng ý tiếp tục không?",
+                    "Xác nhận Giá Nhập",
+                    System.Windows.Forms.MessageBoxButtons.OKCancel,
+                    System.Windows.Forms.MessageBoxIcon.Question);
 
-                if (string.IsNullOrWhiteSpace(SelectedIngredientType))
+                if (result == System.Windows.Forms.DialogResult.OK)
                 {
-                    System.Windows.Forms.MessageBox.Show("Vui lòng chọn loại nguyên liệu");
-                    return;
-                }
+                    var existingingredient = dbContext.Nguyenlieus.FirstOrDefault(nl => nl.TenNguyenLieu == AddedIngredient.ingredientName);
 
-                if (AddedIngredient.quantity <= 0 || AddedIngredient.quantity == null)
-                {
-                    System.Windows.Forms.MessageBox.Show("Vui lòng nhập lại số lượng");
-                    return;
-                }
+                    if (existingingredient != null) // Nếu nguyên liệu đã có trong kho
+                    {
+                        existingingredient.DonGia = AddedIngredient.unitPrice;
 
-                if (AddedIngredient.unitPrice <= 0 || AddedIngredient.quantity == null)
-                {
-                    System.Windows.Forms.MessageBox.Show("Vui lòng nhập lại đơn giá");
-                    return;
+                        // Cập nhật lượng tồn dư cho CTKHO
+                        var updateCtkho = dbContext.Ctkhos.FirstOrDefault(ctk => ctk.IdnguyenLieu == existingingredient.Id);
+                        if (updateCtkho != null)
+                        {
+                            updateCtkho.SoLuongTonDu += AddedIngredient.quantity;
+                        }
+                        dbContext.SaveChanges();
+
+
+                        // Cập nhật NHAPKHO
+                        var newNhapKho = new Nhapkho
+                        {
+                            NguonNhap = AddedIngredient.supplySource,
+                            NgayNhap = AddedIngredient.supplyDate,
+                            GiaNhap = AddedIngredient.quantity * AddedIngredient.unitPrice,
+                            SdtlienLac = AddedIngredient.phoneNumber,
+                            Idkho = SelectedIngredientType == "Nguyên liệu thô" ? 1 : 2,
+                        };
+                        dbContext.Nhapkhos.Add(newNhapKho);
+                        dbContext.SaveChanges(); // Lưu để lấy Id nhập kho mới
+
+                        int newIdNhapkho = newNhapKho.Id; // Lấy Id nhập kho mới
+
+
+                        // Cập nhật CTNHAPKHO
+                        var newCTNHAPKHO = new Ctnhapkho
+                        {
+                            IdnhapKho = newIdNhapkho,
+                            IdnguyenLieu = existingingredient.Id,
+                            SoLuongNguyenLieu = AddedIngredient.quantity,
+                            GiaNguyenLieu = AddedIngredient.unitPrice * AddedIngredient.quantity
+                        };
+                        dbContext.Ctnhapkhos.Add(newCTNHAPKHO);
+                        dbContext.SaveChanges();
+                    }
+                    else // Thêm nguyên liệu mới vào kho
+                    {
+                        // Thêm vào NGUYENLIEU
+                        var newIngredient = new Nguyenlieu
+                        {
+                            TenNguyenLieu = AddedIngredient.ingredientName,
+                            DonVi = AddedIngredient.unit,
+                            DonGia = AddedIngredient.unitPrice,
+                            TinhTrang = true
+                        };
+                        dbContext.Add(newIngredient);
+                        dbContext.SaveChanges();
+
+                        int newIngredientID = newIngredient.Id; // Lấy ID Nguyên liệu
+
+
+                        // Thêm vào NHAPKHO
+                        var newNhapKho = new Nhapkho
+                        {
+                            NguonNhap = AddedIngredient.supplySource,
+                            NgayNhap = AddedIngredient.supplyDate,
+                            GiaNhap = AddedIngredient.quantity * AddedIngredient.unitPrice,
+                            SdtlienLac = AddedIngredient.phoneNumber,
+                            Idkho = SelectedIngredientType == "Nguyên liệu thô" ? 1 : 2,
+                        };
+                        dbContext.Nhapkhos.Add(newNhapKho);
+                        dbContext.SaveChanges();
+
+                        int newNhapKhoID = newNhapKho.Id;
+
+
+                        // Thêm vào CTNHAPKHO
+                        var newCtnhapKho = new Ctnhapkho
+                        {
+                            IdnhapKho = newNhapKhoID,
+                            IdnguyenLieu = newIngredientID,
+                            SoLuongNguyenLieu = AddedIngredient.quantity,
+                            GiaNguyenLieu = AddedIngredient.quantity * AddedIngredient.unitPrice
+                        };
+                        dbContext.Ctnhapkhos.Add(newCtnhapKho);
+                        dbContext.SaveChanges();
+                    }
+
+                    System.Windows.Forms.MessageBox.Show("NHẬP KHO THÀNH CÔNG");
                 }
             }
             catch(Exception ex)

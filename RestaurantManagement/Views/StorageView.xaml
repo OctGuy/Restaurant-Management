@@ -301,7 +301,8 @@
                             Cursor="Hand"
                             Content="Nhập kho"
                             Width="150"
-                            VerticalAlignment="Center"/>    
+                            VerticalAlignment="Center"
+                            Command="{Binding ImportIngredientCommand}"/>    
                 </Grid>
             </Grid>
         </Grid>
