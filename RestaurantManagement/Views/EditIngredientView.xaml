@@ -26,7 +26,6 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <TextBox Grid.Row="0"
@@ -66,30 +65,22 @@
                  Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
                  Text="{Binding IngredientToChange.quantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <ComboBox Grid.Row="7"
-                 materialDesign:HintAssist.Hint="Loại"
-                 Style="{StaticResource MaterialDesignFloatingHintComboBox}"
-                 SelectedItem="{Binding IngredientToChange.type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-            <ComboBoxItem Content="Nguyên liệu thô" />
-            <ComboBoxItem Content="Nước uống" />
-        </ComboBox>
-
-        <TextBox Grid.Row="8"
+        <TextBox Grid.Row="7"
                  materialDesign:HintAssist.Hint="Nguồn nhập"
                  Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
                  Text="{Binding IngredientToChange.supplySource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <TextBox Grid.Row="9"
+        <TextBox Grid.Row="8"
                  materialDesign:HintAssist.Hint="SĐT liên lạc"
                  Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
                  Text="{Binding IngredientToChange.phoneNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <TextBox Grid.Row="10"
+        <TextBox Grid.Row="9"
                  materialDesign:HintAssist.Hint="Tồn dư"
                  Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
                  Text="{Binding IngredientToChange.remainQuantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <Grid Grid.Row="11">
+        <Grid Grid.Row="10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />

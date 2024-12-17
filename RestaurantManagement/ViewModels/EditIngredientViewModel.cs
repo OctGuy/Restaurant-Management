@@ -128,7 +128,6 @@ namespace RestaurantManagement.ViewModels
                 importOriginal.NguonNhap = IngredientToChange.supplySource;
                 importOriginal.NgayNhap = IngredientToChange.supplyDate;
                 importOriginal.SdtlienLac = IngredientToChange.phoneNumber;
-                importOriginal.Idkho = IngredientToChange.type == false ? 1 : 2;
                 
                 // Cập nhật lại cột GiaNhap trong bảng NHAPKHO thông qua SLNL trong bảng CTNHAPKHO và DonGia trong bảng NGUYENLIEU 
                 var ctnk = dbContext.Ctnhapkhos.Where(ctnk => ctnk.IdnhapKho == IngredientToChange.importID
@@ -153,7 +152,13 @@ namespace RestaurantManagement.ViewModels
             var storageDetailOriginal = dbContext.Ctkhos.FirstOrDefault(ctk => ctk.IdnguyenLieu == IngredientToChange.ingredientID);
             if (storageDetailOriginal != null)
             {
-                storageDetailOriginal.SoLuongTonDu = IngredientToChange.remainQuantity;
+                var calcSumQuantity = dbContext.Ctnhapkhos.GroupBy(ctnk => ctnk.IdnguyenLieu)
+                                                          .Select(group => new
+                                                          {
+                                                              IDNguyenLieu = group.Key,
+                                                              TongSoLuong = group.Sum(ctnk => ctnk.SoLuongNguyenLieu),
+                                                          }).ToDictionary(x => x.IDNguyenLieu, x => x.TongSoLuong);
+                storageDetailOriginal.SoLuongTonDu = calcSumQuantity.ContainsKey(storageDetailOriginal.IdnguyenLieu) ? calcSumQuantity[storageDetailOriginal.IdnguyenLieu] : 0;
                 dbContext.SaveChanges();
             }
             else
