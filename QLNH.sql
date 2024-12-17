@@ -232,6 +232,11 @@ VALUES
 ('Công ty E', '2024-06-14', '0678901234', 2), -- Lần nhập 5
 ('Công ty F', '2024-06-15', '0789123456', 1); -- Lần nhập 6
 
+INSERT INTO NHAPKHO (NguonNhap, NgayNhap, SDTLienLac, IDKho)
+VALUES
+('Công ty G', '2024-06-17', '0328256792', 2),
+('Công ty H', '2024-06-18', '0986513630', 2)
+
 INSERT INTO CTNHAPKHO (IDNhapKho, IDNguyenLieu, SoLuongNguyenLieu, GiaNguyenLieu)
 VALUES 
 (1, 2, 100, 20000.00 * 100), -- Lần nhập 1: Gạo (ID = 2)
@@ -240,6 +245,11 @@ VALUES
 (4, 5, 150, 15000.00 * 150), -- Lần nhập 4: Rau cải (ID = 5)
 (5, 6, 30, 70000.00 * 30), -- Lần nhập 5: Thịt gà (ID = 6)
 (6, 7, 20, 120000.00 * 20); -- Lần nhập 6: Tôm sú (ID = 7)
+INSERT INTO CTNHAPKHO (IDNhapKho, IDNguyenLieu, SoLuongNguyenLieu, GiaNguyenLieu)
+VALUES
+(7, 8, 300, 10000.00 * 300),
+(8, 9, 250, 8000.00 * 250)
+
 
 UPDATE NHAPKHO
 SET IDKho = 1
@@ -249,7 +259,7 @@ update NHAPKHO
 set IDKho = 2
 where id = 3
 
-UPDATE NHAPKHO
-SET GiaNhap = CT.GiaNguyenLieu
-FROM NHAPKHO NK
-JOIN CTNHAPKHO CT ON NK.ID = CT.IDNhapKho;
+UPDATE CTKHO
+SET SoLuongTonDu = CTNK.SoLuongNguyenLieu
+FROM CTKHO CTK
+JOIN CTNHAPKHO CTNK ON CTK.IDNguyenLieu = CTNK.IDNguyenLieu;

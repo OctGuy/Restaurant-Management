@@ -47,7 +47,6 @@ namespace RestaurantManagement.Views
                     {
                         rawListView.SelectedItem = null;
                     }
-
                 }
             }
         }

@@ -29,7 +29,8 @@ namespace RestaurantManagement.ViewModels
         private readonly QlnhContext dbContext;
         public class Ingredient
         {
-            public int Id { get; set; }
+            public int importID { get; set; }
+            public int ingredientID { get; set; }
             public string? ingredientName { get; set; }
             public DateTime supplyDate { get; set; }
             public string? unit { get; set; }
@@ -42,6 +43,8 @@ namespace RestaurantManagement.ViewModels
         }
 
         public ICommand ResetFilterCommand { get; set; }
+        public ICommand OpenEditCommand { get; set; }
+        //public ICommand 
 
         private ObservableCollection<Ingredient> rawIngrdients;
         public ObservableCollection<Ingredient> RawIngredients
@@ -65,17 +68,6 @@ namespace RestaurantManagement.ViewModels
             }
         }
 
-        private Ingredient selectedRawIngredient;
-        public Ingredient SelectedRawIngredient
-        {
-            get => selectedRawIngredient;
-            set
-            {
-                selectedRawIngredient = value;
-                OnPropertyChanged();
-            }
-        }
-
         private ObservableCollection<Ingredient> drinkIngrdients;
         public ObservableCollection<Ingredient> DrinkIngredients
         {
@@ -94,6 +86,17 @@ namespace RestaurantManagement.ViewModels
             set
             {
                 displayDrinkIngredients = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Ingredient selectedRawIngredient;
+        public Ingredient SelectedRawIngredient
+        {
+            get => selectedRawIngredient;
+            set
+            {
+                selectedRawIngredient = value;
                 OnPropertyChanged();
             }
         }
@@ -168,10 +171,21 @@ namespace RestaurantManagement.ViewModels
         public List<int> Months { get; }
         public ObservableCollection<int> Days { get; }
 
-        public StorageViewModel()
-        {
-            dbContext = new QlnhContext();
+        public ObservableCollection<string> ingredientType { get; }
 
+        private string selectedIngredientType;
+        public string SelectedIngredientType
+        {
+            get => selectedIngredientType;
+            set
+            {
+                selectedIngredientType = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public void LoadRawIngredients()
+        {
             RawIngredients = new ObservableCollection<Ingredient>
             (
                 dbContext.Nhapkhos
@@ -179,7 +193,8 @@ namespace RestaurantManagement.ViewModels
                 .SelectMany(nk => nk.Ctnhapkhos, (nk, ctnk) => new { nk, ctnk })
                 .Select(result => new Ingredient
                 {
-                    Id = result.nk.Id, // Id của NHAPKHO
+                    importID = result.nk.Id, // Id của NHAPKHO
+                    ingredientID = result.ctnk.IdnguyenLieuNavigation.Id, // Id của NGUYENLIEU
                     ingredientName = result.ctnk.IdnguyenLieuNavigation.TenNguyenLieu,
                     supplyDate = result.nk.NgayNhap,
                     unit = result.ctnk.IdnguyenLieuNavigation.DonVi,
@@ -195,7 +210,10 @@ namespace RestaurantManagement.ViewModels
             );
 
             DisplayRawIngredients = new ObservableCollection<Ingredient>(RawIngredients);
+        }
 
+        public void LoadDrinkIngredients()
+        {
             DrinkIngredients = new ObservableCollection<Ingredient>
             (
                 dbContext.Nhapkhos
@@ -203,7 +221,8 @@ namespace RestaurantManagement.ViewModels
                 .SelectMany(nk => nk.Ctnhapkhos, (nk, ctnk) => new { nk, ctnk })
                 .Select(result => new Ingredient
                 {
-                    Id = result.nk.Id, // Id của NHAPKHO
+                    importID = result.nk.Id, // Id của NHAPKHO
+                    ingredientID = result.ctnk.IdnguyenLieuNavigation.Id, // Id của NGUYENLIEU
                     ingredientName = result.ctnk.IdnguyenLieuNavigation.TenNguyenLieu,
                     supplyDate = result.nk.NgayNhap,
                     unit = result.ctnk.IdnguyenLieuNavigation.DonVi,
@@ -219,12 +238,21 @@ namespace RestaurantManagement.ViewModels
             );
 
             DisplayDrinkIngredients = new ObservableCollection<Ingredient>(DrinkIngredients);
+        }
+
+        public StorageViewModel()
+        {
+            dbContext = new QlnhContext();
+            LoadRawIngredients();
+            LoadDrinkIngredients();
 
             Years = Enumerable.Range(2000, DateTime.Now.Year - 2000 + 1).ToList();
             Months = Enumerable.Range(1, 12).ToList();
             Days = new ObservableCollection<int>();
+            ingredientType = new ObservableCollection<string> { "Nguyên liệu thô", "Nước uống" };
 
             ResetFilterCommand = new RelayCommand(ResetFilter);
+            OpenEditCommand = new RelayCommand<object>(CanExecuteOpenEditView, ExecuteOpenEditView);
         }
 
         private void UpdateDays()
@@ -304,6 +332,38 @@ namespace RestaurantManagement.ViewModels
             SelectedDay = null;
             DisplayRawIngredients = new ObservableCollection<Ingredient>(RawIngredients);
             DisplayDrinkIngredients = new ObservableCollection<Ingredient>(DrinkIngredients);
+        }
+
+        private bool CanExecuteOpenEditView(object? parameter)
+        {
+            if (SelectedDrinkIngredient == null && SelectedRawIngredient == null)
+                return false;
+            return true;
+        }
+
+        private void ExecuteOpenEditView(object? parameter)
+        {
+            if (SelectedRawIngredient != null)
+            {
+                var editWindow = new EditIngredientView();
+                var editViewModel = new EditIngredientViewModel(dbContext, SelectedRawIngredient, editWindow.Close);
+
+                editWindow.DataContext = editViewModel;
+                editWindow.ShowDialog();
+
+                LoadRawIngredients();
+            }
+
+            if (SelectedDrinkIngredient != null)
+            {
+                var editWindow = new EditIngredientView();
+                var editViewModel = new EditIngredientViewModel(dbContext, SelectedDrinkIngredient, editWindow.Close);
+
+                editWindow.DataContext = editViewModel;
+                editWindow.ShowDialog();
+
+                LoadDrinkIngredients();
+            }
         }
     }
 }
