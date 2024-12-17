@@ -50,8 +50,7 @@ namespace RestaurantManagement.ViewModels
             set
             {
                 rawIngrdients = value;
-                OnPropertyChanged();
-                //ApplyFilter();
+                OnPropertyChanged(); 
             }
         }
 
@@ -85,7 +84,6 @@ namespace RestaurantManagement.ViewModels
             {
                 drinkIngrdients = value;
                 OnPropertyChanged();
-                //ApplyFilter();
             }
         }
 
@@ -118,34 +116,51 @@ namespace RestaurantManagement.ViewModels
             set
             {
                 ingredientNameFilter = value;
-                ApplyFilter();
+                OnPropertyChanged(nameof(IngredientNameFilter));
+                ApplyFilterRaw();
+                ApplyFilterDrink();
             }
         }
 
-        private int selectedDay;
-        private int selectedMonth;
-        private int selectedYear;
+        private int? selectedDay;
+        private int? selectedMonth;
+        private int? selectedYear;
 
-        public int SelectedDay { get; set; }
-        public int SelectedMonth
+        public int? SelectedDay
+        {
+            get => selectedDay;
+            set
+            {
+                selectedDay = value;
+                OnPropertyChanged(nameof(SelectedDay));
+                ApplyFilterRaw();
+                ApplyFilterDrink();
+            }
+        }
+
+        public int? SelectedMonth
         {
             get => selectedMonth;
             set
             {
                 selectedMonth = value;
+                OnPropertyChanged(nameof(SelectedMonth));
                 UpdateDays();
-                ApplyFilter();
+                ApplyFilterRaw();
+                ApplyFilterDrink();
             }
         }
 
-        public int SelectedYear
+        public int? SelectedYear
         {
             get => selectedYear;
             set
             {
                 selectedYear = value;
+                OnPropertyChanged(nameof(SelectedYear));
                 UpdateDays();
-                ApplyFilter();
+                ApplyFilterRaw();
+                ApplyFilterDrink();
             }
         }
 
@@ -217,61 +232,76 @@ namespace RestaurantManagement.ViewModels
             Days.Clear();
             if (SelectedYear > 0 && SelectedMonth > 0)
             {
-                int daysInMonth = DateTime.DaysInMonth(SelectedYear, SelectedMonth);
+                int daysInMonth = DateTime.DaysInMonth(SelectedYear.Value, SelectedMonth.Value);
                 for (int i = 1; i <= daysInMonth; i++)
                     Days.Add(i);
             }
         }
 
-        private void ApplyFilter()
+        private void ApplyFilterRaw()
         {
-            DisplayRawIngredients.Clear();
-            DisplayDrinkIngredients.Clear();
+            if (RawIngredients == null || !RawIngredients.Any()) return;
 
             var queryRaw = RawIngredients.AsEnumerable();
-            var queryDrink = DrinkIngredients.AsEnumerable();
-
+            
             if (!string.IsNullOrWhiteSpace(IngredientNameFilter))
             {
                 queryRaw = queryRaw.Where(q => q.ingredientName.IndexOf(ingredientNameFilter, StringComparison.OrdinalIgnoreCase) >= 0);
-                queryDrink = queryDrink.Where(q => q.ingredientName.IndexOf(ingredientNameFilter, StringComparison.OrdinalIgnoreCase) >= 0);
             }
 
             if (SelectedYear > 0)
             {
                 queryRaw = queryRaw.Where(m => m.supplyDate.Year ==  SelectedYear);
-                queryDrink = queryDrink.Where(m => m.supplyDate.Year == SelectedYear);
             }
 
             if (SelectedMonth > 0)
             {
                 queryRaw = queryRaw.Where(m => m.supplyDate.Month == SelectedMonth);
-                queryDrink = queryDrink.Where(m => m.supplyDate.Month == SelectedMonth);
             }
 
             if (SelectedDay > 0)
             {
                 queryRaw = queryRaw.Where(m => m.supplyDate.Day == SelectedDay);
+            }
+
+            DisplayRawIngredients = new ObservableCollection<Ingredient>(queryRaw);
+        }
+
+        private void ApplyFilterDrink()
+        {
+            if (DrinkIngredients == null || !DrinkIngredients.Any()) return;
+
+            var queryDrink = DrinkIngredients.AsEnumerable();
+
+            if (!string.IsNullOrWhiteSpace(IngredientNameFilter))
+            {
+                queryDrink = queryDrink.Where(q => q.ingredientName.IndexOf(ingredientNameFilter, StringComparison.OrdinalIgnoreCase) >= 0);
+            }
+
+            if (SelectedYear > 0)
+            {
+                queryDrink = queryDrink.Where(m => m.supplyDate.Year == SelectedYear);
+            }
+
+            if (SelectedMonth > 0)
+            {
+                queryDrink = queryDrink.Where(m => m.supplyDate.Month == SelectedMonth);
+            }
+
+            if (SelectedDay > 0)
+            {
                 queryDrink = queryDrink.Where(m => m.supplyDate.Day == SelectedDay);
             }
 
-            foreach(var item in queryRaw)
-            {
-                DisplayRawIngredients.Add(item);
-            }
-
-            foreach(var item in queryDrink)
-            {
-                DisplayDrinkIngredients.Add(item);
-            }
+            DisplayDrinkIngredients = new ObservableCollection<Ingredient>(queryDrink);
         }
 
         private void ResetFilter(object? parameter)
         {
             IngredientNameFilter = string.Empty;
-            SelectedYear = 0;
-            SelectedMonth = 0;
-            SelectedDay = 0;
+            SelectedYear = null;
+            SelectedMonth = null;
+            SelectedDay = null;
             DisplayRawIngredients = new ObservableCollection<Ingredient>(RawIngredients);
             DisplayDrinkIngredients = new ObservableCollection<Ingredient>(DrinkIngredients);
         }

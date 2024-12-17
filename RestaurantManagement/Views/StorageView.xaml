@@ -51,21 +51,21 @@
                               materialDesign:HintAssist.Hint="Ngày"
                               Style="{StaticResource MaterialDesignFloatingHintComboBox}"
                               ItemsSource="{Binding Days}"
-                              SelectedItem="{Binding SelectedDay, Mode=TwoWay}"
+                              SelectedItem="{Binding SelectedDay, UpdateSourceTrigger=PropertyChanged}"
                               Width="100" />
 
                     <ComboBox Grid.Column="1"
                               materialDesign:HintAssist.Hint="Tháng"
                               Style="{StaticResource MaterialDesignFloatingHintComboBox}"
                               ItemsSource="{Binding Months}"
-                              SelectedItem="{Binding SelectedMonth, Mode=TwoWay}"
+                              SelectedItem="{Binding SelectedMonth, UpdateSourceTrigger=PropertyChanged}"
                               Width="100" />
 
                     <ComboBox Grid.Column="2"
                               materialDesign:HintAssist.Hint="Năm"
                               Style="{StaticResource MaterialDesignFloatingHintComboBox}"
                               ItemsSource="{Binding Years}"
-                              SelectedItem="{Binding SelectedYear, Mode=TwoWay}"
+                              SelectedItem="{Binding SelectedYear, UpdateSourceTrigger=PropertyChanged}"
                               Width="100" />        
                 </Grid>
             </Grid>
