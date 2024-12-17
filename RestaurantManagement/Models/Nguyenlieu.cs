@@ -13,7 +13,7 @@ public partial class Nguyenlieu
 
     public string DonVi { get; set; } = null!;
 
-    public decimal DonGia { get; set; }
+    public decimal? DonGia { get; set; }
 
     public bool TinhTrang { get; set; }
 

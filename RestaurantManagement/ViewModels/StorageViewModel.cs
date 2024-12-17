@@ -32,18 +32,19 @@ namespace RestaurantManagement.ViewModels
             public int importID { get; set; }
             public int ingredientID { get; set; }
             public string? ingredientName { get; set; }
-            public DateTime supplyDate { get; set; }
+            public DateTime? supplyDate { get; set; }
             public string? unit { get; set; }
-            public decimal unitPrice { get; set; }
-            public int quantity { get; set; }
+            public decimal? unitPrice { get; set; }
+            public int? quantity { get; set; }
             public bool type { get; set; } // 0: raw, 1: drink
             public string? supplySource { get; set; }
             public string? phoneNumber { get; set; }
-            public int remainQuantity { get; set; }
+            public int? remainQuantity { get; set; }
         }
 
         public ICommand ResetFilterCommand { get; set; }
         public ICommand OpenEditCommand { get; set; }
+        public ICommand ImportIngredientCommand { get; set; }
         //public ICommand 
 
         private ObservableCollection<Ingredient> rawIngrdients;
@@ -167,6 +168,17 @@ namespace RestaurantManagement.ViewModels
             }
         }
 
+        private Ingredient addedIngredient;
+        public Ingredient AddedIngredient
+        {
+            get => addedIngredient;
+            set
+            {
+                addedIngredient = value;
+                OnPropertyChanged();
+            }
+        }
+
         public List<int> Years { get; }
         public List<int> Months { get; }
         public ObservableCollection<int> Days { get; }
@@ -253,6 +265,7 @@ namespace RestaurantManagement.ViewModels
 
             ResetFilterCommand = new RelayCommand(ResetFilter);
             OpenEditCommand = new RelayCommand<object>(CanExecuteOpenEditView, ExecuteOpenEditView);
+            ImportIngredientCommand = new RelayCommand(ImportIngredient);
         }
 
         private void UpdateDays()
@@ -274,22 +287,22 @@ namespace RestaurantManagement.ViewModels
             
             if (!string.IsNullOrWhiteSpace(IngredientNameFilter))
             {
-                queryRaw = queryRaw.Where(q => q.ingredientName.IndexOf(ingredientNameFilter, StringComparison.OrdinalIgnoreCase) >= 0);
+                queryRaw = queryRaw.Where(q => q.ingredientName?.IndexOf(ingredientNameFilter, StringComparison.OrdinalIgnoreCase) >= 0);
             }
 
             if (SelectedYear > 0)
             {
-                queryRaw = queryRaw.Where(m => m.supplyDate.Year ==  SelectedYear);
+                queryRaw = queryRaw.Where(m => m.supplyDate?.Year ==  SelectedYear);
             }
 
             if (SelectedMonth > 0)
             {
-                queryRaw = queryRaw.Where(m => m.supplyDate.Month == SelectedMonth);
+                queryRaw = queryRaw.Where(m => m.supplyDate?.Month == SelectedMonth);
             }
 
             if (SelectedDay > 0)
             {
-                queryRaw = queryRaw.Where(m => m.supplyDate.Day == SelectedDay);
+                queryRaw = queryRaw.Where(m => m.supplyDate?.Day == SelectedDay);
             }
 
             DisplayRawIngredients = new ObservableCollection<Ingredient>(queryRaw);
@@ -303,22 +316,22 @@ namespace RestaurantManagement.ViewModels
 
             if (!string.IsNullOrWhiteSpace(IngredientNameFilter))
             {
-                queryDrink = queryDrink.Where(q => q.ingredientName.IndexOf(ingredientNameFilter, StringComparison.OrdinalIgnoreCase) >= 0);
+                queryDrink = queryDrink.Where(q => q.ingredientName?.IndexOf(ingredientNameFilter, StringComparison.OrdinalIgnoreCase) >= 0);
             }
 
             if (SelectedYear > 0)
             {
-                queryDrink = queryDrink.Where(m => m.supplyDate.Year == SelectedYear);
+                queryDrink = queryDrink.Where(m => m.supplyDate?.Year == SelectedYear);
             }
 
             if (SelectedMonth > 0)
             {
-                queryDrink = queryDrink.Where(m => m.supplyDate.Month == SelectedMonth);
+                queryDrink = queryDrink.Where(m => m.supplyDate?.Month == SelectedMonth);
             }
 
             if (SelectedDay > 0)
             {
-                queryDrink = queryDrink.Where(m => m.supplyDate.Day == SelectedDay);
+                queryDrink = queryDrink.Where(m => m.supplyDate?.Day == SelectedDay);
             }
 
             DisplayDrinkIngredients = new ObservableCollection<Ingredient>(queryDrink);
@@ -363,6 +376,64 @@ namespace RestaurantManagement.ViewModels
                 editWindow.ShowDialog();
 
                 LoadDrinkIngredients();
+            }
+        }
+
+        private void ImportIngredient(object? parameter)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(AddedIngredient.ingredientName))
+                {
+                    System.Windows.Forms.MessageBox.Show("Vui lòng nhập tên món");
+                    return;
+                }
+                
+                if (string.IsNullOrWhiteSpace(AddedIngredient.supplySource))
+                {
+                    System.Windows.Forms.MessageBox.Show("Vui lòng nhập nguồn cung cấp");
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(AddedIngredient.phoneNumber))
+                {
+                    System.Windows.Forms.MessageBox.Show("Vui lòng nhập số điện thoại");
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(AddedIngredient.unit))
+                {
+                    System.Windows.Forms.MessageBox.Show("Vui lòng nhập đơn vị");
+                    return;
+                }
+
+                if (AddedIngredient.supplyDate == null)
+                {
+                    System.Windows.Forms.MessageBox.Show("Vui lòng chọn ngày nhập kho");
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(SelectedIngredientType))
+                {
+                    System.Windows.Forms.MessageBox.Show("Vui lòng chọn loại nguyên liệu");
+                    return;
+                }
+
+                if (AddedIngredient.quantity <= 0 || AddedIngredient.quantity == null)
+                {
+                    System.Windows.Forms.MessageBox.Show("Vui lòng nhập lại số lượng");
+                    return;
+                }
+
+                if (AddedIngredient.unitPrice <= 0 || AddedIngredient.quantity == null)
+                {
+                    System.Windows.Forms.MessageBox.Show("Vui lòng nhập lại đơn giá");
+                    return;
+                }
+            }
+            catch(Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show($"Lỗi khi nhập kho: {ex.Message}\nChi tiết: {ex.InnerException?.Message}");
             }
         }
     }

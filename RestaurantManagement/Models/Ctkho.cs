@@ -9,7 +9,7 @@ public partial class Ctkho
 
     public int IdnguyenLieu { get; set; }
 
-    public int SoLuongTonDu { get; set; }
+    public int? SoLuongTonDu { get; set; }
 
     public virtual Kho IdkhoNavigation { get; set; } = null!;
 

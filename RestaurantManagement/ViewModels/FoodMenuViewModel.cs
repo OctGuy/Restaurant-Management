@@ -256,8 +256,7 @@ namespace RestaurantManagement.ViewModels
                 context.SaveChangesAsync();
 
                 LoadData();
-                //FoodMenuCollection.Refresh();
-
+               
                 System.Windows.Forms.MessageBox.Show("Thêm món thành công!");
             }
             catch (Exception ex)

@@ -93,14 +93,11 @@
                                                 Width="200"
                                                 Header="Tên sản phẩm" />
                                 <GridViewColumn DisplayMemberBinding="{Binding remainQuantity}"
-                                                Width="130"
+                                                Width="200"
                                                 Header="Tồn dư" />
                                 <GridViewColumn DisplayMemberBinding="{Binding unit}"
-                                                Width="130"
+                                                Width="200"
                                                 Header="Đơn vị" />
-                                <GridViewColumn DisplayMemberBinding="{Binding unitPrice}"
-                                                Width="190"
-                                                Header="Đơn giá(VNĐ)" />
                             </GridView>
                         </ListView.View>
                     </ListView>
@@ -125,14 +122,11 @@
                                                 Width="200"
                                                 Header="Tên sản phẩm" />
                                 <GridViewColumn DisplayMemberBinding="{Binding remainQuantity}"
-                                                Width="130"
+                                                Width="200"
                                                 Header="Tồn dư" />
                                 <GridViewColumn DisplayMemberBinding="{Binding unit}"
-                                                Width="130"
+                                                Width="200"
                                                 Header="Đơn vị" />
-                                <GridViewColumn DisplayMemberBinding="{Binding unitPrice}"
-                                                Width="190"
-                                                Header="Đơn giá(VNĐ)" />
                             </GridView>
                         </ListView.View>
                     </ListView>
@@ -229,12 +223,14 @@
                         <TextBox materialDesign:HintAssist.Hint="Tên sản phẩm"
                                  Grid.Column="0"
                                  Margin="15"
-                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                 Text="{Binding AddedIngredient.ingredientName, UpdateSourceTrigger=PropertyChanged}"/>
                  
                         <DatePicker materialDesign:HintAssist.Hint="Ngày nhập"
                                     Grid.Column="1"
                                     Margin="15"
-                                    Style="{StaticResource MaterialDesignFloatingHintDatePicker}"/> 
+                                    Style="{StaticResource MaterialDesignFloatingHintDatePicker}"
+                                    SelectedDate="{Binding AddedIngredient.supplyDate, UpdateSourceTrigger=PropertyChanged}"/> 
                     </Grid>
 
                     <Grid Grid.Row="1" Margin="0 5">
@@ -246,13 +242,14 @@
                         <TextBox materialDesign:HintAssist.Hint="Số lượng"
                                  Grid.Column="0"
                                  Margin="15"
-                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>   
-           
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                 Text="{Binding AddedIngredient.quantity, UpdateSourceTrigger=PropertyChanged}"/>
+
                         <TextBox materialDesign:HintAssist.Hint="Đơn vị"
                                  Grid.Column="1"
                                  Margin="15"
-                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
-                        <!-- Binding SelectedDate -->
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
+                                 Text="{Binding AddedIngredient.unit, UpdateSourceTrigger=PropertyChanged}"/>
                     </Grid>
 
                     <Grid Grid.Row="2" Margin="0 5">
@@ -261,11 +258,11 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBox materialDesign:HintAssist.Hint="Giá nhập (VNĐ)"
+                        <TextBox materialDesign:HintAssist.Hint="Đơn giá"
                                  Grid.Column="0"
                                  Margin="15"
-                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>       
-                        <!-- Binding Text -->
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                 Text="{Binding AddedIngredient.unitPrice, UpdateSourceTrigger=PropertyChanged}"/>
 
                         <ComboBox materialDesign:HintAssist.Hint="Loại"
                                   Grid.Column="1"
@@ -273,7 +270,6 @@
                                   Style="{StaticResource MaterialDesignFloatingHintComboBox}"
                                   ItemsSource="{Binding ingredientType}"
                                   SelectedItem="{Binding SelectedIngredientType, UpdateSourceTrigger=PropertyChanged}"/>
-                        <!-- Binding Text -->
                     </Grid>
 
                     <Grid Grid.Row="3" Margin="0 5">
@@ -285,43 +281,27 @@
                         <TextBox materialDesign:HintAssist.Hint="Nguồn nhập"
                                  Grid.Column="0"
                                  Margin="15"
-                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>   
-                        <!-- Binding Text -->
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                 Text="{Binding AddedIngredient.supplySource, UpdateSourceTrigger=PropertyChanged}"/>   
 
                         <TextBox materialDesign:HintAssist.Hint="SĐT Liên lạc"
                                  Grid.Column="1"
                                  Margin="15"
-                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>     
-                        <!-- Binding Text -->
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                 Text="{Binding AddedIngredient.phoneNumber, UpdateSourceTrigger=PropertyChanged}"/>     
                     </Grid>
 
-                    <Grid Grid.Row="4" Margin="0 20">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Button Name="btnAddStaff"
-                                Grid.Column="0"
-                                Background="#701c1c"
-                                Margin="15"
-                                Foreground="White"
-                                FontSize="16"
-                                FontFamily="Comfortaa"
-                                BorderThickness="0"
-                                Cursor="Hand"
-                                Content="Nhập kho"/>            
-                        <Button Name="btnEditStaff"
-                                Grid.Column="1"
-                                Background="#701c1c"
-                                Margin="15"
-                                Foreground="White"
-                                FontSize="16"
-                                FontFamily="Comfortaa"
-                                BorderThickness="0"
-                                Cursor="Hand"
-                                Content="Sửa"/> 
-                    </Grid>
+                    <Button Grid.Row="4"
+                            Background="#701c1c"
+                            Margin="15"
+                            Foreground="White"
+                            FontSize="16"
+                            FontFamily="Comfortaa"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            Content="Nhập kho"
+                            Width="150"
+                            VerticalAlignment="Center"/>    
                 </Grid>
             </Grid>
         </Grid>

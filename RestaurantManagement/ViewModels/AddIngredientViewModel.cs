@@ -34,18 +34,18 @@ namespace RestaurantManagement.ViewModels
 
         public class IngredientViewModel
         {
-            public string TenNguyenLieu { get; set; }
-            public string DonVi { get; set; }
-            public decimal DonGia { get; set; }
-            public int TonDu { get; set; }
+            public string? TenNguyenLieu { get; set; }
+            public string? DonVi { get; set; }
+            public decimal? DonGia { get; set; }
+            public int? TonDu { get; set; }
         }
 
         public class DishDetails 
         {
             public int IdDoAnUong { get; set; }
             public int IdNguyenLieu { get; set; } 
-            public string TenNguyenLieu { get; set; }   
-            public int SoLuongNguyenLieu { get; set; }
+            public string? TenNguyenLieu { get; set; }   
+            public int? SoLuongNguyenLieu { get; set; }
             public DishDetails() { }
             public DishDetails(string tenNL, int SL)
             {
