@@ -37,6 +37,7 @@ namespace RestaurantManagement.ViewModels
         public ICommand EditDishImageCommand { get; set; }
         public ICommand AddDishImageCommand { get; set; }
         public ICommand SelectedDishCommand { get; set; }
+        public ICommand EditDishInfoCommand { get; set; }
 
         #endregion
 
@@ -190,7 +191,7 @@ namespace RestaurantManagement.ViewModels
             AddDishImageCommand = new RelayCommand(AddDishImageAsync);
             EditDishImageCommand = new RelayCommand(EditDishImageAsync);
             ViewIngredientsCommand = new RelayCommand(ViewIngredients);
-            //ChangeDishInfoCommand = new RelayCommand<object>(CanExecuteChangeDishInfo, ExecuteChangeDishInfo);
+            EditDishInfoCommand = new RelayCommand(EditDishInfo);
         }
 
         #region define commands
@@ -266,6 +267,33 @@ namespace RestaurantManagement.ViewModels
             }
         }
 
+        private void EditDishInfo(object? parameter)
+        {
+            try
+            {
+                if (SelectedDish == null) return;
+
+                var dishToChange = dbContext.Doanuongs.FirstOrDefault(dau => dau.Id == SelectedDish.Id);    
+
+                if (dishToChange != null)
+                {
+                    dishToChange.ThoiGianChuanBi = SelectedDish.ThoiGianChuanBi;
+                    dishToChange.DonGia = SelectedDish.DonGia;
+                    dishToChange.TenDoAnUong = SelectedDish.TenDoAnUong;
+
+                    dbContext.SaveChanges();
+                    _ = LoadData();
+                }
+
+                System.Windows.Forms.MessageBox.Show("Sửa thông tin món ăn thành công");
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"Có lỗi khi sửa thông tin nguyên liệu: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+
+            }
+        }
+
         private bool CanExecuteDeleteDish(object? parameter)
         {
             return SelectedDish != null;
@@ -304,7 +332,7 @@ namespace RestaurantManagement.ViewModels
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show($"Có lỗi xảy ra: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show($"Có lỗi khi xóa món ăn xảy ra: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

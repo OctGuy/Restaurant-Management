@@ -46,15 +46,14 @@
                         Command="{Binding DeleteDishesCommand}"/>
             </StackPanel>
 
-            <ListView x:Name="Dishes_ListView"
-                      FontSize="15"
+            <ListView FontSize="15"
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                       Margin="20"
                       Grid.Row="1"
                       IsSynchronizedWithCurrentItem="True"
                       HorizontalAlignment="Center"
                       VerticalAlignment="Stretch"
-                      ItemsSource="{Binding DisplayListDishes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      ItemsSource="{Binding DisplayListDishes}"
                       SelectedItem="{Binding SelectedDish, UpdateSourceTrigger=PropertyChanged}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
@@ -123,7 +122,7 @@
                                  Grid.Column="2"
                                  materialDesign:HintAssist.Hint="Tên món"
                                  Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
-                                 Text="{Binding SelectedDish.TenDoAnUong, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                 Text="{Binding SelectedDish.TenDoAnUong, UpdateSourceTrigger=PropertyChanged}"/>
                     </Grid>
 
                     <Grid Margin="0 50 0 0">
@@ -137,13 +136,13 @@
                                  FontSize="16"
                                  materialDesign:HintAssist.Hint="Giá (VNĐ)"
                                  Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
-                                 Text="{Binding SelectedDish.DonGia, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>  
+                                 Text="{Binding SelectedDish.DonGia, UpdateSourceTrigger=PropertyChanged}"/>  
                         
                         <TextBox FontSize="16"
                                  Grid.Column="2"
                                  materialDesign:HintAssist.Hint="Thời gian nấu (phút)"
                                  Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
-                                 Text="{Binding SelectedDish.ThoiGianChuanBi, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>  
+                                 Text="{Binding SelectedDish.ThoiGianChuanBi, UpdateSourceTrigger=PropertyChanged}"/>  
                     </Grid>
 
                     <Grid Margin="0 50 0 0">
@@ -161,8 +160,7 @@
                         <Button Grid.Column="2"
                                 Content="Lưu thay đổi"
                                 Background="#701c1c"
-                                />
-                        <!-- Binding ChangeDishInfo-->
+                                Command="{Binding EditDishInfoCommand}"/>
                     </Grid>
                 </StackPanel>
             </Border>

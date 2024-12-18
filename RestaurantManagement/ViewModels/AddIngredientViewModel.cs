@@ -174,18 +174,18 @@ namespace RestaurantManagement.ViewModels
             try
             {
                 RawIngredient = new ObservableCollection<IngredientViewModel>
-            (
-                dbContext.Ctkhos
-                .Where(ctk => ctk.Idkho == 1 && ctk.IsDeleted == false)
-                .Select(ctk => new IngredientViewModel
-                {
-                    TenNguyenLieu = ctk.IdnguyenLieuNavigation.TenNguyenLieu,
-                    DonVi = ctk.IdnguyenLieuNavigation.DonVi,
-                    DonGia = ctk.IdnguyenLieuNavigation.DonGia,
-                    TonDu = ctk.SoLuongTonDu
-                })
-                .ToList()
-            );
+                (
+                    dbContext.Ctkhos
+                    .Where(ctk => ctk.Idkho == 1 && ctk.IsDeleted == false)
+                    .Select(ctk => new IngredientViewModel
+                    {
+                        TenNguyenLieu = ctk.IdnguyenLieuNavigation.TenNguyenLieu,
+                        DonVi = ctk.IdnguyenLieuNavigation.DonVi,
+                        DonGia = ctk.IdnguyenLieuNavigation.DonGia,
+                        TonDu = ctk.SoLuongTonDu
+                    })
+                    .ToList()
+                );
                 DisplayRawIngredient = new ObservableCollection<IngredientViewModel>(RawIngredient);
 
                 DrinkIngredient = new ObservableCollection<IngredientViewModel>
