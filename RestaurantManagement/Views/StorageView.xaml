@@ -170,7 +170,8 @@
                                 Cursor="Hand"
                                 Content="Xóa"
                                 FontSize="16" 
-                                Margin="15 0 15 0"/>
+                                Margin="15 0 15 0"
+                                Command="{Binding DeleteIngredientCommand}"/>
                     </Grid>
 
                     <Grid Grid.Row="1">
@@ -224,13 +225,13 @@
                                  Grid.Column="0"
                                  Margin="15"
                                  Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                                 Text="{Binding AddedIngredient.ingredientName, UpdateSourceTrigger=PropertyChanged}"/>
+                                 Text="{Binding AddedIngredient.ingredientName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                  
                         <DatePicker materialDesign:HintAssist.Hint="Ngày nhập"
                                     Grid.Column="1"
                                     Margin="15"
                                     Style="{StaticResource MaterialDesignFloatingHintDatePicker}"
-                                    SelectedDate="{Binding AddedIngredient.supplyDate, UpdateSourceTrigger=PropertyChanged}"/> 
+                                    SelectedDate="{Binding AddedIngredient.supplyDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/> 
                     </Grid>
 
                     <Grid Grid.Row="1" Margin="0 5">
@@ -243,13 +244,13 @@
                                  Grid.Column="0"
                                  Margin="15"
                                  Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                                 Text="{Binding AddedIngredient.quantity, UpdateSourceTrigger=PropertyChanged}"/>
+                                 Text="{Binding AddedIngredient.quantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
                         <TextBox materialDesign:HintAssist.Hint="Đơn vị"
                                  Grid.Column="1"
                                  Margin="15"
                                  Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
-                                 Text="{Binding AddedIngredient.unit, UpdateSourceTrigger=PropertyChanged}"/>
+                                 Text="{Binding AddedIngredient.unit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                     </Grid>
 
                     <Grid Grid.Row="2" Margin="0 5">
@@ -262,14 +263,14 @@
                                  Grid.Column="0"
                                  Margin="15"
                                  Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                                 Text="{Binding AddedIngredient.unitPrice, UpdateSourceTrigger=PropertyChanged}"/>
+                                 Text="{Binding AddedIngredient.unitPrice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
                         <ComboBox materialDesign:HintAssist.Hint="Loại"
                                   Grid.Column="1"
                                   Margin="15"
                                   Style="{StaticResource MaterialDesignFloatingHintComboBox}"
                                   ItemsSource="{Binding ingredientType}"
-                                  SelectedItem="{Binding SelectedIngredientType, UpdateSourceTrigger=PropertyChanged}"/>
+                                  SelectedItem="{Binding SelectedIngredientType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                     </Grid>
 
                     <Grid Grid.Row="3" Margin="0 5">
@@ -282,13 +283,13 @@
                                  Grid.Column="0"
                                  Margin="15"
                                  Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                                 Text="{Binding AddedIngredient.supplySource, UpdateSourceTrigger=PropertyChanged}"/>   
+                                 Text="{Binding AddedIngredient.supplySource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>   
 
                         <TextBox materialDesign:HintAssist.Hint="SĐT Liên lạc"
                                  Grid.Column="1"
                                  Margin="15"
                                  Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                                 Text="{Binding AddedIngredient.phoneNumber, UpdateSourceTrigger=PropertyChanged}"/>     
+                                 Text="{Binding AddedIngredient.phoneNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>     
                     </Grid>
 
                     <Button Grid.Row="4"

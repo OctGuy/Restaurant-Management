@@ -171,10 +171,12 @@ namespace RestaurantManagement.ViewModels
         public AddIngredientViewModel()
         {
             dbContext = new QlnhContext();
-            RawIngredient = new ObservableCollection<IngredientViewModel>
+            try
+            {
+                RawIngredient = new ObservableCollection<IngredientViewModel>
             (
                 dbContext.Ctkhos
-                .Where(ctk => ctk.Idkho == 1)
+                .Where(ctk => ctk.Idkho == 1 && ctk.IsDeleted == false)
                 .Select(ctk => new IngredientViewModel
                 {
                     TenNguyenLieu = ctk.IdnguyenLieuNavigation.TenNguyenLieu,
@@ -184,22 +186,28 @@ namespace RestaurantManagement.ViewModels
                 })
                 .ToList()
             );
-            DisplayRawIngredient = new ObservableCollection<IngredientViewModel>(RawIngredient);
-            DrinkIngredient = new ObservableCollection<IngredientViewModel>
-            (
-                dbContext.Ctkhos
-                .Where(ctk => ctk.Idkho == 2)
-                .Select(ctk => new IngredientViewModel
-                {
-                    TenNguyenLieu = ctk.IdnguyenLieuNavigation.TenNguyenLieu,
-                    DonVi = ctk.IdnguyenLieuNavigation.DonVi,
-                    DonGia = ctk.IdnguyenLieuNavigation.DonGia,
-                    TonDu = ctk.SoLuongTonDu
-                })
-                .ToList()
-            );
-            DisplayDrinkIngredient = new ObservableCollection<IngredientViewModel>(DrinkIngredient);
-            //InitializeData();
+                DisplayRawIngredient = new ObservableCollection<IngredientViewModel>(RawIngredient);
+
+                DrinkIngredient = new ObservableCollection<IngredientViewModel>
+                (
+                    dbContext.Ctkhos
+                    .Where(ctk => ctk.Idkho == 2 && ctk.IsDeleted == false)
+                    .Select(ctk => new IngredientViewModel
+                    {
+                        TenNguyenLieu = ctk.IdnguyenLieuNavigation.TenNguyenLieu,
+                        DonVi = ctk.IdnguyenLieuNavigation.DonVi,
+                        DonGia = ctk.IdnguyenLieuNavigation.DonGia,
+                        TonDu = ctk.SoLuongTonDu
+                    })
+                    .ToList()
+                );
+                DisplayDrinkIngredient = new ObservableCollection<IngredientViewModel>(DrinkIngredient);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show($"Lỗi khi tải nguyên liệu cho chi tiết món ăn: {ex.Message}\nChi tiết: {ex.InnerException?.Message}");
+            }
+
             PowerOffAddIngredientViewCommand = new RelayCommand(parameter =>
             {
                 if (parameter is Window win)
@@ -410,7 +418,7 @@ namespace RestaurantManagement.ViewModels
             }
             catch (Exception ex)
             {
-                System.Windows.Forms.MessageBox.Show($"Lỗi {ex.Message}");
+                System.Windows.Forms.MessageBox.Show($"Lỗi khi lưu các nguyên liệu cần thiết cho món ăn {ex.Message}");
             }
         }
 
@@ -459,4 +467,3 @@ namespace RestaurantManagement.ViewModels
         }
     }
 }
-

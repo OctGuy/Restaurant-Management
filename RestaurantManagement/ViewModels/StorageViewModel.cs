@@ -31,7 +31,7 @@ namespace RestaurantManagement.ViewModels
         {
             public int importID { get; set; }
             public int ingredientID { get; set; }
-            public string ingredientName { get; set; }
+            public string? ingredientName { get; set; }
             public DateTime? supplyDate { get; set; }
             public string? unit { get; set; }
             public decimal? unitPrice { get; set; }
@@ -45,6 +45,7 @@ namespace RestaurantManagement.ViewModels
         public ICommand ResetFilterCommand { get; set; }
         public ICommand OpenEditCommand { get; set; }
         public ICommand ImportIngredientCommand { get; set; }
+        public ICommand DeleteIngredientCommand { get; set; }
         //public ICommand 
 
         private ObservableCollection<Ingredient> rawIngrdients;
@@ -198,103 +199,109 @@ namespace RestaurantManagement.ViewModels
 
         public void LoadRawIngredients()
         {
-            //var getRawIngredient = (from nk in dbContext.Nhapkhos
-            //                        join ctnk in dbContext.Ctnhapkhos on nk.Id equals ctnk.IdnhapKho
-            //                        join nl in dbContext.Nguyenlieus on ctnk.IdnguyenLieu equals nl.Id
-            //                        join ctk in dbContext.Ctkhos on nl.Id equals ctk.IdnguyenLieu
-            //                        where nk.IsDeleted == false && ctk.Idkho == 1
-            //                        group new {nk, ctnk, nl, ctk} by new { ctnk.IdnguyenLieu } into grouped
-            //                        let latestEntry = grouped.OrderByDescending(g => g.nk.NgayNhap).FirstOrDefault() // chỗ này ???
-            //                        select new Ingredient
-            //                        {
-            //                            importID = latestEntry.nk.Id,
-            //                            ingredientID = latestEntry.nl.Id,
-            //                            ingredientName = latestEntry.nl.TenNguyenLieu,
-            //                            supplyDate = latestEntry.nk.NgayNhap,
-            //                            unit = latestEntry.nl.DonVi,
-            //                            unitPrice = latestEntry.nl.DonGia,
-            //                            quantity = latestEntry.ctnk.SoLuongNguyenLieu,
-            //                            type = latestEntry.nl.Loai,
-            //                            supplySource = latestEntry.nk.NguonNhap,
-            //                            phoneNumber = latestEntry.nk.SdtlienLac,
-            //                            remainQuantity = latestEntry.ctk.SoLuongTonDu
-            //                        }).ToList();
-            //RawIngredients = new ObservableCollection<Ingredient>(getRawIngredient);
-            RawIngredients = new ObservableCollection<Ingredient>
-            (
-                dbContext.Nhapkhos
-                .Where(nk => nk.IsDeleted == false && nk.Idkho == 1)
-                .SelectMany(nk => nk.Ctnhapkhos, (nk, ctnk) => new { nk, ctnk })
-                .Select(result => new Ingredient
-                {
-                    importID = result.nk.Id, // Id của NHAPKHO
-                    ingredientID = result.ctnk.IdnguyenLieuNavigation.Id, // Id của NGUYENLIEU
-                    ingredientName = result.ctnk.IdnguyenLieuNavigation.TenNguyenLieu,
-                    supplyDate = result.nk.NgayNhap,
-                    unit = result.ctnk.IdnguyenLieuNavigation.DonVi,
-                    unitPrice = result.ctnk.IdnguyenLieuNavigation.DonGia,
-                    quantity = result.ctnk.SoLuongNguyenLieu,
-                    type = false,
-                    supplySource = result.nk.NguonNhap,
-                    phoneNumber = result.nk.SdtlienLac,
-                    remainQuantity = dbContext.Ctkhos.Where(ctk => ctk.Idkho == result.nk.Idkho && ctk.IdnguyenLieu == result.ctnk.IdnguyenLieu)
-                                                     .Select(ctk => ctk.SoLuongTonDu)
-                                                     .FirstOrDefault()
-                })
-                .ToList());
-            //);
+            try
+            {
+                var latestEntries = dbContext.Nhapkhos
+                                .Where(nk => nk.IsDeleted == false && nk.Idkho == 1)
+                                .SelectMany(nk => nk.Ctnhapkhos, (nk, ctnk) => new { nk, ctnk })
+                                .Where(x => x.ctnk.IdnguyenLieuNavigation.IsDeleted == false)
+                                .GroupBy(result => result.ctnk.IdnguyenLieu)
+                                .Select(group => group
+                                    .OrderByDescending(g => g.nk.NgayNhap)
+                                    .Select(g => new
+                                    {
+                                        g.nk.Id,
+                                        g.nk.NgayNhap,
+                                        g.ctnk.IdnguyenLieu,
+                                        g.ctnk.SoLuongNguyenLieu,
+                                        g.nk.NguonNhap,
+                                        g.nk.SdtlienLac,
+                                        g.ctnk.IdnguyenLieuNavigation.TenNguyenLieu,
+                                        g.ctnk.IdnguyenLieuNavigation.DonVi,
+                                        g.ctnk.IdnguyenLieuNavigation.DonGia
+                                    })
+                                    .FirstOrDefault())
+                                .ToList();
 
-            DisplayRawIngredients = new ObservableCollection<Ingredient>(RawIngredients);
+                RawIngredients = new ObservableCollection<Ingredient>(
+                    latestEntries.Select(result => new Ingredient
+                    {
+                        importID = result.Id,
+                        ingredientID = result.IdnguyenLieu,
+                        ingredientName = result.TenNguyenLieu,
+                        supplyDate = result.NgayNhap,
+                        unit = result.DonVi,
+                        unitPrice = result.DonGia,
+                        quantity = result.SoLuongNguyenLieu,
+                        type = false,
+                        supplySource = result.NguonNhap,
+                        phoneNumber = result.SdtlienLac,
+                        remainQuantity = dbContext.Ctkhos
+                                                   .Where(ctk => ctk.Idkho == 1 && ctk.IdnguyenLieu == result.IdnguyenLieu)
+                                                   .Select(ctk => ctk.SoLuongTonDu)
+                                                   .FirstOrDefault()
+                    }));
+
+                DisplayRawIngredients = new ObservableCollection<Ingredient>(RawIngredients);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show($"Lỗi khi tải dữ liệu của Kho nguyên liệu thô: {ex.Message}\nChi tiết: {ex.InnerException?.Message}");
+            }
         }
 
         public void LoadDrinkIngredients()
         {
-            //var getDrinkIngredient = (from nk in dbContext.Nhapkhos
-            //                        join ctnk in dbContext.Ctnhapkhos on nk.Id equals ctnk.IdnhapKho
-            //                        join nl in dbContext.Nguyenlieus on ctnk.IdnguyenLieu equals nl.Id
-            //                        join ctk in dbContext.Ctkhos on nl.Id equals ctk.IdnguyenLieu
-            //                        where nk.IsDeleted == false && ctk.Idkho == 2
-            //                        group new { nk, ctnk, nl, ctk } by new { ctnk.IdnguyenLieu } into grouped
-            //                        let latestEntry = grouped.OrderByDescending(g => g.nk.NgayNhap).FirstOrDefault()
-            //                        select new Ingredient
-            //                        {
-            //                            importID = latestEntry.nk.Id,
-            //                            ingredientID = latestEntry.nl.Id,
-            //                            ingredientName = latestEntry.nl.TenNguyenLieu,
-            //                            supplyDate = latestEntry.nk.NgayNhap,
-            //                            unit = latestEntry.nl.DonVi,
-            //                            unitPrice = latestEntry.nl.DonGia,
-            //                            quantity = latestEntry.ctnk.SoLuongNguyenLieu,
-            //                            type = latestEntry.nl.Loai,
-            //                            supplySource = latestEntry.nk.NguonNhap,
-            //                            phoneNumber = latestEntry.nk.SdtlienLac,
-            //                            remainQuantity = latestEntry.ctk.SoLuongTonDu
-            //                        }).ToList();
-            //DrinkIngredients = new ObservableCollection<Ingredient>(getDrinkIngredient);
-            DrinkIngredients = new ObservableCollection<Ingredient>
-            (
-                dbContext.Nhapkhos
-                .Where(nk => nk.IsDeleted == false && nk.Idkho == 2)
-                .SelectMany(nk => nk.Ctnhapkhos, (nk, ctnk) => new { nk, ctnk })
-                .Select(result => new Ingredient
-                {
-                    importID = result.nk.Id, // Id của NHAPKHO
-                    ingredientID = result.ctnk.IdnguyenLieuNavigation.Id, // Id của NGUYENLIEU
-                    ingredientName = result.ctnk.IdnguyenLieuNavigation.TenNguyenLieu,
-                    supplyDate = result.nk.NgayNhap,
-                    unit = result.ctnk.IdnguyenLieuNavigation.DonVi,
-                    unitPrice = result.ctnk.IdnguyenLieuNavigation.DonGia,
-                    quantity = result.ctnk.SoLuongNguyenLieu,
-                    type = true,
-                    supplySource = result.nk.NguonNhap,
-                    phoneNumber = result.nk.SdtlienLac,
-                    remainQuantity = dbContext.Ctkhos.Where(ctk => ctk.Idkho == result.nk.Idkho && ctk.IdnguyenLieu == result.ctnk.IdnguyenLieu)
-                                                     .Select(ctk => ctk.SoLuongTonDu).FirstOrDefault()
-                })
-                .ToList()
-            );
+            try
+            {
+                var latestEntries = dbContext.Nhapkhos
+                                .Where(nk => nk.IsDeleted == false && nk.Idkho == 2)
+                                .SelectMany(nk => nk.Ctnhapkhos, (nk, ctnk) => new { nk, ctnk })
+                                .Where(x => x.ctnk.IdnguyenLieuNavigation.IsDeleted == false)
+                                .GroupBy(result => result.ctnk.IdnguyenLieu)
+                                .Select(group => group
+                                    .OrderByDescending(g => g.nk.NgayNhap)
+                                    .Select(g => new
+                                    {
+                                        g.nk.Id,
+                                        g.nk.NgayNhap,
+                                        g.ctnk.IdnguyenLieu,
+                                        g.ctnk.SoLuongNguyenLieu,
+                                        g.nk.NguonNhap,
+                                        g.nk.SdtlienLac,
+                                        g.ctnk.IdnguyenLieuNavigation.TenNguyenLieu,
+                                        g.ctnk.IdnguyenLieuNavigation.DonVi,
+                                        g.ctnk.IdnguyenLieuNavigation.DonGia
+                                    })
+                                    .FirstOrDefault())
+                                .ToList();
 
-            DisplayDrinkIngredients = new ObservableCollection<Ingredient>(DrinkIngredients);
+                DrinkIngredients = new ObservableCollection<Ingredient>(
+                    latestEntries.Select(result => new Ingredient
+                    {
+                        importID = result.Id,
+                        ingredientID = result.IdnguyenLieu,
+                        ingredientName = result.TenNguyenLieu,
+                        supplyDate = result.NgayNhap,
+                        unit = result.DonVi,
+                        unitPrice = result.DonGia,
+                        quantity = result.SoLuongNguyenLieu,
+                        type = false,
+                        supplySource = result.NguonNhap,
+                        phoneNumber = result.SdtlienLac,
+                        remainQuantity = dbContext.Ctkhos
+                                                   .Where(ctk => ctk.Idkho == 2 && ctk.IdnguyenLieu == result.IdnguyenLieu)
+                                                   .Select(ctk => ctk.SoLuongTonDu)
+                                                   .FirstOrDefault()
+                    }));
+
+                DisplayDrinkIngredients = new ObservableCollection<Ingredient>(DrinkIngredients);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show($"Lỗi khi tải dữ liệu của Kho nước uống: {ex.Message}\nChi tiết: {ex.InnerException?.Message}");
+            }
+            
         }
 
         public StorageViewModel()
@@ -310,6 +317,7 @@ namespace RestaurantManagement.ViewModels
 
             ResetFilterCommand = new RelayCommand(ResetFilter);
             OpenEditCommand = new RelayCommand<object>(CanExecuteOpenEditView, ExecuteOpenEditView);
+            DeleteIngredientCommand = new RelayCommand<object>(CanExecuteDeleteIngredient, ExecuteDeleteIngredient);
             ImportIngredientCommand = new RelayCommand(ImportIngredient);
             AddedIngredient = new Ingredient();
         }
@@ -327,60 +335,74 @@ namespace RestaurantManagement.ViewModels
 
         private void ApplyFilterRaw()
         {
-            if (RawIngredients == null || !RawIngredients.Any()) return;
-
-            var queryRaw = RawIngredients.AsEnumerable();
-            
-            if (!string.IsNullOrWhiteSpace(IngredientNameFilter))
+            try
             {
-                queryRaw = queryRaw.Where(q => q.ingredientName?.IndexOf(ingredientNameFilter, StringComparison.OrdinalIgnoreCase) >= 0);
-            }
+                if (RawIngredients == null || !RawIngredients.Any()) return;
 
-            if (SelectedYear > 0)
+                var queryRaw = RawIngredients.AsEnumerable();
+
+                if (!string.IsNullOrWhiteSpace(IngredientNameFilter))
+                {
+                    queryRaw = queryRaw.Where(q => q.ingredientName?.IndexOf(ingredientNameFilter, StringComparison.OrdinalIgnoreCase) >= 0);
+                }
+
+                if (SelectedYear > 0)
+                {
+                    queryRaw = queryRaw.Where(m => m.supplyDate?.Year == SelectedYear);
+                }
+
+                if (SelectedMonth > 0)
+                {
+                    queryRaw = queryRaw.Where(m => m.supplyDate?.Month == SelectedMonth);
+                }
+
+                if (SelectedDay > 0)
+                {
+                    queryRaw = queryRaw.Where(m => m.supplyDate?.Day == SelectedDay);
+                }
+
+                DisplayRawIngredients = new ObservableCollection<Ingredient>(queryRaw);
+            }
+            catch (Exception ex) 
             {
-                queryRaw = queryRaw.Where(m => m.supplyDate?.Year ==  SelectedYear);
+                System.Windows.Forms.MessageBox.Show($"Lỗi khi lọc Kho nguyên liệu thô: {ex.Message}\nChi tiết: {ex.InnerException?.Message}");
             }
-
-            if (SelectedMonth > 0)
-            {
-                queryRaw = queryRaw.Where(m => m.supplyDate?.Month == SelectedMonth);
-            }
-
-            if (SelectedDay > 0)
-            {
-                queryRaw = queryRaw.Where(m => m.supplyDate?.Day == SelectedDay);
-            }
-
-            DisplayRawIngredients = new ObservableCollection<Ingredient>(queryRaw);
         }
 
         private void ApplyFilterDrink()
         {
-            if (DrinkIngredients == null || !DrinkIngredients.Any()) return;
-
-            var queryDrink = DrinkIngredients.AsEnumerable();
-
-            if (!string.IsNullOrWhiteSpace(IngredientNameFilter))
+            try
             {
-                queryDrink = queryDrink.Where(q => q.ingredientName?.IndexOf(ingredientNameFilter, StringComparison.OrdinalIgnoreCase) >= 0);
-            }
+                if (DrinkIngredients == null || !DrinkIngredients.Any()) return;
 
-            if (SelectedYear > 0)
+                var queryDrink = DrinkIngredients.AsEnumerable();
+
+                if (!string.IsNullOrWhiteSpace(IngredientNameFilter))
+                {
+                    queryDrink = queryDrink.Where(q => q.ingredientName?.IndexOf(ingredientNameFilter, StringComparison.OrdinalIgnoreCase) >= 0);
+                }
+
+                if (SelectedYear > 0)
+                {
+                    queryDrink = queryDrink.Where(m => m.supplyDate?.Year == SelectedYear);
+                }
+
+                if (SelectedMonth > 0)
+                {
+                    queryDrink = queryDrink.Where(m => m.supplyDate?.Month == SelectedMonth);
+                }
+
+                if (SelectedDay > 0)
+                {
+                    queryDrink = queryDrink.Where(m => m.supplyDate?.Day == SelectedDay);
+                }
+
+                DisplayDrinkIngredients = new ObservableCollection<Ingredient>(queryDrink);
+            }
+            catch (Exception ex)
             {
-                queryDrink = queryDrink.Where(m => m.supplyDate?.Year == SelectedYear);
+                System.Windows.Forms.MessageBox.Show($"Lỗi khi lọc Kho nước uống: {ex.Message}\nChi tiết: {ex.InnerException?.Message}");
             }
-
-            if (SelectedMonth > 0)
-            {
-                queryDrink = queryDrink.Where(m => m.supplyDate?.Month == SelectedMonth);
-            }
-
-            if (SelectedDay > 0)
-            {
-                queryDrink = queryDrink.Where(m => m.supplyDate?.Day == SelectedDay);
-            }
-
-            DisplayDrinkIngredients = new ObservableCollection<Ingredient>(queryDrink);
         }
 
         private void ResetFilter(object? parameter)
@@ -398,6 +420,17 @@ namespace RestaurantManagement.ViewModels
             if (SelectedDrinkIngredient == null && SelectedRawIngredient == null)
                 return false;
             return true;
+        }
+
+        private void ResetImportIngredient()
+        {
+            AddedIngredient.ingredientName = string.Empty;
+            AddedIngredient.supplyDate = DateTime.Today;
+            AddedIngredient.quantity = 0;
+            AddedIngredient.unit = string.Empty;
+            AddedIngredient.unitPrice = 0;
+            AddedIngredient.phoneNumber = string.Empty;
+            AddedIngredient.supplySource = string.Empty;    
         }
 
         private void ExecuteOpenEditView(object? parameter)
@@ -435,13 +468,36 @@ namespace RestaurantManagement.ViewModels
                     return;
                 }
 
+                if (!AddedIngredient.ingredientName.All(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c)))
+                {
+                    System.Windows.Forms.MessageBox.Show("Tên nguyên liệu không được chứa ký tự đặc biệt");
+                    return;
+                }
+
                 if (AddedIngredient.supplyDate == null)
                 {
                     System.Windows.Forms.MessageBox.Show("Vui lòng chọn ngày nhập kho");
                     return;
                 }
 
-                if (AddedIngredient.quantity <= 0 || AddedIngredient.quantity == null)
+                var existingIngredient = dbContext.Nguyenlieus.FirstOrDefault(nl => nl.TenNguyenLieu == AddedIngredient.ingredientName && nl.IsDeleted == false);
+                if (existingIngredient != null)
+                {
+                    // Tìm lần nhập kho gần nhất của nguyên liệu được thêm để so sánh ngày nhập kho với nhau
+                    var latestNhapKho = dbContext.Nhapkhos
+                            .Where(nk => nk.Idkho == (SelectedIngredientType == "Nguyên liệu thô" ? 1 : 2)
+                                         && dbContext.Ctnhapkhos.Any(ctnk => ctnk.IdnhapKho == nk.Id && ctnk.IdnguyenLieu == existingIngredient.Id))
+                            .OrderByDescending(nk => nk.NgayNhap)
+                            .FirstOrDefault();
+
+                    if (latestNhapKho != null && AddedIngredient.supplyDate <= latestNhapKho.NgayNhap)
+                    {
+                        System.Windows.Forms.MessageBox.Show("Ngày nhập kho lần này phải lớn hơn ngày nhập kho lần trước.");
+                        return;
+                    }
+                }
+
+                if (!int.TryParse(AddedIngredient.quantity?.ToString(), out var quantity) || quantity <= 0)
                 {
                     System.Windows.Forms.MessageBox.Show("Vui lòng nhập lại số lượng");
                     return;
@@ -453,7 +509,7 @@ namespace RestaurantManagement.ViewModels
                     return;
                 }
 
-                if (AddedIngredient.unitPrice <= 0 || AddedIngredient.unitPrice == null)
+                if (!decimal.TryParse(AddedIngredient.unitPrice?.ToString(), out var unitPrice) || unitPrice <= 0)
                 {
                     System.Windows.Forms.MessageBox.Show("Vui lòng nhập lại đơn giá");
                     return;
@@ -471,9 +527,21 @@ namespace RestaurantManagement.ViewModels
                     return;
                 }
 
+                if (!AddedIngredient.supplySource.All(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c)))
+                {
+                    System.Windows.Forms.MessageBox.Show("Nguồn cung cấp không được chứa ký tự đặc biệt");
+                    return;
+                }
+
                 if (string.IsNullOrWhiteSpace(AddedIngredient.phoneNumber))
                 {
                     System.Windows.Forms.MessageBox.Show("Vui lòng nhập số điện thoại");
+                    return;
+                }
+
+                if (!AddedIngredient.phoneNumber.All(char.IsDigit))
+                {
+                    System.Windows.Forms.MessageBox.Show("Số điện thoại chỉ được chứa các chữ số");
                     return;
                 }
 
@@ -488,7 +556,8 @@ namespace RestaurantManagement.ViewModels
 
                 if (result == System.Windows.Forms.DialogResult.OK)
                 {
-                    var existingingredient = dbContext.Nguyenlieus.FirstOrDefault(nl => nl.TenNguyenLieu == AddedIngredient.ingredientName);
+                    var existingingredient = dbContext.Nguyenlieus.FirstOrDefault(nl => nl.TenNguyenLieu == AddedIngredient.ingredientName
+                                                                                    && nl.IsDeleted == false);
 
                     if (existingingredient != null) // Nếu nguyên liệu đã có trong kho
                     {
@@ -570,7 +639,21 @@ namespace RestaurantManagement.ViewModels
                         };
                         dbContext.Ctnhapkhos.Add(newCtnhapKho);
                         dbContext.SaveChanges();
+
+                        // Thêm vào CTKHO
+                        var newCtkho = new Ctkho
+                        {
+                            Idkho = SelectedIngredientType == "Nguyên liệu thô" ? 1 : 2,
+                            IdnguyenLieu = newIngredientID,
+                            SoLuongTonDu = AddedIngredient.quantity,
+                        };
+                        dbContext.Ctkhos.Add(newCtkho);
+                        dbContext.SaveChanges();
                     }
+
+                    LoadRawIngredients();
+                    LoadDrinkIngredients();
+                    // ResetImportIngredient();
 
                     System.Windows.Forms.MessageBox.Show("NHẬP KHO THÀNH CÔNG");
                 }
@@ -579,6 +662,87 @@ namespace RestaurantManagement.ViewModels
             {
                 System.Windows.Forms.MessageBox.Show($"Lỗi khi nhập kho: {ex.Message}\nChi tiết: {ex.InnerException?.Message}");
             }
+        }
+
+        private bool CanExecuteDeleteIngredient(object? parameter)
+        {
+            if (SelectedDrinkIngredient == null && SelectedRawIngredient == null)
+                return false;
+            return true;
+        }
+
+        private void ExecuteDeleteIngredient(object? parameter)
+        {
+            if (SelectedRawIngredient != null)
+            {
+                var result = System.Windows.Forms.MessageBox.Show(
+                    $"Bạn có đồng ý xóa nguyên liệu không?",
+                    "Xác nhận xóa",
+                    System.Windows.Forms.MessageBoxButtons.OKCancel,
+                    System.Windows.Forms.MessageBoxIcon.Question);
+
+                try
+                {
+                    if (result == System.Windows.Forms.DialogResult.OK)
+                    {
+                        var existingIngredient = dbContext.Nguyenlieus.FirstOrDefault(nl => nl.Id == SelectedRawIngredient.ingredientID);
+
+                        if (existingIngredient != null)
+                        {
+                            existingIngredient.IsDeleted = true;
+                            var ctkho = dbContext.Ctkhos.FirstOrDefault(ctk => ctk.IdnguyenLieu == SelectedRawIngredient.ingredientID);
+                            if (ctkho != null)
+                            {
+                                ctkho.IsDeleted = true;
+                            }
+
+                            dbContext.SaveChanges();
+                            System.Windows.Forms.MessageBox.Show($"Xóa {SelectedRawIngredient.ingredientName} thành công");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.Forms.MessageBox.Show($"Lỗi khi xóa nguyên liệu thô: {ex.Message}\nChi tiết: {ex.InnerException?.Message}");
+                }
+            }
+
+            if (SelectedDrinkIngredient != null)
+            {
+                var result = System.Windows.Forms.MessageBox.Show(
+                    $"Bạn có đồng ý xóa nguyên liệu không?",
+                    "Xác nhận xóa",
+                    System.Windows.Forms.MessageBoxButtons.OKCancel,
+                    System.Windows.Forms.MessageBoxIcon.Question);
+
+                try
+                {
+                    if (result == System.Windows.Forms.DialogResult.OK)
+                    {
+                        var existingIngredient = dbContext.Nguyenlieus.FirstOrDefault(nl => nl.Id == SelectedDrinkIngredient.ingredientID);
+
+                        if (existingIngredient != null)
+                        {
+                            existingIngredient.IsDeleted = true;
+                            var ctkho = dbContext.Ctkhos.FirstOrDefault(ctk => ctk.IdnguyenLieu == SelectedDrinkIngredient.ingredientID);
+                            if (ctkho != null)
+                            {
+                                ctkho.IsDeleted = true;
+                            }
+
+                            dbContext.SaveChanges();
+                            System.Windows.Forms.MessageBox.Show($"Xóa {SelectedDrinkIngredient.ingredientName} thành công");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.Forms.MessageBox.Show($"Lỗi khi xóa nước uống: {ex.Message}\nChi tiết: {ex.InnerException?.Message}");
+                }
+            }
+
+            LoadRawIngredients();
+            LoadDrinkIngredients();
         }
     }
 }

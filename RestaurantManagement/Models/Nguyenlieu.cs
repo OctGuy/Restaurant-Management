@@ -19,6 +19,8 @@ public partial class Nguyenlieu
 
     public bool Loai { get; set; }
 
+    public bool? IsDeleted { get; set; }
+
     public virtual ICollection<Ctkho> Ctkhos { get; set; } = new List<Ctkho>();
 
     public virtual ICollection<Ctmonan> Ctmonans { get; set; } = new List<Ctmonan>();

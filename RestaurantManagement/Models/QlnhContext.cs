@@ -88,6 +88,7 @@ public partial class QlnhContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.IdhoaDon).HasColumnName("IDHoaDon");
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.MaCheBien)
                 .HasMaxLength(7)
                 .IsUnicode(false)
@@ -108,6 +109,7 @@ public partial class QlnhContext : DbContext
             entity.Property(e => e.IdhoaDon).HasColumnName("IDHoaDon");
             entity.Property(e => e.IddoAnUong).HasColumnName("IDDoAnUong");
             entity.Property(e => e.GiaMon).HasColumnType("decimal(18, 0)");
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
 
             entity.HasOne(d => d.IddoAnUongNavigation).WithMany(p => p.Cthds)
                 .HasForeignKey(d => d.IddoAnUong)
@@ -128,6 +130,7 @@ public partial class QlnhContext : DbContext
 
             entity.Property(e => e.Idkho).HasColumnName("IDKho");
             entity.Property(e => e.IdnguyenLieu).HasColumnName("IDNguyenLieu");
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
 
             entity.HasOne(d => d.IdkhoNavigation).WithMany(p => p.Ctkhos)
                 .HasForeignKey(d => d.Idkho)
@@ -169,6 +172,7 @@ public partial class QlnhContext : DbContext
             entity.Property(e => e.IdnhapKho).HasColumnName("IDNhapKho");
             entity.Property(e => e.IdnguyenLieu).HasColumnName("IDNguyenLieu");
             entity.Property(e => e.GiaNguyenLieu).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
 
             entity.HasOne(d => d.IdnguyenLieuNavigation).WithMany(p => p.Ctnhapkhos)
                 .HasForeignKey(d => d.IdnguyenLieu)
@@ -240,6 +244,7 @@ public partial class QlnhContext : DbContext
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.DonGia).HasColumnType("decimal(10, 2)");
             entity.Property(e => e.DonVi).HasMaxLength(10);
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.MaNguyenLieu)
                 .HasMaxLength(7)
                 .IsUnicode(false)

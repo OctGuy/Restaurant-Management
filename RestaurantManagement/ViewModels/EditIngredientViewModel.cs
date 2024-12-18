@@ -89,84 +89,115 @@ namespace RestaurantManagement.ViewModels
 
         private void SaveIngredientChange(object? parameter)
         {
-            // Cập nhật bảng NGUYENLIEU
-            var ingredientOriginal = dbContext.Nguyenlieus.FirstOrDefault(nl => nl.Id == IngredientToChange.ingredientID);
-            if (ingredientOriginal != null)
+            try
             {
-                ingredientOriginal.TenNguyenLieu = IngredientToChange.ingredientName;
-                ingredientOriginal.DonVi = IngredientToChange.unit;
-                ingredientOriginal.DonGia = IngredientToChange.unitPrice;
-                ingredientOriginal.Loai = IngredientToChange.type;
-                // Cập nhật CTKHO ---------------
-                dbContext.SaveChanges();
-            }
-            else
-            {
-                System.Windows.Forms.MessageBox.Show("Không tìm thấy original ingredient");
-            }
-
-
-            // Cập nhật bảng CTNHAPKHO, với target là hàng thêm vào mới nhất
-            var importDetailOriginal = dbContext.Ctnhapkhos.Where(ctnk => ctnk.IdnhapKho == IngredientToChange.importID
-                                                                           && ctnk.IdnguyenLieu == IngredientToChange.ingredientID)
-                                                            .OrderByDescending(ctnk => ctnk.IdnhapKhoNavigation.NgayNhap)
-                                                            .FirstOrDefault();
-            if (importDetailOriginal != null)
-            {
-                importDetailOriginal.SoLuongNguyenLieu = IngredientToChange.quantity;
-                importDetailOriginal.GiaNguyenLieu = importDetailOriginal.IdnguyenLieuNavigation.DonGia * importDetailOriginal.SoLuongNguyenLieu;
-            }
-            else
-            {
-                System.Windows.Forms.MessageBox.Show("Không tìm thấy original ingredient");
-            }
-
-            // Cập nhật bảng NHAPKHO
-            var importOriginal = dbContext.Nhapkhos.FirstOrDefault(nk => nk.Id == IngredientToChange.importID);
-            if (importOriginal != null)
-            {
-                importOriginal.NguonNhap = IngredientToChange.supplySource;
-                importOriginal.NgayNhap = IngredientToChange.supplyDate;
-                importOriginal.SdtlienLac = IngredientToChange.phoneNumber;
-                
-                // Cập nhật lại cột GiaNhap trong bảng NHAPKHO thông qua SLNL trong bảng CTNHAPKHO và DonGia trong bảng NGUYENLIEU 
-                var ctnk = dbContext.Ctnhapkhos.Where(ctnk => ctnk.IdnhapKho == IngredientToChange.importID
-                                                               && ctnk.IdnguyenLieu == IngredientToChange.ingredientID)
-                                                .OrderByDescending(ctnk => ctnk.IdnhapKhoNavigation.NgayNhap)
-                                                .FirstOrDefault();
-                if (ctnk != null)
+                // Cập nhật bảng NGUYENLIEU
+                var ingredientOriginal = dbContext.Nguyenlieus.FirstOrDefault(nl => nl.Id == IngredientToChange.ingredientID);
+                if (ingredientOriginal != null)
                 {
-                    importOriginal.GiaNhap = ctnk.SoLuongNguyenLieu * ctnk.IdnguyenLieuNavigation.DonGia;
+                    ingredientOriginal.TenNguyenLieu = IngredientToChange.ingredientName;
+                    ingredientOriginal.DonVi = IngredientToChange.unit;
+                    ingredientOriginal.DonGia = IngredientToChange.unitPrice;
+                    ingredientOriginal.Loai = IngredientToChange.type;
+                    // Cập nhật CTKHO ---------------
+                    dbContext.SaveChanges();
                 }
                 else
                 {
-                    System.Windows.Forms.MessageBox.Show("Không tìm thấy ctnk để cập nhật GIANHAP trong NHAPKHO");
+                    System.Windows.Forms.MessageBox.Show("Không tìm thấy nguyên liệu khi sửa thông tin nguyên liệu");
                 }
-                dbContext.SaveChanges();
             }
-            else
+            catch (Exception ex)
             {
-                System.Windows.Forms.MessageBox.Show("Không tìm thấy original importing");
+                System.Windows.Forms.MessageBox.Show($"Lỗi khi sửa thông tin NGUYÊN LIỆU: {ex.Message}\nChi tiết: {ex.InnerException?.Message}");
             }
 
-            var storageDetailOriginal = dbContext.Ctkhos.FirstOrDefault(ctk => ctk.IdnguyenLieu == IngredientToChange.ingredientID);
-            if (storageDetailOriginal != null)
+
+            try
             {
-                var calcSumQuantity = dbContext.Ctnhapkhos.GroupBy(ctnk => ctnk.IdnguyenLieu)
-                                                          .Select(group => new
-                                                          {
-                                                              IDNguyenLieu = group.Key,
-                                                              TongSoLuong = group.Sum(ctnk => ctnk.SoLuongNguyenLieu),
-                                                          }).ToDictionary(x => x.IDNguyenLieu, x => x.TongSoLuong);
-                storageDetailOriginal.SoLuongTonDu = calcSumQuantity.ContainsKey(storageDetailOriginal.IdnguyenLieu) ? calcSumQuantity[storageDetailOriginal.IdnguyenLieu] : 0;
-                dbContext.SaveChanges();
+                // Cập nhật bảng CTNHAPKHO, với target là hàng thêm vào mới nhất
+                var importDetailOriginal = dbContext.Ctnhapkhos.Where(ctnk => ctnk.IdnhapKho == IngredientToChange.importID
+                                                                               && ctnk.IdnguyenLieu == IngredientToChange.ingredientID)
+                                                                .OrderByDescending(ctnk => ctnk.IdnhapKhoNavigation.NgayNhap)
+                                                                .FirstOrDefault();
+                if (importDetailOriginal != null)
+                {
+                    importDetailOriginal.SoLuongNguyenLieu = IngredientToChange.quantity;
+                    importDetailOriginal.GiaNguyenLieu = importDetailOriginal.IdnguyenLieuNavigation.DonGia * importDetailOriginal.SoLuongNguyenLieu;
+                }
+                else
+                {
+                    System.Windows.Forms.MessageBox.Show("Không tìm thấy không tìm thấy chi tiết nhập kho khi sửa thông tin nguyên liệu");
+                }
             }
-            else
+            catch(Exception ex)
             {
-                System.Windows.Forms.MessageBox.Show("Không tìm thấy CT Kho để cập nhật TonDu");
+                System.Windows.Forms.MessageBox.Show($"Lỗi khi sửa thông tin CTNHAPKHO: {ex.Message}\nChi tiết: {ex.InnerException?.Message}");
             }
 
-            System.Windows.Forms.MessageBox.Show("Lưu thành công");
+            try
+            {
+                // Cập nhật bảng NHAPKHO
+                var importOriginal = dbContext.Nhapkhos.FirstOrDefault(nk => nk.Id == IngredientToChange.importID);
+                if (importOriginal != null)
+                {
+                    importOriginal.NguonNhap = IngredientToChange.supplySource;
+                    importOriginal.NgayNhap = IngredientToChange.supplyDate;
+                    importOriginal.SdtlienLac = IngredientToChange.phoneNumber;
+
+                    // Cập nhật lại cột GiaNhap trong bảng NHAPKHO thông qua SLNL trong bảng CTNHAPKHO và DonGia trong bảng NGUYENLIEU 
+                    var ctnk = dbContext.Ctnhapkhos.Where(ctnk => ctnk.IdnhapKho == IngredientToChange.importID
+                                                                   && ctnk.IdnguyenLieu == IngredientToChange.ingredientID)
+                                                    .OrderByDescending(ctnk => ctnk.IdnhapKhoNavigation.NgayNhap)
+                                                    .FirstOrDefault();
+                    if (ctnk != null)
+                    {
+                        importOriginal.GiaNhap = ctnk.SoLuongNguyenLieu * ctnk.IdnguyenLieuNavigation.DonGia;
+                    }
+                    else
+                    {
+                        System.Windows.Forms.MessageBox.Show("Không tìm thấy chi tiết nhập kho để cập nhật GIANHAP trong NHAPKHO khi sửa thông tin nguyên liệu");
+                    }
+                    dbContext.SaveChanges();
+                }
+                else
+                {
+                    System.Windows.Forms.MessageBox.Show("Không tìm thấy nhập kho khi sửa thông tin nguyên liệu");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show($"Lỗi khi sửa thông tin NHAPKHO: {ex.Message}\nChi tiết: {ex.InnerException?.Message}");
+            }
+
+
+            try
+            {
+                // Cập nhật CTKHO
+                var storageDetailOriginal = dbContext.Ctkhos.FirstOrDefault(ctk => ctk.IdnguyenLieu == IngredientToChange.ingredientID);
+                if (storageDetailOriginal != null)
+                {
+                    var calcSumQuantity = dbContext.Ctnhapkhos.GroupBy(ctnk => ctnk.IdnguyenLieu)
+                                                              .Select(group => new
+                                                              {
+                                                                  IDNguyenLieu = group.Key,
+                                                                  TongSoLuong = group.Sum(ctnk => ctnk.SoLuongNguyenLieu),
+                                                              }).ToDictionary(x => x.IDNguyenLieu, x => x.TongSoLuong);
+                    // Cập nhật tồn dư qua số lượng nguyên liệu nhập của lần nhập mới nhất
+                    storageDetailOriginal.SoLuongTonDu = calcSumQuantity.ContainsKey(storageDetailOriginal.IdnguyenLieu) ? calcSumQuantity[storageDetailOriginal.IdnguyenLieu] : 0;
+                    dbContext.SaveChanges();
+                }
+                else
+                {
+                    System.Windows.Forms.MessageBox.Show("Không tìm thấy CT Kho để cập nhật tồn dư cho nguyên liệu");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show($"Lỗi khi sửa thông tin CTKHO: {ex.Message}\nChi tiết: {ex.InnerException?.Message}");
+            }
+
+            System.Windows.Forms.MessageBox.Show("Lưu thông tin nguyên liệu thành công");
         }
 
         private void CloseWindow(object? parameter) => closeWindowCallback();

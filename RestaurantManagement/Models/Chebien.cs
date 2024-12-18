@@ -13,5 +13,7 @@ public partial class Chebien
 
     public int? ThoiGianChuanBi { get; set; }
 
+    public bool? IsDeleted { get; set; }
+
     public virtual Hoadon IdhoaDonNavigation { get; set; } = null!;
 }

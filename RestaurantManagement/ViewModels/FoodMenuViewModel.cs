@@ -170,13 +170,13 @@ namespace RestaurantManagement.ViewModels
         public FoodMenuViewModel()
         {
             dbContext = new QlnhContext();
-            LoadData();
+            _ = LoadData();
             InitializeCommands();
         }
 
-        private void LoadData()
+        private async Task LoadData()
         {
-            ListDishes = new ObservableCollection<Doanuong>(dbContext.Doanuongs.ToList());
+            ListDishes = new ObservableCollection<Doanuong>(await dbContext.Doanuongs.Where(dau => dau.IsDeleted == false && dau.TinhTrang == true).ToListAsync());
             DisplayListDishes = new ObservableCollection<Doanuong>(ListDishes);
         }
 
@@ -248,6 +248,7 @@ namespace RestaurantManagement.ViewModels
                     DonGia = AddedDish.DonGia,
                     ThoiGianChuanBi = AddedDish.ThoiGianChuanBi,
                     Loai = SelectedDishType == "Thức uống",
+                    TinhTrang = true,
                     AnhDoAnUong = AddedDish.AnhDoAnUong
                 };
 
@@ -255,7 +256,7 @@ namespace RestaurantManagement.ViewModels
                 context.Doanuongs.Add(newDish);
                 context.SaveChangesAsync();
 
-                LoadData();
+                _ = LoadData();
                
                 System.Windows.Forms.MessageBox.Show("Thêm món thành công!");
             }
@@ -289,9 +290,9 @@ namespace RestaurantManagement.ViewModels
 
                         if (dishToRemove != null)
                         {
-                            context.Doanuongs.Remove(dishToRemove);
+                            dishToRemove.IsDeleted = true;
                             context.SaveChangesAsync();
-                            LoadData();
+                            _ = LoadData();
                             System.Windows.MessageBox.Show("Xóa thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
                         }
                         else
@@ -372,7 +373,7 @@ namespace RestaurantManagement.ViewModels
                             dishToUpdate.AnhDoAnUong = SelectedDish.AnhDoAnUong;
                         }
                         context.SaveChangesAsync();
-                        LoadData();
+                        _ = LoadData();
 
                         System.Windows.Forms.MessageBox.Show("Cập nhật ảnh thành công!");
                     }

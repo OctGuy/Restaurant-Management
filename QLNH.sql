@@ -72,6 +72,7 @@ CREATE TABLE [CTHD]
 	constraint [PK_CTHD] primary key([IDHoaDon], [IDDoAnUong]),
 	[SoLuong] int not null default 0,
 	[GiaMon] decimal not null default 0 -- = DoAnUong.DonGia * SoLuong (ĐỀ XUẤT BỎ)
+	[IsDeleted] bit default 0
 )
 
 CREATE TABLE [NGUYENLIEU]
@@ -137,6 +138,7 @@ CREATE TABLE [CHEBIEN]
 	[MaCheBien] as ('CB' + RIGHT('00000' + CAST([ID] as varchar(5)), 5)) persisted,
 	[IDHoaDon] int not null, -- fk, ko biet nen tham chieu den bang HOADON hay CTHD
 	[ThoiGianChuanBi] int not null default 0
+	[IsDeleted] bit default 0
 )
 
 
@@ -263,3 +265,45 @@ UPDATE CTKHO
 SET SoLuongTonDu = CTNK.SoLuongNguyenLieu
 FROM CTKHO CTK
 JOIN CTNHAPKHO CTNK ON CTK.IDNguyenLieu = CTNK.IDNguyenLieu;
+
+Update NGUYENLIEU
+Set Loai = 0
+Where ID = 2
+
+Update NHAPKHO
+Set IDKho = 1
+Where ID = 1
+
+Update CTNHAPKHO
+SET IsDeleted = 0
+
+
+delete from CTNHAPKHO where IDNhapKho = 10 and IDNguyenLieu = 10
+delete from NHAPKHO where ID = 10
+delete from NGUYENLIEU where ID = 10
+
+ALTER TABLE [CTKHO]
+ADD [IsDeleted] bit DEFAULT 0;
+
+ALTER TABLE [CTNHAPKHO]
+ADD [IsDeleted] bit DEFAULT 0;
+
+ALTER TABLE [NGUYENLIEU]
+ADD [IsDeleted] bit DEFAULT 0;
+
+SELECT 
+    req.session_id
+    , req.total_elapsed_time AS duration_ms
+    , req.cpu_time AS cpu_time_ms
+    , req.total_elapsed_time - req.cpu_time AS wait_time
+    , req.logical_reads
+    , SUBSTRING (REPLACE (REPLACE (SUBSTRING (ST.text, (req.statement_start_offset/2) + 1, 
+       ((CASE statement_end_offset
+           WHEN -1
+           THEN DATALENGTH(ST.text)  
+           ELSE req.statement_end_offset
+         END - req.statement_start_offset)/2) + 1) , CHAR(10), ' '), CHAR(13), ' '), 
+      1, 512)  AS statement_text  
+FROM sys.dm_exec_requests AS req
+    CROSS APPLY sys.dm_exec_sql_text(req.sql_handle) AS ST
+ORDER BY total_elapsed_time DESC;
