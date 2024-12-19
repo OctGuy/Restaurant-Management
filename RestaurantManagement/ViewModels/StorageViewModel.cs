@@ -21,6 +21,14 @@ using Microsoft.EntityFrameworkCore.Query.Internal;
 using System.Windows.Data;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using iText.Kernel.Pdf;
+using iText.Layout;
+using iText.Layout.Element;
+using iText.Layout.Properties;
+using iText.IO.Font;
+using iText.Kernel.Font;
+using iText.Kernel.Colors;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 
 namespace RestaurantManagement.ViewModels
 {
@@ -46,6 +54,7 @@ namespace RestaurantManagement.ViewModels
         public ICommand OpenEditCommand { get; set; }
         public ICommand ImportIngredientCommand { get; set; }
         public ICommand DeleteIngredientCommand { get; set; }
+        public ICommand ExportPDFCommand { get; set; }
         //public ICommand 
 
         private ObservableCollection<Ingredient> rawIngrdients;
@@ -320,6 +329,7 @@ namespace RestaurantManagement.ViewModels
             DeleteIngredientCommand = new RelayCommand<object>(CanExecuteDeleteIngredient, ExecuteDeleteIngredient);
             ImportIngredientCommand = new RelayCommand(ImportIngredient);
             AddedIngredient = new Ingredient();
+            ExportPDFCommand = new RelayCommand<object>(CanExportPDF, ExportPDF);
         }
 
         private void UpdateDays()
@@ -743,6 +753,198 @@ namespace RestaurantManagement.ViewModels
 
             LoadRawIngredients();
             LoadDrinkIngredients();
+        }
+
+        private bool CanExportPDF(object? parameter)
+        {
+            if (SelectedDrinkIngredient == null && SelectedRawIngredient == null)
+                return false;
+            return true;
+        }
+
+        public class Import
+        {
+            public string? MaNhapKho { get; set; }
+            public int? SoLuong { get; set; }
+            public decimal? DonGia { get; set; }
+            public decimal? GiaNhap { get; set; }
+            public DateTime? NgayNhap { get; set; }
+            public string? NguonNhap { get; set; }
+            public string? SDTLienLac { get; set; }
+        }
+
+        private List<Import> GetImportInfo(int ingredientID)
+        {
+            var listImport = dbContext.Nhapkhos
+                            .Join(dbContext.Ctnhapkhos, n => n.Id, c => c.IdnhapKho, (n, c) => new { Nhapkho = n, Ctnhapkho = c })
+                            .Where(x => x.Ctnhapkho.IdnguyenLieu == ingredientID)
+                            .Select(x => new Import
+                            {
+                                MaNhapKho = x.Nhapkho.MaNhapKho,
+                                SoLuong = x.Ctnhapkho.SoLuongNguyenLieu,
+                                GiaNhap = x.Nhapkho.GiaNhap,
+                                DonGia = x.Ctnhapkho.GiaNguyenLieu / x.Ctnhapkho.SoLuongNguyenLieu,
+                                NgayNhap = x.Nhapkho.NgayNhap,
+                                NguonNhap = x.Nhapkho.NguonNhap,
+                                SDTLienLac = x.Nhapkho.SdtlienLac
+                            }).ToList();
+
+            return listImport;
+        }
+
+        private void ExportPDF(object? parameter)
+        {
+            if (SelectedRawIngredient != null)
+            {
+                string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"import_history_{SelectedRawIngredient.ingredientName}.pdf");
+
+                using (FileStream fs = new FileStream(filePath, FileMode.Create))
+                {
+                    PdfWriter writer = new PdfWriter(fs);
+                    PdfDocument pdfDoc = new PdfDocument(writer);
+                    Document document = new Document(pdfDoc);
+
+                    PdfFont vietnameseFont = PdfFontFactory.CreateFont("c:/windows/fonts/arial.ttf", PdfEncodings.IDENTITY_H);
+                    PdfFont boldFont = PdfFontFactory.CreateFont("C:/Windows/Fonts/arialbd.ttf", PdfEncodings.IDENTITY_H);
+
+                    document.Add(new Paragraph("LỊCH SỬ NHẬP KHO")
+                   .SetFont(boldFont)
+                   .SetFontSize(24)
+                   .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)
+                   .SetMarginBottom(20));
+
+                    document.Add(new Paragraph($"Tên nguyên liệu: {SelectedRawIngredient.ingredientName}")
+                    .SetFont(vietnameseFont).SetFontSize(12).SetTextAlignment(iText.Layout.Properties.TextAlignment.LEFT));
+
+                    document.Add(new Paragraph($"Ngày in phiếu: {DateTime.Now.ToString("dd/MM/yyyy")}")
+                        .SetFont(vietnameseFont).SetFontSize(12).SetTextAlignment(iText.Layout.Properties.TextAlignment.LEFT));
+
+                    Table table = new Table(7).UseAllAvailableWidth();
+
+                    table.AddHeaderCell(new Cell().Add(new Paragraph("Mã nhập kho").SetFont(boldFont).SetFontSize(12).SetFontColor(ColorConstants.WHITE))
+                        .SetBackgroundColor(ColorConstants.DARK_GRAY).SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+                    table.AddHeaderCell(new Cell().Add(new Paragraph("Số lượng").SetFont(boldFont).SetFontSize(12).SetFontColor(ColorConstants.WHITE))
+                        .SetBackgroundColor(ColorConstants.DARK_GRAY).SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+                    table.AddHeaderCell(new Cell().Add(new Paragraph("Giá nhập").SetFont(boldFont).SetFontSize(12).SetFontColor(ColorConstants.WHITE))
+                        .SetBackgroundColor(ColorConstants.DARK_GRAY).SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+                    table.AddHeaderCell(new Cell().Add(new Paragraph("Đơn giá").SetFont(boldFont).SetFontSize(12).SetFontColor(ColorConstants.WHITE))
+                        .SetBackgroundColor(ColorConstants.DARK_GRAY).SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+                    table.AddHeaderCell(new Cell().Add(new Paragraph("Ngày nhập").SetFont(boldFont).SetFontSize(12).SetFontColor(ColorConstants.WHITE))
+                        .SetBackgroundColor(ColorConstants.DARK_GRAY).SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+                    table.AddHeaderCell(new Cell().Add(new Paragraph("Nguồn nhập").SetFont(boldFont).SetFontSize(12).SetFontColor(ColorConstants.WHITE))
+                        .SetBackgroundColor(ColorConstants.DARK_GRAY).SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+                    table.AddHeaderCell(new Cell().Add(new Paragraph("Số điện thoại").SetFont(boldFont).SetFontSize(12).SetFontColor(ColorConstants.WHITE))
+                        .SetBackgroundColor(ColorConstants.DARK_GRAY).SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+
+                    List<Import> rawImport = new List<Import>();
+                    rawImport = GetImportInfo(SelectedRawIngredient.ingredientID);
+
+                    foreach(var item in rawImport)
+                    {
+                        table.AddCell(new Cell().Add(new Paragraph(item.MaNhapKho).SetFont(vietnameseFont).SetFontSize(12))
+                        .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+
+                        table.AddCell(new Cell().Add(new Paragraph(item.SoLuong.ToString()).SetFont(vietnameseFont).SetFontSize(12))
+                        .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+
+                        table.AddCell(new Cell().Add(new Paragraph(item.GiaNhap.ToString()).SetFont(vietnameseFont).SetFontSize(12))
+                        .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+
+                        table.AddCell(new Cell().Add(new Paragraph(((int?)item.DonGia).ToString()).SetFont(vietnameseFont).SetFontSize(12))
+                        .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+
+                        table.AddCell(new Cell().Add(new Paragraph(string.Format("{0:dd/MM/yyyy}", item.NgayNhap)).SetFont(vietnameseFont).SetFontSize(12))
+                        .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+
+                        table.AddCell(new Cell().Add(new Paragraph(item.NguonNhap).SetFont(vietnameseFont).SetFontSize(12))
+                        .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+
+                        table.AddCell(new Cell().Add(new Paragraph(item.SDTLienLac).SetFont(vietnameseFont).SetFontSize(12))
+                        .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+                    }
+
+                    document.Add(table.SetMarginBottom(20));
+                    document.Close();
+                }
+
+                System.Windows.MessageBox.Show($"Hóa đơn đã được xuất ra file PDF tại: {filePath}", "Xuất Hóa Đơn", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+
+            if (SelectedDrinkIngredient != null)
+            {
+                string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"import_history_{SelectedDrinkIngredient.ingredientName}.pdf");
+
+                using (FileStream fs = new FileStream(filePath, FileMode.Create))
+                {
+                    PdfWriter writer = new PdfWriter(fs);
+                    PdfDocument pdfDoc = new PdfDocument(writer);
+                    Document document = new Document(pdfDoc);
+
+                    PdfFont vietnameseFont = PdfFontFactory.CreateFont("c:/windows/fonts/arial.ttf", PdfEncodings.IDENTITY_H);
+                    PdfFont boldFont = PdfFontFactory.CreateFont("C:/Windows/Fonts/arialbd.ttf", PdfEncodings.IDENTITY_H);
+
+                    document.Add(new Paragraph("LỊCH SỬ NHẬP KHO")
+                   .SetFont(boldFont)
+                   .SetFontSize(24)
+                   .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)
+                   .SetMarginBottom(20));
+
+                    document.Add(new Paragraph($"Tên nguyên liệu: {SelectedDrinkIngredient.ingredientName}")
+                    .SetFont(vietnameseFont).SetFontSize(12).SetTextAlignment(iText.Layout.Properties.TextAlignment.LEFT));
+
+                    document.Add(new Paragraph($"Ngày in phiếu: {DateTime.Now.ToString("dd/MM/yyyy")}")
+                        .SetFont(vietnameseFont).SetFontSize(12).SetTextAlignment(iText.Layout.Properties.TextAlignment.LEFT));
+
+                    Table table = new Table(7).UseAllAvailableWidth();
+
+                    table.AddHeaderCell(new Cell().Add(new Paragraph("Mã nhập kho").SetFont(boldFont).SetFontSize(12).SetFontColor(ColorConstants.WHITE))
+                        .SetBackgroundColor(ColorConstants.DARK_GRAY).SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+                    table.AddHeaderCell(new Cell().Add(new Paragraph("Số lượng").SetFont(boldFont).SetFontSize(12).SetFontColor(ColorConstants.WHITE))
+                        .SetBackgroundColor(ColorConstants.DARK_GRAY).SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+                    table.AddHeaderCell(new Cell().Add(new Paragraph("Giá nhập").SetFont(boldFont).SetFontSize(12).SetFontColor(ColorConstants.WHITE))
+                        .SetBackgroundColor(ColorConstants.DARK_GRAY).SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+                    table.AddHeaderCell(new Cell().Add(new Paragraph("Đơn giá").SetFont(boldFont).SetFontSize(12).SetFontColor(ColorConstants.WHITE))
+                        .SetBackgroundColor(ColorConstants.DARK_GRAY).SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+                    table.AddHeaderCell(new Cell().Add(new Paragraph("Ngày nhập").SetFont(boldFont).SetFontSize(12).SetFontColor(ColorConstants.WHITE))
+                        .SetBackgroundColor(ColorConstants.DARK_GRAY).SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+                    table.AddHeaderCell(new Cell().Add(new Paragraph("Nguồn nhập").SetFont(boldFont).SetFontSize(12).SetFontColor(ColorConstants.WHITE))
+                        .SetBackgroundColor(ColorConstants.DARK_GRAY).SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+                    table.AddHeaderCell(new Cell().Add(new Paragraph("Số điện thoại").SetFont(boldFont).SetFontSize(12).SetFontColor(ColorConstants.WHITE))
+                        .SetBackgroundColor(ColorConstants.DARK_GRAY).SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+
+                    List<Import> rawImport = new List<Import>();
+                    rawImport = GetImportInfo(SelectedDrinkIngredient.ingredientID);
+
+                    foreach (var item in rawImport)
+                    {
+                        table.AddCell(new Cell().Add(new Paragraph(item.MaNhapKho).SetFont(vietnameseFont).SetFontSize(12))
+                        .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+
+                        table.AddCell(new Cell().Add(new Paragraph(item.SoLuong.ToString()).SetFont(vietnameseFont).SetFontSize(12))
+                        .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+
+                        table.AddCell(new Cell().Add(new Paragraph(item.GiaNhap.ToString()).SetFont(vietnameseFont).SetFontSize(12))
+                        .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+
+                        table.AddCell(new Cell().Add(new Paragraph(((int?)item.DonGia).ToString()).SetFont(vietnameseFont).SetFontSize(12))
+                        .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+
+                        table.AddCell(new Cell().Add(new Paragraph(string.Format("{0:dd/MM/yyyy}", item.NgayNhap)).SetFont(vietnameseFont).SetFontSize(12))
+                        .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+
+                        table.AddCell(new Cell().Add(new Paragraph(item.NguonNhap).SetFont(vietnameseFont).SetFontSize(12))
+                        .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+
+                        table.AddCell(new Cell().Add(new Paragraph(item.SDTLienLac).SetFont(vietnameseFont).SetFontSize(12))
+                        .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+                    }
+
+                    document.Add(table.SetMarginBottom(20));
+                    document.Close();
+                }
+
+                System.Windows.MessageBox.Show($"Hóa đơn đã được xuất ra file PDF tại: {filePath}", "Xuất Hóa Đơn", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
     }
 }

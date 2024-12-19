@@ -20,7 +20,6 @@ using static RestaurantManagement.ViewModels.AddIngredientViewModel;
 using System.Windows.Media;
 using System.Windows.Data;
 using System.ComponentModel;
-using Diacritics.Extensions;
 using System.Net.Http;
 
 namespace RestaurantManagement.ViewModels
