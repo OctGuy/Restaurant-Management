@@ -202,7 +202,7 @@ namespace RestaurantManagement.ViewModels
             try
             {
                 var latestEntries = dbContext.Nhapkhos
-                                .Where(nk => nk.IsDeleted == false && nk.Idkho == 1)
+                                .Where(nk => nk.Idkho == 1)
                                 .SelectMany(nk => nk.Ctnhapkhos, (nk, ctnk) => new { nk, ctnk })
                                 .Where(x => x.ctnk.IdnguyenLieuNavigation.IsDeleted == false)
                                 .GroupBy(result => result.ctnk.IdnguyenLieu)
@@ -255,7 +255,7 @@ namespace RestaurantManagement.ViewModels
             try
             {
                 var latestEntries = dbContext.Nhapkhos
-                                .Where(nk => nk.IsDeleted == false && nk.Idkho == 2)
+                                .Where(nk => nk.Idkho == 2)
                                 .SelectMany(nk => nk.Ctnhapkhos, (nk, ctnk) => new { nk, ctnk })
                                 .Where(x => x.ctnk.IdnguyenLieuNavigation.IsDeleted == false)
                                 .GroupBy(result => result.ctnk.IdnguyenLieu)

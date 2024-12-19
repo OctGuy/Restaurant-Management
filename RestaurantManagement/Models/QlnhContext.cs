@@ -44,8 +44,8 @@ public partial class QlnhContext : DbContext
     public virtual DbSet<Taikhoan> Taikhoans { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-
-        => optionsBuilder.UseSqlServer("Server=TDTPC;Database=QLNH;Trusted_Connection=True;TrustServerCertificate=True");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=TDTPC;Database=QLNH;Trusted_Connection=True;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -58,6 +58,7 @@ public partial class QlnhContext : DbContext
                 .HasMaxLength(6)
                 .IsUnicode(false)
                 .HasComputedColumnSql("('B'+right('00000'+CONVERT([varchar](5),[ID]),(5)))", true);
+            entity.Property(e => e.SucChua).HasDefaultValue(0);
         });
 
         modelBuilder.Entity<Chamcong>(entity =>
@@ -131,6 +132,7 @@ public partial class QlnhContext : DbContext
             entity.Property(e => e.Idkho).HasColumnName("IDKho");
             entity.Property(e => e.IdnguyenLieu).HasColumnName("IDNguyenLieu");
             entity.Property(e => e.IsDeleted).HasDefaultValue(false);
+            entity.Property(e => e.SoLuongTonDu).HasDefaultValue(0);
 
             entity.HasOne(d => d.IdkhoNavigation).WithMany(p => p.Ctkhos)
                 .HasForeignKey(d => d.Idkho)
@@ -172,7 +174,6 @@ public partial class QlnhContext : DbContext
             entity.Property(e => e.IdnhapKho).HasColumnName("IDNhapKho");
             entity.Property(e => e.IdnguyenLieu).HasColumnName("IDNguyenLieu");
             entity.Property(e => e.GiaNguyenLieu).HasColumnType("decimal(10, 2)");
-            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
 
             entity.HasOne(d => d.IdnguyenLieuNavigation).WithMany(p => p.Ctnhapkhos)
                 .HasForeignKey(d => d.IdnguyenLieu)
@@ -197,6 +198,7 @@ public partial class QlnhContext : DbContext
                 .IsUnicode(false)
                 .HasComputedColumnSql("('DAU'+right('00000'+CONVERT([varchar](5),[ID]),(5)))", true);
             entity.Property(e => e.TenDoAnUong).HasMaxLength(100);
+            entity.Property(e => e.TinhTrang).HasDefaultValue(true);
         });
 
         modelBuilder.Entity<Hoadon>(entity =>
@@ -242,7 +244,9 @@ public partial class QlnhContext : DbContext
             entity.ToTable("NGUYENLIEU");
 
             entity.Property(e => e.Id).HasColumnName("ID");
-            entity.Property(e => e.DonGia).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.DonGia)
+                .HasDefaultValue(0m)
+                .HasColumnType("decimal(10, 2)");
             entity.Property(e => e.DonVi).HasMaxLength(10);
             entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.MaNguyenLieu)
@@ -280,9 +284,10 @@ public partial class QlnhContext : DbContext
             entity.ToTable("NHAPKHO");
 
             entity.Property(e => e.Id).HasColumnName("ID");
-            entity.Property(e => e.GiaNhap).HasColumnType("decimal(18, 0)");
+            entity.Property(e => e.GiaNhap)
+                .HasDefaultValue(0m)
+                .HasColumnType("decimal(18, 0)");
             entity.Property(e => e.Idkho).HasColumnName("IDKho");
-            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.MaNhapKho)
                 .HasMaxLength(7)
                 .IsUnicode(false)
@@ -303,7 +308,7 @@ public partial class QlnhContext : DbContext
         {
             entity.ToTable("TAIKHOAN");
 
-            entity.HasIndex(e => e.TenTaiKhoan, "UQ__TAIKHOAN__B106EAF8FD55CA7C").IsUnique();
+            entity.HasIndex(e => e.TenTaiKhoan, "UQ__TAIKHOAN__B106EAF8508F8E65").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.IdnhanVien).HasColumnName("IDNhanVien");

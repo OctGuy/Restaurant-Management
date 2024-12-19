@@ -13,7 +13,7 @@ public partial class Hoadon
 
     public int IdnhanVien { get; set; }
 
-    public DateTime? NgayHoaDon { get; set; }
+    public DateTime NgayHoaDon { get; set; }
 
     public decimal? TongGia { get; set; }
 

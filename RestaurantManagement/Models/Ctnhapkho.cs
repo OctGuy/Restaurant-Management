@@ -13,8 +13,6 @@ public partial class Ctnhapkho
 
     public decimal? GiaNguyenLieu { get; set; }
 
-    public bool? IsDeleted { get; set; }
-
     public virtual Nguyenlieu IdnguyenLieuNavigation { get; set; } = null!;
 
     public virtual Nhapkho IdnhapKhoNavigation { get; set; } = null!;

@@ -58,7 +58,7 @@
         <TextBox Grid.Row="5"
                  materialDesign:HintAssist.Hint="Đơn giá (VNĐ)"
                  Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
-                 Text="{Binding IngredientToChange.unitPrice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                 Text="{Binding IngredientToChange.unitPrice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N0}}"/>
 
         <TextBox Grid.Row="6"
                  materialDesign:HintAssist.Hint="Số lượng"

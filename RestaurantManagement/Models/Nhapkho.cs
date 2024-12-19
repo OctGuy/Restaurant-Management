@@ -9,17 +9,15 @@ public partial class Nhapkho
 
     public string? MaNhapKho { get; set; }
 
-    public string NguonNhap { get; set; } = null!;
+    public string? NguonNhap { get; set; } = null!;
 
     public DateTime? NgayNhap { get; set; }
 
     public decimal? GiaNhap { get; set; }
 
-    public string SdtlienLac { get; set; } = null!;
+    public string? SdtlienLac { get; set; } = null!;
 
     public int Idkho { get; set; }
-
-    public bool? IsDeleted { get; set; }
 
     public virtual ICollection<Ctnhapkho> Ctnhapkhos { get; set; } = new List<Ctnhapkho>();
 

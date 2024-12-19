@@ -19,8 +19,6 @@ public partial class Nhanvien
 
     public string? CongViec { get; set; }
 
-    public byte[]? Avatar { get; set; }
-
     public DateTime NgayVaoLam { get; set; }
 
     public string LoaiNhanVien { get; set; } = null!;

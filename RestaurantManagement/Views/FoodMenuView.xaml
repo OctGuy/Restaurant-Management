@@ -53,8 +53,8 @@
                       IsSynchronizedWithCurrentItem="True"
                       HorizontalAlignment="Center"
                       VerticalAlignment="Stretch"
-                      ItemsSource="{Binding DisplayListDishes}"
-                      SelectedItem="{Binding SelectedDish, UpdateSourceTrigger=PropertyChanged}">
+                      ItemsSource="{Binding DisplayListDishes, UpdateSourceTrigger=PropertyChanged}"
+                      SelectedItem="{Binding SelectedDish}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
                         <i:InvokeCommandAction Command="{Binding SelectedDishCommand}" />
