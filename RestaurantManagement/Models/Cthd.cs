@@ -13,6 +13,8 @@ public partial class Cthd
 
     public decimal GiaMon { get; set; }
 
+    public bool? IsDeleted { get; set; } = false;
+
     public virtual Doanuong IddoAnUongNavigation { get; set; } = null!;
 
     public virtual Hoadon IdhoaDonNavigation { get; set; } = null!;

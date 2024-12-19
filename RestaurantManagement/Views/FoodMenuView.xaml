@@ -40,11 +40,13 @@
                 <Button Background="#701c1c"
                         Margin="20 0 0 0"
                         Content="Xóa món"
-                        Width="120"/>
+                        Width="120"
+                        Command="{Binding DeleteDishesCommand}"/>
                 <!-- Command Remove, CommandParameter -->
             </StackPanel>
 
             <ListView x:Name="Dishes_ListView"
+                      ItemsSource="{Binding ListDishes}"
                       SelectedIndex="0"
                       FontSize="15"
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -222,10 +224,13 @@
                         </Grid.ColumnDefinitions>
                         <Button Background="#701c1c" 
                                 Grid.Column="0"
-                                Content="Thêm"/>
+                                Content="Thêm"
+                                Command="{Binding AddDishesCommand}"/>
+
                         <Button Background="#701c1c" 
                                 Grid.Column="2" 
-                                Content="Chỉnh sửa" />  
+                                Content="Chỉnh sửa" 
+                                Command="{Binding SwitchToAddDishesViewCommand}"/>
                         <!-- Binding Command -->
                     </Grid>
                 </StackPanel>

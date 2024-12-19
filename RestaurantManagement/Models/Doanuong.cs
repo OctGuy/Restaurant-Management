@@ -11,7 +11,7 @@ public partial class Doanuong
 
     public string TenDoAnUong { get; set; } = null!;
 
-    public byte[] AnhDoAnUong { get; set; } = null!;
+    public string? AnhDoAnUong { get; set; }
 
     public decimal DonGia { get; set; }
 
@@ -20,6 +20,8 @@ public partial class Doanuong
     public int ThoiGianChuanBi { get; set; }
 
     public bool Loai { get; set; }
+
+    public bool? IsDeleted { get; set; }
 
     public virtual ICollection<Cthd> Cthds { get; set; } = new List<Cthd>();
 

@@ -11,17 +11,21 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Microsoft.EntityFrameworkCore;
+using RestaurantManagement.Models;
+using RestaurantManagement.ViewModels;
 
 namespace RestaurantManagement.Views
 {
     /// <summary>
-    /// Interaction logic for Bep.xaml
+    /// Interaction logic for Kitchen.xaml
     /// </summary>
     public partial class Kitchen : Window
     {
         public Kitchen()
         {
             InitializeComponent();
+            DataContext = new KitchenViewModel(new QlnhContext());
         }
     }
 }

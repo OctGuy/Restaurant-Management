@@ -17,5 +17,7 @@ public partial class Taikhoan
 
     public int IdnhanVien { get; set; }
 
+    public bool? IsDeleted { get; set; }
+
     public virtual Nhanvien IdnhanVienNavigation { get; set; } = null!;
 }
