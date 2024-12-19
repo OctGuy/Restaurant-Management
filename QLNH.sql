@@ -319,3 +319,15 @@ VALUES
 (2, 9, 5),
 (2, 10, 5)
 
+Insert into [BAN] (SucChua, TrangThai)
+values
+(2,0),
+(4,0),
+(8,0)
+
+INSERT INTO [HOADON] (IDBan, IDNhanVien, NgayHoaDon, TongGia, IsDeleted)
+VALUES (1, 2, '2024-12-19', 100000, 0)
+
+INSERT INTO [NHANVIEN] (HoTen, SDT, DiaChi, NgaySinh, CongViec, NgayVaoLam, LoaiNhanVien, LuongThang, LuongTheoGio, SoNgayLamViec, IsDeleted)
+VALUES 
+('Nguyen Van A', '0123456789', '123 Street, City', '1990-01-01', 'Quản lý', '2024-01-01', 'Full-time', 50000, NULL, NULL, 0);
