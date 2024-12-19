@@ -21,13 +21,15 @@ using System.Windows.Media;
 using System.Windows.Data;
 using System.ComponentModel;
 using Diacritics.Extensions;
+using System.Net.Http;
 
 namespace RestaurantManagement.ViewModels
 {
     public class FoodMenuViewModel : BaseViewModel
     {
         private readonly QlnhContext dbContext; // Manipulating database
-
+        const string defaultImg = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/800px-No_image_available.svg.png?fbclid=IwZXh0bgNhZW0CMTEAAR3HmVFzh45Ckm3scd4gjRC0ZsaUr87zn14IsZ07-fKfsdHZUnNXY9FyGh4_aem_wkm0VmC8XQ3-paBoXkgwfg";
+        
         #region declare commands
 
         public ICommand AddDishesCommand { get; set; }
@@ -38,6 +40,8 @@ namespace RestaurantManagement.ViewModels
         public ICommand AddDishImageCommand { get; set; }
         public ICommand SelectedDishCommand { get; set; }
         public ICommand EditDishInfoCommand { get; set; }
+        public ICommand CheckImageCommand { get; set; }
+        public ICommand CheckImageForAddCommand { get; set; }
 
         #endregion
 
@@ -98,7 +102,21 @@ namespace RestaurantManagement.ViewModels
                     }
                     catch (UriFormatException)
                     {
-                        EditedImage = null;
+                        Uri uri = new Uri(defaultImg, UriKind.Absolute);
+
+                        if (Uri.IsWellFormedUriString(uri.ToString(), UriKind.Absolute))
+                        {
+                            BitmapImage bmi = new BitmapImage();
+                            bmi.BeginInit();
+                            bmi.UriSource = uri;
+                            bmi.EndInit();
+
+                            EditedImage = bmi;
+                        }
+                        else
+                        {
+                            EditedImage = null;
+                        }
                     }
                 }
             }
@@ -199,8 +217,15 @@ namespace RestaurantManagement.ViewModels
 
         private async Task LoadData()
         {
-            ListDishes = new ObservableCollection<Doanuong>(await dbContext.Doanuongs.Where(dau => dau.IsDeleted == false && dau.TinhTrang == true).ToListAsync());
-            DisplayListDishes = new ObservableCollection<Doanuong>(ListDishes);
+            try
+            {
+                ListDishes = new ObservableCollection<Doanuong>(await dbContext.Doanuongs.Where(dau => dau.IsDeleted == false && dau.TinhTrang == true).ToListAsync());
+                DisplayListDishes = new ObservableCollection<Doanuong>(ListDishes);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show($"Lỗi khi tải dữ liệu món ăn: {ex.Message}\nChi tiết: {ex.InnerException?.Message}");
+            }
         }
 
         private void InitializeCommands()
@@ -210,10 +235,11 @@ namespace RestaurantManagement.ViewModels
             SwitchToAddDishesViewCommand = new RelayCommand<object>(CanExecuteSwitchToAddDishesView, ExecuteSwitchToAddDishesView);
             DeleteDishesCommand = new RelayCommand<object>(CanExecuteDeleteDish, ExecuteDeleteDish);
             SelectedDishCommand = new RelayCommand<object>(CanExecuteSelectDish, ExecuteSelectDish);
-            AddDishImageCommand = new RelayCommand(AddDishImageAsync);
             EditDishImageCommand = new RelayCommand(EditDishImageAsync);
             ViewIngredientsCommand = new RelayCommand(ViewIngredients);
             EditDishInfoCommand = new RelayCommand(EditDishInfo);
+            CheckImageCommand = new RelayCommand(async (o) => await CheckImage());
+            CheckImageForAddCommand = new RelayCommand(async(o) => await CheckImageForAdd());
         }
 
         #region define commands
@@ -235,21 +261,28 @@ namespace RestaurantManagement.ViewModels
             try
             {
                 // Validate input
+
                 if (string.IsNullOrWhiteSpace(AddedDish.TenDoAnUong))
                 {
-                    System.Windows.Forms.MessageBox.Show("Vui lòng nhập tên món!");
+                    System.Windows.Forms.MessageBox.Show("Vui lòng nhập tên nguyên liệu");
                     return;
                 }
 
-                if (AddedDish.DonGia <= 0)
+                if (!AddedDish.TenDoAnUong.All(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c)))
                 {
-                    System.Windows.Forms.MessageBox.Show("Giá món phải lớn hơn 0!");
+                    System.Windows.Forms.MessageBox.Show("Tên món ăn không được chứa ký tự đặc biệt");
                     return;
                 }
 
-                if (AddedDish.ThoiGianChuanBi <= 0)
+                if (!decimal.TryParse(AddedDish.DonGia?.ToString(), out var unitPrice) || unitPrice <= 0)
                 {
-                    System.Windows.Forms.MessageBox.Show("Thời gian chuẩn bị phải lớn hơn 0!");
+                    System.Windows.Forms.MessageBox.Show("Vui lòng nhập lại đơn giá");
+                    return;
+                }
+
+                if (!decimal.TryParse(AddedDish.ThoiGianChuanBi?.ToString(), out var prepareTime) || prepareTime <= 0)
+                {
+                    System.Windows.Forms.MessageBox.Show("Vui lòng nhập lại thời gian chuẩn bị");
                     return;
                 }
 
@@ -373,66 +406,118 @@ namespace RestaurantManagement.ViewModels
             }
         }
 
-        private void AddDishImageAsync(object? parameter)
+        private async Task<bool> IsImageUrlValid(string url)
         {
-            //var ofd = new OpenFileDialog
-            //{
-            //    Filter = "All supported graphics|*.jpg;*.jpeg;*.png|" + "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|" + "Portable Network Graphic (*.png)|*.png",
-            //    Title = "Thêm ảnh món ăn"
-            //};
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    // Gửi yêu cầu GET đến URL
+                    HttpResponseMessage response = await client.GetAsync(url);
 
-            //if (ofd.ShowDialog() == DialogResult.OK)
-            //{
-            //    string filePath = ofd.FileName;
-            //    try
-            //    {
-            //        var converter = new ImageConverter();
-            //        AddedDish.AnhDoAnUong = converter.BitmapImageToByteArray(filePath);
-            //        AddedImage = converter.ByteArrayToBitmapImage(AddedDish.AnhDoAnUong);
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        System.Windows.Forms.MessageBox.Show($"Lỗi khi thêm ảnh: {ex.Message}");
-            //    }
-            //}
+                    // Kiểm tra xem mã trạng thái HTTP có phải là 200 OK
+                    return response.IsSuccessStatusCode && response.Content.Headers.ContentType.MediaType.StartsWith("image");
+                }
+            }
+            catch
+            {
+                // Nếu xảy ra lỗi trong quá trình yêu cầu (ví dụ: không thể kết nối), trả về false
+                return false;
+            }
+        }
+
+        private async Task CheckImageForAdd()
+        {
+            string? imgUrl = AddedDish.AnhDoAnUong;
+
+            if (await IsImageUrlValid(imgUrl))
+            {
+                BitmapImage bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.UriSource = new Uri(imgUrl, UriKind.Absolute);
+                bitmap.EndInit();
+
+                AddedImage = bitmap;
+            }
+            else
+            {
+                System.Windows.MessageBox.Show("Ảnh không tồn tại hoặc URL không hợp lệ.", "Thông báo",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+
+                AddedDish.AnhDoAnUong = defaultImg;
+
+                // No image available
+                Uri uri = new Uri(defaultImg, UriKind.Absolute);
+
+                if (Uri.IsWellFormedUriString(uri.ToString(), UriKind.Absolute))
+                {
+                    BitmapImage bmi = new BitmapImage();
+                    bmi.BeginInit();
+                    bmi.UriSource = uri;
+                    bmi.EndInit();
+
+                    AddedImage = bmi;
+                }
+                else
+                {
+                    AddedImage = null;
+                }
+            }
+        }
+
+        private async Task CheckImage()
+        {
+            string? imgUrl = SelectedDish.AnhDoAnUong;
+
+            if (await IsImageUrlValid(imgUrl))
+            {
+                BitmapImage bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.UriSource = new Uri(imgUrl, UriKind.Absolute);
+                bitmap.EndInit();
+
+                EditedImage = bitmap;
+            }
+            else
+            {
+                System.Windows.MessageBox.Show("Ảnh không tồn tại hoặc URL không hợp lệ.", "Thông báo",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+
+                SelectedDish.AnhDoAnUong = defaultImg;
+
+                // No image available
+                Uri uri = new Uri(defaultImg, UriKind.Absolute);
+
+                if (Uri.IsWellFormedUriString(uri.ToString(), UriKind.Absolute))
+                {
+                    BitmapImage bmi = new BitmapImage();
+                    bmi.BeginInit();
+                    bmi.UriSource = uri;
+                    bmi.EndInit();
+
+                    EditedImage = bmi;
+                }
+                else
+                {
+                    EditedImage = null;
+                }
+            }
         }
 
         private void EditDishImageAsync(object? parameter)
         {
-            //var ofd = new OpenFileDialog
-            //{
-            //    Filter = "All supported graphics|*.jpg;*.jpeg;*.png|JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|Portable Network Graphic (*.png)|*.png",
-            //    Title = "Đổi ảnh món ăn"
-            //};
+            using (var context = new QlnhContext())
+            {
+                var doAnUong = context.Doanuongs.Where(dau => dau.Id == SelectedDish.Id).FirstOrDefault();
+                if (doAnUong != null)
+                {
+                    doAnUong.AnhDoAnUong = SelectedDish.AnhDoAnUong;
+                    context.SaveChanges();
+                }
+            }
 
-            //if (ofd.ShowDialog() == DialogResult.OK)
-            //{
-            //    string filePath = ofd.FileName;
-            //    try
-            //    {
-            //        if (SelectedDish.AnhDoAnUong != null)
-            //        {
-            //            var converter = new ImageConverter();
-            //            SelectedDish.AnhDoAnUong = converter.BitmapImageToByteArray(filePath);
-            //            EditedImage = converter.ByteArrayToBitmapImage(SelectedDish.AnhDoAnUong);
-
-            //            using var context = new QlnhContext();
-            //            var dishToUpdate = context.Doanuongs.FirstOrDefault(d => d.MaDoAnUong == SelectedDish.MaDoAnUong);
-            //            if (dishToUpdate != null)
-            //            {
-            //                dishToUpdate.AnhDoAnUong = SelectedDish.AnhDoAnUong;
-            //            }
-            //            context.SaveChangesAsync();
-            //            _ = LoadData();
-
-            //            System.Windows.Forms.MessageBox.Show("Cập nhật ảnh thành công!");
-            //        }
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        System.Windows.Forms.MessageBox.Show($"Lỗi khi cập nhật ảnh: {ex.Message}");
-            //    }
-            //}
+            System.Windows.MessageBox.Show("LƯU ẢNH THÀNH CÔNG", "Thông báo",
+                            MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void ViewIngredients(object? paramter)
