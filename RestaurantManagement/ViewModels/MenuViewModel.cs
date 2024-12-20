@@ -387,7 +387,7 @@ namespace RestaurantManagement.ViewModels
                             hoaDon = new Hoadon
                             { 
                                 Idban = SelectedTable.Id,
-                                IdnhanVien = 2,
+                                IdnhanVien = 1,
                                 NgayHoaDon = DateTime.Now,
                                 TongGia = SUM,
                                 IsDeleted = false,
