@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using System.Configuration;
 
 namespace RestaurantManagement.Models;
 
@@ -45,12 +44,8 @@ public partial class QlnhContext : DbContext
     public virtual DbSet<Taikhoan> Taikhoans { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        if (!optionsBuilder.IsConfigured)
-        {
-            optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["QLNH"].ConnectionString);
-        }
-    }
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Data Source=LAPTOP-QCE8DGMH\\MSSQLSERVER02;Initial Catalog=QLNH;Integrated Security=True;Trust Server Certificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -63,6 +58,7 @@ public partial class QlnhContext : DbContext
                 .HasMaxLength(6)
                 .IsUnicode(false)
                 .HasComputedColumnSql("('B'+right('00000'+CONVERT([varchar](5),[ID]),(5)))", true);
+            entity.Property(e => e.SucChua).HasDefaultValue(0);
         });
 
         modelBuilder.Entity<Chamcong>(entity =>
@@ -70,7 +66,9 @@ public partial class QlnhContext : DbContext
             entity.ToTable("CHAMCONG");
 
             entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.GhiChu).HasMaxLength(100);
             entity.Property(e => e.IdnhanVien).HasColumnName("IDNhanVien");
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.MaChamCong)
                 .HasMaxLength(7)
                 .IsUnicode(false)
@@ -91,6 +89,7 @@ public partial class QlnhContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.IdhoaDon).HasColumnName("IDHoaDon");
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.MaCheBien)
                 .HasMaxLength(7)
                 .IsUnicode(false)
@@ -111,6 +110,7 @@ public partial class QlnhContext : DbContext
             entity.Property(e => e.IdhoaDon).HasColumnName("IDHoaDon");
             entity.Property(e => e.IddoAnUong).HasColumnName("IDDoAnUong");
             entity.Property(e => e.GiaMon).HasColumnType("decimal(18, 0)");
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
 
             entity.HasOne(d => d.IddoAnUongNavigation).WithMany(p => p.Cthds)
                 .HasForeignKey(d => d.IddoAnUong)
@@ -131,6 +131,8 @@ public partial class QlnhContext : DbContext
 
             entity.Property(e => e.Idkho).HasColumnName("IDKho");
             entity.Property(e => e.IdnguyenLieu).HasColumnName("IDNguyenLieu");
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
+            entity.Property(e => e.SoLuongTonDu).HasDefaultValue(0);
 
             entity.HasOne(d => d.IdkhoNavigation).WithMany(p => p.Ctkhos)
                 .HasForeignKey(d => d.Idkho)
@@ -190,11 +192,13 @@ public partial class QlnhContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.DonGia).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.MaDoAnUong)
                 .HasMaxLength(8)
                 .IsUnicode(false)
                 .HasComputedColumnSql("('DAU'+right('00000'+CONVERT([varchar](5),[ID]),(5)))", true);
             entity.Property(e => e.TenDoAnUong).HasMaxLength(100);
+            entity.Property(e => e.TinhTrang).HasDefaultValue(true);
         });
 
         modelBuilder.Entity<Hoadon>(entity =>
@@ -204,6 +208,7 @@ public partial class QlnhContext : DbContext
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.Idban).HasColumnName("IDBan");
             entity.Property(e => e.IdnhanVien).HasColumnName("IDNhanVien");
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.MaHoaDon)
                 .HasMaxLength(7)
                 .IsUnicode(false)
@@ -239,8 +244,11 @@ public partial class QlnhContext : DbContext
             entity.ToTable("NGUYENLIEU");
 
             entity.Property(e => e.Id).HasColumnName("ID");
-            entity.Property(e => e.DonGia).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.DonGia)
+                .HasDefaultValue(0m)
+                .HasColumnType("decimal(10, 2)");
             entity.Property(e => e.DonVi).HasMaxLength(10);
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.MaNguyenLieu)
                 .HasMaxLength(7)
                 .IsUnicode(false)
@@ -256,8 +264,10 @@ public partial class QlnhContext : DbContext
             entity.Property(e => e.CongViec).HasMaxLength(20);
             entity.Property(e => e.DiaChi).HasMaxLength(50);
             entity.Property(e => e.HoTen).HasMaxLength(50);
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.LoaiNhanVien).HasMaxLength(20);
             entity.Property(e => e.LuongThang).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.LuongTheoGio).HasColumnType("decimal(10, 2)");
             entity.Property(e => e.MaNhanVien)
                 .HasMaxLength(7)
                 .IsUnicode(false)
@@ -274,7 +284,9 @@ public partial class QlnhContext : DbContext
             entity.ToTable("NHAPKHO");
 
             entity.Property(e => e.Id).HasColumnName("ID");
-            entity.Property(e => e.GiaNhap).HasColumnType("decimal(18, 0)");
+            entity.Property(e => e.GiaNhap)
+                .HasDefaultValue(0m)
+                .HasColumnType("decimal(18, 0)");
             entity.Property(e => e.Idkho).HasColumnName("IDKho");
             entity.Property(e => e.MaNhapKho)
                 .HasMaxLength(7)
@@ -296,10 +308,11 @@ public partial class QlnhContext : DbContext
         {
             entity.ToTable("TAIKHOAN");
 
-            entity.HasIndex(e => e.TenTaiKhoan, "UQ__TAIKHOAN__B106EAF830961192").IsUnique();
+            entity.HasIndex(e => e.TenTaiKhoan, "UQ__TAIKHOAN__B106EAF8E3D7169C").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.IdnhanVien).HasColumnName("IDNhanVien");
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.MaTaiKhoan)
                 .HasMaxLength(7)
                 .IsUnicode(false)

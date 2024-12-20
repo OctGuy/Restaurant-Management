@@ -9,9 +9,9 @@ public partial class Ban
 
     public string? MaBan { get; set; }
 
-    public int SucChua { get; set; }
+    public int? SucChua { get; set; }
 
-    public bool TrangThai { get; set; }
+    public bool? TrangThai { get; set; }
 
     public virtual ICollection<Hoadon> Hoadons { get; set; } = new List<Hoadon>();
 }

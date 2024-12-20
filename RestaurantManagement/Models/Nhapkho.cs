@@ -11,9 +11,9 @@ public partial class Nhapkho
 
     public string NguonNhap { get; set; } = null!;
 
-    public DateTime NgayNhap { get; set; }
+    public DateTime? NgayNhap { get; set; }
 
-    public decimal GiaNhap { get; set; }
+    public decimal? GiaNhap { get; set; }
 
     public string SdtlienLac { get; set; } = null!;
 

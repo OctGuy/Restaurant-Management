@@ -13,11 +13,13 @@ public partial class Nguyenlieu
 
     public string DonVi { get; set; } = null!;
 
-    public decimal DonGia { get; set; }
+    public decimal? DonGia { get; set; }
 
     public bool TinhTrang { get; set; }
 
     public bool Loai { get; set; }
+
+    public bool? IsDeleted { get; set; }
 
     public virtual ICollection<Ctkho> Ctkhos { get; set; } = new List<Ctkho>();
 
