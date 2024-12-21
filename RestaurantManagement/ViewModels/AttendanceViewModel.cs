@@ -189,7 +189,7 @@ namespace RestaurantManagement.ViewModels
             {
                 
                 var allEmployees = _context.Nhanviens
-                    .Where(nv => nv.IsDeleted.HasValue && nv.IsDeleted == false)
+                    .Where(nv => nv.IsDeleted.HasValue && nv.IsDeleted == false && nv.LoaiNhanVien=="Part-time")
                     .ToList();
 
                 DateOnly selectedDate = SelectedDate.HasValue ? DateOnly.FromDateTime(SelectedDate.Value) : DateOnly.FromDateTime(DateTime.Now);
@@ -425,10 +425,10 @@ namespace RestaurantManagement.ViewModels
                     .ToList();
 
                 
-                if (records == null || !records.Any())
-                {
-                    throw new Exception("Không tìm thấy bản ghi nào cho tháng đã chọn.");
-                }
+                //if (records == null || !records.Any())
+                //{
+                //    throw new Exception("Không tìm thấy bản ghi nào cho tháng đã chọn.");
+                //}
 
                
                 var monthlyRecords = records

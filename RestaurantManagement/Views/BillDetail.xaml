@@ -65,6 +65,11 @@
        
         <materialDesign:Card Grid.Row="2" Padding="10">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Xong" Margin="10 0 40 0" 
+                Background="#01872c"
+                Command="{Binding FinishCommand}" 
+                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                Style="{StaticResource MaterialDesignRaisedButton}"/>
                 <TextBlock Text="Tổng Cộng: " FontWeight="Bold" FontSize="18" 
                            VerticalAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
                 <TextBlock Text="{Binding TotalPrice}" FontSize="18" 

@@ -173,12 +173,6 @@ namespace RestaurantManagement.ViewModels
             {
                 return false;
             }
-            if (!SelectedEmployee.Phone.All(char.IsDigit))
-            {
-                System.Windows.Forms.MessageBox.Show("Số điện thoại chỉ được chứa các chữ số");
-                SelectedEmployee.Phone = "";
-                return false;
-            }
 
             System.Diagnostics.Debug.WriteLine($"HoTen: {SelectedEmployee.HoTen}, CongViec: {SelectedEmployee.CongViec}");
             return !string.IsNullOrWhiteSpace(SelectedEmployee.HoTen) &&
@@ -357,6 +351,11 @@ namespace RestaurantManagement.ViewModels
             if (SelectedEmployee.LuongTheoGio == 0 && SelectedEmployee.LuongCoBan == 0)
             {
                 System.Windows.Forms.MessageBox.Show("Vui lòng nhập lương nhân viên");
+                return false;
+            }
+            if (SelectedEmployee.DateBorn > SelectedEmployee.NgayVaoLam)
+            {
+                System.Windows.Forms.MessageBox.Show("Ngày sinh phải nhỏ hơn ngày vào làm");
                 return false;
             }
             return true;

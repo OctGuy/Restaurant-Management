@@ -78,14 +78,22 @@ namespace RestaurantManagement.ViewModels
         public ObservableCollection<BillDetailModel> BillDetails { get; set; }
 
         public ICommand PrintCommand { get; set; }
+        public ICommand FinishCommand { get; set; }
         public BillDetailViewModel(int billId)
         {
             _context = new QlnhContext();
             BillDetails = new ObservableCollection<BillDetailModel>();
             BillId = billId;
             PrintCommand = new RelayCommand<object>(canExecute: _ => true, execute: ExecutePrint);
-
+            FinishCommand=new RelayCommand<object>(canExecute: _ => true, execute: Finish);
             LoadBillDetails();
+        }
+        private void Finish(object parameter)
+        {
+            if (parameter is Window window)
+            {
+                window.Close();
+            }
         }
         private void LoadBillDetails()
         {
