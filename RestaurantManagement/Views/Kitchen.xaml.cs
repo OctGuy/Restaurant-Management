@@ -25,7 +25,7 @@ namespace RestaurantManagement.Views
         public Kitchen()
         {
             InitializeComponent();
-            DataContext = new KitchenViewModel(new QlnhContext());
+            DataContext = new KitchenViewModel();
         }
     }
 }

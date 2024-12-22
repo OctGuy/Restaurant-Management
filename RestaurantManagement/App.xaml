@@ -4,7 +4,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" 
              xmlns:local="clr-namespace:RestaurantManagement"
              xmlns:converters="clr-namespace:RestaurantManagement"
-             StartupUri="Views/LoginWindow.xaml">
+             StartupUri="MainWindow.xaml">
 
     <Application.Resources>
         <ResourceDictionary>

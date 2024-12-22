@@ -28,8 +28,8 @@ namespace RestaurantManagement.Views
         {
 
             InitializeComponent();
-            var dbContext = new QlnhContext();
-            var loginViewModel = new LoginWindowViewModel(dbContext);
+            //var dbContext = new QlnhContext();
+            var loginViewModel = new LoginWindowViewModel();
             this.DataContext = loginViewModel;
         }
         private void PackIcon_MouseDown(object sender, MouseButtonEventArgs e)

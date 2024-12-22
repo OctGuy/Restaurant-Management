@@ -18,7 +18,7 @@ public class LoginWindowViewModel : BaseViewModel
     private string _password;
     private string _errorMessage;
     private readonly QlnhContext _context;
-    private bool _role;
+    private int _role;
 
     public string Username
     {
@@ -52,7 +52,7 @@ public class LoginWindowViewModel : BaseViewModel
         }
     }
 
-    public bool Role
+    public int Role
     {
         get => _role;
         set
@@ -64,9 +64,9 @@ public class LoginWindowViewModel : BaseViewModel
 
     public ICommand LoginCommand { get; set; }
 
-    public LoginWindowViewModel(QlnhContext context)
+    public LoginWindowViewModel()
     {
-        _context = context;
+        _context = new QlnhContext();
 
         Username = "";
         Password = "";
@@ -86,24 +86,29 @@ public class LoginWindowViewModel : BaseViewModel
             OnPropertyChanged();
             return;
         }
-
         try
         {
             var user = _context.Taikhoans
                 .FirstOrDefault(t => t.TenTaiKhoan == Username && t.MatKhau == Password);
-
             if (user != null)
             {
-                Role = (user.PhanQuyen == 0);
-
+                Role = (user.PhanQuyen == 0) ? 0 :1;
                 ErrorMessage = "";
-                if (Role)
+
+                if (Role == 0)
                 {
                     MessageBox.Show("Đăng nhập thành công với quyền Admin!");
                 }
                 else
                 {
                     MessageBox.Show("Đăng nhập thành công với quyền Nhân viên!");
+                }
+
+                // Đóng window login và set DialogResult
+                if (parameter is Window window)
+                {
+                    window.DialogResult = true;
+                    window.Close();
                 }
             }
             else

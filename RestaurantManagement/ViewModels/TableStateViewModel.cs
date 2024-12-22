@@ -124,9 +124,9 @@ namespace RestaurantManagement.ViewModels
         private readonly QlnhContext _dbContext;
 
         // Constructor
-        public TableStateViewModel(QlnhContext dbContext)
+        public TableStateViewModel()
         {
-            _dbContext = dbContext;
+            _dbContext = new QlnhContext();
             TitleOfBill = SelectedTable != null ? "Hóa đơn bàn " + SelectedTable.ID : "CHỌN 1 BÀN";
             BillItems = new ObservableCollection<BillItem>();
             Tables = new ObservableCollection<cTable>();

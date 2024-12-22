@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using RestaurantManagement.ViewModels;
 
 namespace RestaurantManagement
 {
@@ -22,6 +23,7 @@ namespace RestaurantManagement
         public MainWindow()
         {
             InitializeComponent();
+            this.DataContext = new MainViewModel();
         }
     }
 }

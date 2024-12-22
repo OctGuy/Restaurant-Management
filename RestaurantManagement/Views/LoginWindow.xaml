@@ -50,7 +50,8 @@ WindowStartupLocation="CenterScreen">
                 Margin="33,47,31,42"
                 Content="Đăng nhập"
                 Background="#8a4646" FontSize="16" Foreground="White"
-                Command="{Binding LoginCommand}"/>
+                Command="{Binding LoginCommand}"
+                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
                 <TextBlock HorizontalAlignment="Center"
            Height="27"
            Margin="0,12,0,0"
