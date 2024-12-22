@@ -15,17 +15,19 @@ using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Crypto;
 using iText.Kernel.Colors;
 using System.Windows.Controls;
+using iText.IO.Image;
+using VietQRHelper;
 
 namespace RestaurantManagement.ViewModels
 {
     public class BillDetailViewModel : BaseViewModel
-    { 
+    {
         private QlnhContext _context;
         private string _employee;
         public string Employee
         {
             get => _employee;
-            set 
+            set
             {
                 _employee = value;
                 OnPropertyChanged();
@@ -85,7 +87,7 @@ namespace RestaurantManagement.ViewModels
             BillDetails = new ObservableCollection<BillDetailModel>();
             BillId = billId;
             PrintCommand = new RelayCommand<object>(canExecute: _ => true, execute: ExecutePrint);
-            FinishCommand=new RelayCommand<object>(canExecute: _ => true, execute: Finish);
+            FinishCommand = new RelayCommand<object>(canExecute: _ => true, execute: Finish);
             LoadBillDetails();
         }
         private void Finish(object parameter)
@@ -100,15 +102,15 @@ namespace RestaurantManagement.ViewModels
             var bill = _context.Hoadons
                     .Include(b => b.Cthds)
                     .ThenInclude(c => c.IddoAnUongNavigation)
-                    .Include(b => b.IdbanNavigation) 
-                    .Include(b => b.IdnhanVienNavigation) 
+                    .Include(b => b.IdbanNavigation)
+                    .Include(b => b.IdnhanVienNavigation)
                     .FirstOrDefault(b => b.Id == BillId);
 
             if (bill != null)
             {
-                CustomerName = bill.IdbanNavigation?.MaBan??"Không rõ khách hàng" ;
+                CustomerName = bill.IdbanNavigation?.MaBan ?? "Không rõ khách hàng";
                 BillDate = bill.NgayHoaDon;
-                TotalPrice = bill.TongGia??0m;
+                TotalPrice = bill.TongGia ?? 0m;
                 Employee = bill.IdnhanVienNavigation?.HoTen ?? "Hong rõ nhân viên";
                 foreach (var cthd in bill.Cthds)
                 {
@@ -190,6 +192,34 @@ namespace RestaurantManagement.ViewModels
                 document.Add(new Paragraph($"Tổng giá: {string.Format(vietnameseCurrencyFormat, "{0:C0}", TotalPrice)}")
                     .SetFont(boldFont).SetFontSize(14).SetTextAlignment(iText.Layout.Properties.TextAlignment.RIGHT)
                     .SetBackgroundColor(ColorConstants.LIGHT_GRAY).SetPadding(10));
+
+                // Thêm mã QR
+                var qrPay = QRPay.InitVietQR(
+                    bankBin: BankApp.BanksObject[BankKey.VIETCOMBANK].bin,
+                    bankNumber: "1038172542",
+                    amount: TotalPrice.ToString(),
+                    purpose: $"Thanh toan ban {CustomerName}"
+                );
+
+                var content = qrPay.Build();
+                var imageQR = QRCodeHelper.TaoVietQRCodeImage(content);
+
+                // Convert Bitmap to ImageData
+                using (var ms = new MemoryStream())
+                {
+                    imageQR.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                    ImageData qrImageData = ImageDataFactory.Create(ms.ToArray());
+                    iText.Layout.Element.Image qrImage = new iText.Layout.Element.Image(qrImageData).ScaleToFit(100, 100);
+
+                    // Add QR Code to the document
+                    document.Add(new Paragraph("Quét mã QR để thanh toán:")
+                        .SetFont(vietnameseFont)
+                        .SetFontSize(12)
+                        .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)
+                        .SetMarginTop(20));
+
+                    document.Add(qrImage.SetHorizontalAlignment(iText.Layout.Properties.HorizontalAlignment.CENTER));
+                }
 
                 // Lời cảm ơn
                 document.Add(new Paragraph("\n***** Rất hân hạnh được phục vụ quý khách. *****")
