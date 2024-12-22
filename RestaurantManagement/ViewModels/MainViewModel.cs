@@ -1,21 +1,4 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
-//using System.Windows.Input;
-
-//namespace RestaurantManagement.ViewModels
-//{
-//    public class MainViewModel : BaseViewModel
-//    {
-//        public ICommand LogOutCommand { get; set; }
-
-//        LogOut
-//    }
-//}
-
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using RestaurantManagement.State.Navigator;
 using RestaurantManagement.Views;
 using System.Windows;
@@ -64,6 +47,17 @@ namespace RestaurantManagement.ViewModels
             set
             {
                 _employeeView = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private HeaderViewModel _header;
+        public HeaderViewModel Header
+        {
+            get => _header;
+            set
+            {
+                _header = value;
                 OnPropertyChanged();
             }
         }
@@ -119,6 +113,7 @@ namespace RestaurantManagement.ViewModels
             });
 
             OpenUserInfoCommand = new RelayCommand(UserInfoWindow);
+            Header = new HeaderViewModel();
         }
 
         private void UserInfoWindow(object? parameter)
