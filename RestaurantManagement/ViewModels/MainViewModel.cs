@@ -20,6 +20,7 @@ using RestaurantManagement.State.Navigator;
 using RestaurantManagement.Views;
 using System.Windows;
 using System.Windows.Input;
+using RestaurantManagement.ViewModels;
 
 namespace RestaurantManagement.ViewModels
 {
