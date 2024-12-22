@@ -12,13 +12,14 @@ using System.Text.RegularExpressions;
 using RestaurantManagement.ViewModels;
 using System.Data;
 
-public class LoginWindowViewModel : INotifyPropertyChanged
+public class LoginWindowViewModel : BaseViewModel
 {
     private string _username;
     private string _password;
     private string _errorMessage;
     private readonly QlnhContext _context;
     private bool _role;
+
     public string Username
     {
         get => _username;
@@ -26,10 +27,10 @@ public class LoginWindowViewModel : INotifyPropertyChanged
         {
             _username = value;
             OnPropertyChanged();
-            (LoginCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            (LoginCommand as RelayCommand)?.RaiseCanExecuteChanged();  // Use the non-generic RelayCommand
         }
     }
-    
+
     public string Password
     {
         get => _password;
@@ -37,7 +38,7 @@ public class LoginWindowViewModel : INotifyPropertyChanged
         {
             _password = value;
             OnPropertyChanged();
-            (LoginCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            (LoginCommand as RelayCommand)?.RaiseCanExecuteChanged();  // Use the non-generic RelayCommand
         }
     }
 
@@ -50,6 +51,7 @@ public class LoginWindowViewModel : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
+
     public bool Role
     {
         get => _role;
@@ -68,16 +70,20 @@ public class LoginWindowViewModel : INotifyPropertyChanged
 
         Username = "";
         Password = "";
-        LoginCommand = new RelayCommand(ExecuteLogin);
+        LoginCommand = new RelayCommand(ExecuteLogin, CanExecuteLogin);  
     }
 
+    private bool CanExecuteLogin(object? parameter)
+    {
+        return !string.IsNullOrEmpty(Username) && !string.IsNullOrEmpty(Password);  
+    }
 
-    private void ExecuteLogin(object parameter)
+    private void ExecuteLogin(object? parameter)
     {
         if (!IsValidInput(Username) || !IsValidInput(Password))
         {
             ErrorMessage = "Tên đăng nhập và mật khẩu không bao gồm ký tự đặc biệt";
-            OnPropertyChanged(nameof(ErrorMessage));
+            OnPropertyChanged();
             return;
         }
 
@@ -116,12 +122,4 @@ public class LoginWindowViewModel : INotifyPropertyChanged
         var regex = new Regex("^[a-zA-Z0-9_-]+$");
         return regex.IsMatch(input);
     }
-
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-
 }
