@@ -29,7 +29,7 @@ using PdfSharp.Drawing;
 
 namespace RestaurantManagement.ViewModels
 {
-    internal class TableStateViewModel : INotifyPropertyChanged
+    internal class TableStateViewModel : BaseViewModel
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -40,7 +40,7 @@ namespace RestaurantManagement.ViewModels
             set
             {
                 _tables = value;
-                OnPropertyChanged(nameof(Tables));
+                OnPropertyChanged();
             }
         }
 
@@ -51,7 +51,7 @@ namespace RestaurantManagement.ViewModels
             set
             {
                 _titleOfBill = value;
-                OnPropertyChanged(nameof(TitleOfBill));
+                OnPropertyChanged();
             }
         }
 
@@ -63,7 +63,7 @@ namespace RestaurantManagement.ViewModels
             {
                 _billItems = value;
                 CalculateTotalAmount();
-                OnPropertyChanged(nameof(BillItems));
+                OnPropertyChanged();
             }
         }
 
@@ -74,7 +74,7 @@ namespace RestaurantManagement.ViewModels
             set
             {
                 _totalAmount = value;
-                OnPropertyChanged(nameof(TotalAmount));
+                OnPropertyChanged();
             }
         }
 
@@ -88,7 +88,7 @@ namespace RestaurantManagement.ViewModels
                 if (_selectedTable != value)
                 {
                     _selectedTable = value;
-                    OnPropertyChanged(nameof(SelectedTable));
+                    OnPropertyChanged();
                 }
             }
         }
@@ -100,7 +100,7 @@ namespace RestaurantManagement.ViewModels
             set
             {
                 _emptyTables = value;
-                OnPropertyChanged(nameof(EmptyTables));
+                OnPropertyChanged();
             }
         }
 
@@ -111,7 +111,7 @@ namespace RestaurantManagement.ViewModels
             set
             {
                 _targetTable = value;
-                OnPropertyChanged(nameof(TargetTable));
+                OnPropertyChanged();
                 Debug.WriteLine($"TargetTable changed: {TargetTable?.ID}");
             }
         }
@@ -124,9 +124,9 @@ namespace RestaurantManagement.ViewModels
         private readonly QlnhContext _dbContext;
 
         // Constructor
-        public TableStateViewModel(QlnhContext dbContext)
+        public TableStateViewModel()
         {
-            _dbContext = dbContext;
+            _dbContext = new QlnhContext();
             TitleOfBill = SelectedTable != null ? "Hóa đơn bàn " + SelectedTable.ID : "CHỌN 1 BÀN";
             BillItems = new ObservableCollection<BillItem>();
             Tables = new ObservableCollection<cTable>();

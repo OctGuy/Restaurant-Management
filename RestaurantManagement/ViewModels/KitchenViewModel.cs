@@ -42,10 +42,9 @@ public class KitchenViewModel : BaseViewModel
     public ICommand MarkAsDoneCommand { get; set; }
     public ICommand ServeDishCommand { get; set; }
 
-    public KitchenViewModel(QlnhContext context)
+    public KitchenViewModel()
     {
-        _context = context;
-
+        _context = new QlnhContext();
         ListOrder = new ObservableCollection<KitchenDish>();
         ListDone = new ObservableCollection<KitchenDish>();
 

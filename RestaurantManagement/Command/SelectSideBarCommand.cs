@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using RestaurantManagement.Models;
 using RestaurantManagement.State.Navigator;
 using RestaurantManagement.ViewModels;
 
@@ -21,14 +22,14 @@ namespace RestaurantManagement.Command
         {
             if (vmNavigator.AdminView == System.Windows.Visibility.Visible) // Admin
             {
-                //vmNavigator.CurrentViewModel = new FoodMenuViewModel();
+                vmNavigator.CurrentViewModel = new FoodMenuViewModel();
                 _titleNavigator.CurrentTitle = "Danh sách món ăn";
                 viewModelNavigator = vmNavigator;
                 titleNavigator = _titleNavigator;
             }
             else // Employee
             {
-                //vmNavigator.CurrentViewModel = new OrderMenuViewModel();
+                vmNavigator.CurrentViewModel = new MenuViewModel();
                 _titleNavigator.CurrentTitle = "Đặt bàn";
                 viewModelNavigator = vmNavigator;
                 titleNavigator = _titleNavigator;
@@ -49,35 +50,35 @@ namespace RestaurantManagement.Command
                 switch(viewType)
                 {
                     case ViewType.Employee:
-                        //viewModelNavigator.CurrentViewModel = new EmployeeViewModel();
+                        viewModelNavigator.CurrentViewModel = new EmployeeViewModel();
                         titleNavigator.CurrentTitle = "Nhân viên";
                         break;
                     case ViewType.Storage:
-                        //viewModelNavigator.CurrentViewModel = new StorageViewModel();
+                        viewModelNavigator.CurrentViewModel = new StorageViewModel();
                         titleNavigator.CurrentTitle = "Kho nguyên liệu";
                         break;
                     case ViewType.OrderMenu:
-                        //viewModelNavigator.CurrentViewModel = new OrderMenuViewModel();
+                        viewModelNavigator.CurrentViewModel = new MenuViewModel();
                         titleNavigator.CurrentTitle = "Đặt bàn";
                         break;
                     case ViewType.FoodMenu:
-                        //viewModelNavigator.CurrentViewModel = new FoodMenuViewModel();
+                        viewModelNavigator.CurrentViewModel = new FoodMenuViewModel();
                         titleNavigator.CurrentTitle = "Danh sách món ăn";
                         break;
                     case ViewType.TableHistory:
-                        //viewModelNavigator.CurrentViewModel = new TableHistoryViewModel();
-                        titleNavigator.CurrentTitle = "Lịch sử bàn";
+                        viewModelNavigator.CurrentViewModel = new BillHistoryViewModel();
+                        titleNavigator.CurrentTitle = "Lịch sử hóa đơn";
                         break;
                     case ViewType.TableStatus:
-                        //viewModelNavigator.CurrentViewModel = new TableStatusViewModel();
+                        viewModelNavigator.CurrentViewModel = new TableStateViewModel();
                         titleNavigator.CurrentTitle = "Tình trạng bàn";
                         break;
                     case ViewType.Statistics:
-                        //viewModelNavigator.CurrentViewModel = new StatisticsViewModel();
+                        viewModelNavigator.CurrentViewModel = new StatisticsViewModel();
                         titleNavigator.CurrentTitle = "Thống kê";
                         break;
                     case ViewType.Kitchen:
-                        //viewModelNavigator.CurrentViewModel = new KitchenViewModel();
+                        viewModelNavigator.CurrentViewModel = new KitchenViewModel();
                         titleNavigator.CurrentTitle = "Bếp";
                         break;
                     default:

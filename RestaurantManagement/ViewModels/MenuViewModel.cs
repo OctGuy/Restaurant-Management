@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 
 namespace RestaurantManagement.ViewModels
 {
-    public class MenuViewModel : INotifyPropertyChanged
+    public class MenuViewModel : BaseViewModel
     {
         public ICommand OrderCommand { get; set; }
         public ICommand DeleteAllCommand { get; set; }
         public ICommand DeleteSelectedItemCommand { get; set; }
 
         public ICommand NotifyCookingCommand { get; set; }
-        public MenuViewModel(QlnhContext context)
+        public MenuViewModel()
         {
             LoadDataFromDatabase();
             LoadMenuItems();
@@ -74,7 +74,7 @@ namespace RestaurantManagement.ViewModels
                 if (_searchKeyword != value)
                 {
                     _searchKeyword = value;
-                    OnPropertyChanged(nameof(SearchKeyword));
+                    OnPropertyChanged();
                     MenuItemsView.Refresh();
                 }
             }
@@ -105,7 +105,7 @@ namespace RestaurantManagement.ViewModels
                 if (_sum != value)
                 {
                     _sum = value;
-                    OnPropertyChanged(nameof(SUM));
+                    OnPropertyChanged();
                 }
             }
         }
@@ -117,7 +117,7 @@ namespace RestaurantManagement.ViewModels
             set
             {
                 _anhDoAnUong = value;
-                OnPropertyChanged(nameof(AnhDoAnUong));
+                OnPropertyChanged();
             }
         }
 
@@ -214,7 +214,7 @@ namespace RestaurantManagement.ViewModels
                     });
                 }
                 UpdateSum();
-                OnPropertyChanged(nameof(SelectedItems));
+                OnPropertyChanged();
             }
         }
 
@@ -225,7 +225,7 @@ namespace RestaurantManagement.ViewModels
             set
             {
                 _selectedTable = value;
-                OnPropertyChanged(nameof(SelectedTable));
+                OnPropertyChanged();
                 CommandManager.InvalidateRequerySuggested();
             }
         }
@@ -238,7 +238,7 @@ namespace RestaurantManagement.ViewModels
             set
             {
                 _selectedItems = value;
-                OnPropertyChanged(nameof(SelectedItems));
+                OnPropertyChanged();
             }
         }
 
@@ -321,7 +321,7 @@ namespace RestaurantManagement.ViewModels
                 bmi.BeginInit();
                 bmi.UriSource = uri;
                 bmi.EndInit();
-                AnhDoAnUong.Add(bmi);  // Assuming you want to store the BitmapImage
+                AnhDoAnUong.Add(bmi); 
             }
             catch (UriFormatException)
             {
@@ -330,7 +330,7 @@ namespace RestaurantManagement.ViewModels
                 bmi.BeginInit();
                 bmi.UriSource = defaultUri;
                 bmi.EndInit();
-                AnhDoAnUong.Add(bmi); // Add default image if URL is invalid
+                AnhDoAnUong.Add(bmi); 
             }
         }
 
@@ -364,7 +364,7 @@ namespace RestaurantManagement.ViewModels
         {
             SelectedItems.Clear();
             UpdateSum();
-            OnPropertyChanged(nameof(SelectedItems));
+            OnPropertyChanged();
         }
         private void DeleteAll(object parameter)
         {
@@ -389,7 +389,7 @@ namespace RestaurantManagement.ViewModels
             set
             {
                 _myComboboxSelection = value;
-                OnPropertyChanged(nameof(MyComboboxSelection));
+                OnPropertyChanged();
                 SortMenuItems();
             }
         }
@@ -549,7 +549,7 @@ namespace RestaurantManagement.ViewModels
             set
             {
                 _controlsEnabled = value;
-                OnPropertyChanged(nameof(ControlsEnabled));
+                OnPropertyChanged();
             }
         }
 
