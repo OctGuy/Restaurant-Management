@@ -21,10 +21,7 @@
         WindowStyle="None"
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized">
-        <!-- Window automatically go full screen -->
-        <!-- Remained DataContext from ViewModel -->
-        <!-- TextElement.FontFamily -->
-        <!-- Add triggers -->
+    
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding LoadWindowCommand}"  

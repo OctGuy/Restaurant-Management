@@ -200,11 +200,11 @@
                             CanUserSort="False"
                             Width="130"/>
                             <DataGridTextColumn Header="Số Giờ Làm Việc"
-                            Binding="{Binding TongSoGioLamViec, Mode=OneWay}"
+                            Binding="{Binding TongSoGioLamViec, Mode=OneWay, StringFormat={}{0:F2}h}"
                             CanUserSort="True" 
                             Width="150"/>
                             <DataGridTextColumn Header="Lương Tạm Tính"
-                            Binding="{Binding LuongTamtinh}"
+                            Binding="{Binding LuongTamtinh, Mode=OneWay, StringFormat={}{0:F0}đ}"
                             CanUserSort="True"
                             Width="200"/>
                         </DataGrid.Columns>

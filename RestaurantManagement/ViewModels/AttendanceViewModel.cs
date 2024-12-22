@@ -279,7 +279,6 @@ namespace RestaurantManagement.ViewModels
             {
                 OfficeOpenXml.ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
 
-
                 if (MonthlyAttendanceRecords == null || !MonthlyAttendanceRecords.Any())
                 {
                     MessageBox.Show("Không có dữ liệu để xuất.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -287,7 +286,6 @@ namespace RestaurantManagement.ViewModels
                 }
 
                 string defaultFileName = $"ChamCongThang_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
-
 
                 var saveFileDialog = new Microsoft.Win32.SaveFileDialog
                 {
@@ -302,19 +300,25 @@ namespace RestaurantManagement.ViewModels
 
                 string savedPath = saveFileDialog.FileName;
 
-
                 using (var package = new OfficeOpenXml.ExcelPackage())
                 {
                     var worksheet = package.Workbook.Worksheets.Add("Monthly Attendance");
 
+                    // Dòng tiêu đề bảng
+                    worksheet.Cells[1, 1].Value = $"Bảng chấm công tháng {DateTime.Now:MM/yyyy}";
+                    worksheet.Cells[1, 1, 1, 5].Merge = true; // Gộp ô
+                    worksheet.Cells[1, 1].Style.Font.Size = 14;
+                    worksheet.Cells[1, 1].Style.Font.Bold = true;
+                    worksheet.Cells[1, 1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
 
-                    worksheet.Cells[1, 1].Value = "Mã Nhân Viên";
-                    worksheet.Cells[1, 2].Value = "Họ Tên";
-                    worksheet.Cells[1, 3].Value = "Chức Vụ";
-                    worksheet.Cells[1, 4].Value = "Tổng Số Giờ Làm Việc";
-                    worksheet.Cells[1, 5].Value = "Lương Tạm Tính";
+                    // Tiêu đề cột
+                    worksheet.Cells[2, 1].Value = "Mã Nhân Viên";
+                    worksheet.Cells[2, 2].Value = "Họ Tên";
+                    worksheet.Cells[2, 3].Value = "Chức Vụ";
+                    worksheet.Cells[2, 4].Value = "Tổng Số Giờ Làm Việc";
+                    worksheet.Cells[2, 5].Value = "Lương Tạm Tính";
 
-                    using (var range = worksheet.Cells[1, 1, 1, 5])
+                    using (var range = worksheet.Cells[2, 1, 2, 5])
                     {
                         range.Style.Font.Bold = true;
                         range.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
@@ -322,15 +326,22 @@ namespace RestaurantManagement.ViewModels
                         range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
                     }
 
-                    int row = 2;
+                    // Dữ liệu bảng
+                    int row = 3;
                     foreach (var record in MonthlyAttendanceRecords)
                     {
                         worksheet.Cells[row, 1].Value = record.MaNhanVien;
                         worksheet.Cells[row, 2].Value = record.HoTen;
                         worksheet.Cells[row, 3].Value = record.ChucVu;
-                        worksheet.Cells[row, 4].Value = record.TongSoGioLamViec; 
+
+                        // Tổng số giờ làm việc định dạng xx.xxh
+                        worksheet.Cells[row, 4].Value = record.TongSoGioLamViec;
+                        worksheet.Cells[row, 4].Style.Numberformat.Format = "#,##0.00\"h\"";
+
+                        // Lương tạm tính định dạng xx,xxx.xxđ
                         worksheet.Cells[row, 5].Value = record.LuongTamtinh;
-                        worksheet.Cells[row, 5].Style.Numberformat.Format = "#,##0.00"; 
+                        worksheet.Cells[row, 5].Style.Numberformat.Format = "#,##0.00\"đ\"";
+
                         row++;
                     }
 
@@ -346,6 +357,7 @@ namespace RestaurantManagement.ViewModels
                 MessageBox.Show($"Đã xảy ra lỗi khi xuất dữ liệu: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
 
 
         private void Refresh()
