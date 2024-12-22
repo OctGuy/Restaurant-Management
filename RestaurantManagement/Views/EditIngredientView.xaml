@@ -77,6 +77,7 @@
 
         <TextBox Grid.Row="9"
                  materialDesign:HintAssist.Hint="Tồn dư"
+                 IsReadOnly="true"
                  Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
                  Text="{Binding IngredientToChange.remainQuantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 

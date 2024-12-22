@@ -616,7 +616,8 @@ namespace RestaurantManagement.ViewModels
                             TenNguyenLieu = AddedIngredient.ingredientName,
                             DonVi = AddedIngredient.unit,
                             DonGia = AddedIngredient.unitPrice,
-                            TinhTrang = true
+                            TinhTrang = true,
+                            Loai = SelectedIngredientType == "Nguyên liệu thô" ? false : true
                         };
                         dbContext.Add(newIngredient);
                         dbContext.SaveChanges();
@@ -663,7 +664,6 @@ namespace RestaurantManagement.ViewModels
 
                     LoadRawIngredients();
                     LoadDrinkIngredients();
-                    // ResetImportIngredient();
 
                     System.Windows.Forms.MessageBox.Show("NHẬP KHO THÀNH CÔNG");
                 }

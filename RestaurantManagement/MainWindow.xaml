@@ -3,11 +3,12 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
         xmlns:local="clr-namespace:RestaurantManagement"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:vm="clr-namespace:RestaurantManagement.ViewModels"
+        d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
         xmlns:uc="clr-namespace:RestaurantManagement.UserControls"
         mc:Ignorable="d"
         AllowsTransparency="True"
@@ -22,8 +23,14 @@
         <!-- Window automatically go full screen -->
         <!-- Remained DataContext from ViewModel -->
         <!-- TextElement.FontFamily -->
-        <!-- xmlns:vm xmlns:uc -->
         <!-- Add triggers -->
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadWindowCommand}"  
+                                   CommandParameter="{Binding ElementName=Window}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    
     <Grid>
         <Grid>
             <!-- Declare some properties for grid -->
