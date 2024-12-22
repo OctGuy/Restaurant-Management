@@ -9,16 +9,16 @@
         mc:Ignorable="d"
         Title="LoginWindow" Height="450" Width="800"
     
-TextElement.FontWeight="Regular"
-TextElement.FontSize="18"
-TextOptions.TextFormattingMode="Ideal"
-TextOptions.TextRenderingMode="Auto"
-Background="#FFFFD6D6"
-FontFamily="Comfortaa"
-ResizeMode="NoResize"
-WindowStyle="None"
-AllowsTransparency="True"
-WindowStartupLocation="CenterScreen">
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="18"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="#FFFFD6D6"
+        FontFamily="Comfortaa"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        WindowStartupLocation="CenterScreen">   
     <Grid Background="#FFA0D6FF" Margin="2,0,-4,0" UseLayoutRounding="False" Height="450" VerticalAlignment="Center">
         <Grid.RowDefinitions>
             <RowDefinition/>
