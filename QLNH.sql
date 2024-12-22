@@ -319,15 +319,59 @@ VALUES
 (2, 9, 5),
 (2, 10, 5)
 
-Insert into [BAN] (SucChua, TrangThai)
-values
-(2,0),
-(4,0),
-(8,0)
+SELect * from CTMONAN
 
-INSERT INTO [HOADON] (IDBan, IDNhanVien, NgayHoaDon, TongGia, IsDeleted)
-VALUES (1, 2, '2024-12-19', 100000, 0)
+select * from BAN
+select * from CTHD
 
-INSERT INTO [NHANVIEN] (HoTen, SDT, DiaChi, NgaySinh, CongViec, NgayVaoLam, LoaiNhanVien, LuongThang, LuongTheoGio, SoNgayLamViec, IsDeleted)
+-- Inserting restaurant tables
+INSERT INTO BAN (SucChua, TrangThai)
 VALUES 
-('Nguyen Van A', '0123456789', '123 Street, City', '1990-01-01', 'Quản lý', '2024-01-01', 'Full-time', 50000, NULL, NULL, 0);
+(4, 1),  -- Table for 4 people, available
+(2, 1),  -- Table for 2 people, available
+(6, 0),  -- Table for 6 people, occupied
+(4, 1),  -- Another table for 4 people, available
+(8, 1);  -- Large table for 8 people, available
+
+select * from NHANVIEN
+select * from DOANUONG
+update DOANUONG
+set AnhDoAnUong = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/800px-No_image_available.svg.png?fbclid=IwZXh0bgNhZW0CMTEAAR3HmVFzh45Ckm3scd4gjRC0ZsaUr87zn14IsZ07-fKfsdHZUnNXY9FyGh4_aem_wkm0VmC8XQ3-paBoXkgwfg'
+
+-- Inserting employees (both full-time and part-time)
+INSERT INTO NHANVIEN (HoTen, SDT, DiaChi, NgaySinh, CongViec, NgayVaoLam, LoaiNhanVien, LuongThang, LuongTheoGio, SoNgayLamViec)
+VALUES 
+(N'Nguyễn Văn An', '0912345678', N'123 Đường A, Quận 1, TP.HCM', '1990-05-15', 'Quản Lý', '2022-01-15', 'Full-time', 15000000, 0, NULL),
+(N'Trần Thị Bích', '0987654321', N'456 Đường B, Quận 2, TP.HCM', '1995-08-20', 'Phục Vụ', '2022-03-01', 'Full-time', 10000000, 0, NULL),
+(N'Lê Văn Cường', '0901234567', N'789 Đường C, Quận 3, TP.HCM', '1997-11-10', 'Đầu Bếp', '2022-02-15', 'Full-time', 12000000, 0, NULL),
+(N'Phạm Thị Dung', '0978123456', N'321 Đường D, Quận 4, TP.HCM', '1993-06-25', 'Order', '2023-06-01', 'Part-time', 0, 50000, 15);
+
+-- Insert data into HOADON table
+INSERT INTO [HOADON] ([IDBan], [IDNhanVien], [NgayHoaDon], [TongGia])
+VALUES
+(1, 1, '2023-12-01', 150000),
+(2, 2, '2023-12-02', 200000),
+(3, 3, '2023-12-03', 180000),
+(4, 4, '2023-12-04', 220000),
+(5, 4, '2023-12-05', 250000);
+
+select * from NHANVIEN
+select * from HOADON
+select * from CTHD
+-- Insert data into CTHD table
+INSERT INTO [CTHD] ([IDHoaDon], [IDDoAnUong], [SoLuong])
+VALUES
+(2, 1, 2),
+(3, 2, 1),
+(4, 3, 3),
+(5, 4, 2),
+(6, 5, 1);
+
+select * from DOANUONG
+
+insert into TAIKHOAN (TenTaiKhoan, MatKhau, PhanQuyen, IDNhanVien)
+values 
+('admin', 'admin123', 0, 1),
+('staff1', 'staff123', 1, 4)
+
+select * from TAIKHOAN

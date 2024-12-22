@@ -24,45 +24,9 @@ namespace RestaurantManagement.View
             InitializeComponent();
         }
 
-        private void ShowCurrentPassword_Checked(object sender, RoutedEventArgs e)
+        private void CloseUserInfoWindow(object sender, RoutedEventArgs e)
         {
-            currentPassword_Displayed.Text = currentPassword.Password;
-            currentPassword.Visibility = Visibility.Collapsed;
-            currentPassword_Displayed.Visibility = Visibility.Visible;
-        }
-
-        private void ShowCurrentPassword_Unchecked(object sender, RoutedEventArgs e)
-        {
-            currentPassword.Password = currentPassword_Displayed.Text;
-            currentPassword_Displayed.Visibility = Visibility.Collapsed;
-            currentPassword.Visibility = Visibility.Visible;
-        }
-
-        private void ShowNewPassword_Checked(object sender, RoutedEventArgs e)
-        {
-            newPassword_Displayed.Text = newPassword.Password;
-            newPassword.Visibility = Visibility.Collapsed;
-            newPassword_Displayed.Visibility = Visibility.Visible;
-        }
-
-        private void ShowNewPassword_Unchecked(object sender, RoutedEventArgs e)
-        {
-            newPassword.Password = newPassword_Displayed.Text;
-            newPassword_Displayed.Visibility = Visibility.Collapsed;
-            newPassword.Visibility = Visibility.Visible;
-        }
-        private void ShowConfirmPassword_Checked(object sender, RoutedEventArgs e)
-        {
-            confirmPassword_Displayed.Text = confirmPassword.Password;
-            confirmPassword.Visibility = Visibility.Collapsed;
-            confirmPassword_Displayed.Visibility = Visibility.Visible;
-        }
-
-        private void ShowConfirmPassword_Unchecked(object sender, RoutedEventArgs e)
-        {
-            confirmPassword.Password = confirmPassword_Displayed.Text;
-            confirmPassword_Displayed.Visibility = Visibility.Collapsed;
-            confirmPassword.Visibility = Visibility.Visible;
+            this.Close();
         }
     }
 }

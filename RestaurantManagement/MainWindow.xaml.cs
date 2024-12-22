@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using RestaurantManagement.ViewModels;
+using Microsoft.VisualBasic.ApplicationServices;
 
 namespace RestaurantManagement
 {
@@ -25,5 +26,12 @@ namespace RestaurantManagement
             InitializeComponent();
             this.DataContext = new MainViewModel();
         }
+
+        //private void ShowUser_Click(object sender, RoutedEventArgs e)
+        //{
+        //    UserInfo userSettingPage = new UserInfo();
+        //    userSettingPage.DataContext = new UserInfoViewModel()
+        //    userSettingPage.ShowDialog();
+        //}
     }
 }

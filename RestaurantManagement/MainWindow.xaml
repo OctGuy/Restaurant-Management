@@ -121,19 +121,119 @@
                     
                     <!-- Header -->
                     <UserControl x:Name="HeaderControl">
-                        <Grid Background="#fff"
-                              Width="{Binding ActualWidth, ElementName=mainSection}"
-                              Margin="20 20 20 0">
+                        <Grid Background="#fff" Width="{Binding ActualWidth, ElementName=main_section}"  Margin="20 20 20 0" >
                             <Grid.Resources>
-                                <Style x:Key="PowerOffButton" TargetType="Button">
+                                <Style x:Key="HeaderButton" TargetType="Button">
                                     <Setter Property="Background" Value="Transparent"/>
                                     <Setter Property="Width" Value="25"/>
                                     <Setter Property="Height" Value="25"/>
                                     <Setter Property="Cursor" Value="Hand"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}" BorderThickness="4 0 0 0" BorderBrush="Transparent">
+                                                    <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                                <Style x:Key="HeaderProfileButton" TargetType="Button">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="Cursor" Value="Hand"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}" BorderBrush="Transparent">
+                                                    <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                                <Style x:Key="HeaderProfileAvatar" TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="30"/>
+                                    <Setter Property="Width" Value="35"/>
+                                    <Setter Property="Height" Value="35" />
+                                    <Setter Property="Background" Value="#CFD2CF" />
+                                </Style>
+                                <Style x:Key="HeaderProfileName" TargetType="TextBlock">
+                                    <Setter Property="FontSize" Value="18"/>
+                                    <Setter Property="FontWeight" Value="Medium"/>
+                                    <Setter Property="Foreground" Value="Black" />
+                                    <Setter Property="VerticalAlignment" Value="Center" />
+                                </Style>
+                                <Style x:Key="SearchBar" TargetType="Border">
+                                    <Setter Property="Width" Value="300"/>
+                                    <Setter Property="BorderThickness" Value="1"/>
+                                    <Setter Property="BorderBrush" Value="#DFDFDE"/>
+                                    <Setter Property="CornerRadius" Value="10"/>
+                                    <Setter Property="Padding" Value="2"/>
+                                    <Setter Property="Height" Value="35"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsFocused, ElementName=txtInput}" Value="True">
+                                            <Setter Property="BorderBrush" Value="#1C3879"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                                <Style x:Key="SearchBarButton" TargetType="Button">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="Width" Value="25"/>
+                                    <Setter Property="Height" Value="25"/>
+                                    <Setter Property="Cursor" Value="Hand"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}" BorderThickness="4 0 0 0" BorderBrush="Transparent">
+                                                    <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                                <Style x:Key="SearchBarIcon" TargetType="fa:IconImage">
+                                    <Setter Property="Width" Value="15"/>
+                                    <Setter Property="Height" Value="15"/>
+                                    <Setter Property="Margin" Value="5 0 0 0" />
+                                    <Setter Property="Foreground" Value="#D8D8D8"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsFocused, ElementName=txtInput}" Value="True">
+                                            <Setter Property="Foreground" Value="#1C3879"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
                                 </Style>
                             </Grid.Resources>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="250"/>
+                                <ColumnDefinition Width="180"/>
+                                <ColumnDefinition Width="250"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" FontSize="25" Width="250" FontWeight="SemiBold" Margin="20 0 0 0" VerticalAlignment="Center" Text="{Binding Navigator.CurrentTitle}" />
+
+                            <StackPanel Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Center" Orientation="Horizontal" Height="60" Margin="0 0 50 0">
+                                <StackPanel VerticalAlignment="Center">
+                                    <Canvas Background="White">
+                                        <Border Background="Red" Width="20" Height="20" CornerRadius="100" Canvas.Left="45" Canvas.Top="-10">
+                                            <TextBlock Text="{Binding NumberOfDishesNeedServing}" Foreground="White" TextAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                        </Border>
+                                    </Canvas>
+                                    <Button Style="{StaticResource HeaderButton}" Margin="30 0 20 0" BorderThickness="0">
+                                        <fa:IconImage Icon="Bell" />
+                                    </Button>
+                                </StackPanel>
+
+                                <Button Style="{StaticResource HeaderProfileButton}" Command="{Binding OpenUserInfoCommand}">
+                                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                        <TextBlock Margin="5 0 0 0" Text="{Binding UserInfo.NhanVien.HoTen, Mode=OneWay}"  TextAlignment="Center" VerticalAlignment="Center" Style="{StaticResource HeaderProfileName}"/>
+                                    </StackPanel>
+                                </Button>
+
+                                <Button Width="40" Style="{StaticResource HeaderButton}" Margin="20 0 20 0" BorderThickness="0" Command="{Binding HeaderViewModel.CloseWindowCommand}" CommandParameter="{Binding ElementName=HeaderControl}" HorizontalAlignment="Right">
+                                    <fa:IconImage Icon="PowerOff" />
+                                </Button>
+                            </StackPanel>
                         </Grid>
-                              
                     </UserControl>
 
                     <Border Grid.Row="2" CornerRadius="10"  Margin="20 0 20 20">
