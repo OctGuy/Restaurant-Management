@@ -25,6 +25,7 @@ namespace RestaurantManagement.Views
         public FoodMenuView()
         {
             InitializeComponent();
+            DataContext = new FoodMenuViewModel();
         }
     }
 }

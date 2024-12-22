@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace RestaurantManagement.Views
 {
     /// <summary>
-    /// Interaction logic for TableHistoryView.xaml
+    /// Interaction logic for BillDetail.xaml
     /// </summary>
-    public partial class TableHistoryView : UserControl
+    public partial class BillDetail : Window
     {
-        public TableHistoryView()
+        public BillDetail()
         {
             InitializeComponent();
         }

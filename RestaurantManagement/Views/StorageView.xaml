@@ -7,6 +7,8 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:vm="clr-namespace:RestaurantManagement.ViewModels" 
+             d:DataContext="{d:DesignInstance Type=vm:StorageViewModel}"
              mc:Ignorable="d" 
              TextElement.FontSize="15"
              d:DesignHeight="670" d:DesignWidth="1070">
@@ -19,69 +21,117 @@
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="5*"/>
+                <RowDefinition Height="8*"/>
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0"
                   Margin="10 0 10 0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="3*"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBox x:Name="txtSearch"
-                         Grid.Column="0"
+                <TextBox Grid.Column="0"
                          Foreground="#701c1c"
-                         Margin="20 20 50 20"
-                         materialDesign:HintAssist.Hint="Tìm kiếm"/>
+                         Margin="30 15 0 0"
+                         materialDesign:HintAssist.Hint="Tìm kiếm nguyên liệu"
+                         Width="180"
+                         Height="35"
+                         HorizontalAlignment="Left"
+                         Text="{Binding IngredientNameFilter, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
-                <Button Name="deleteIngredientsBtn"
-                        Background="#701c1c"
-                        Grid.Column="2"
-                        Margin="5 5 5 10"
-                        Foreground="White"
-                        FontSize="16"
-                        BorderThickness="0"
-                        Cursor="Hand"
-                        Content="Xóa"/>
+                <Grid Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
 
-                <Button Name="checkIngredients"
-                        Grid.Column="1"
-                        Background="#701c1c"
-                        Margin="5 5 10 10"
-                        Foreground="White"
-                        FontSize="16"
-                        BorderThickness="0"
-                        Cursor="Hand"
-                        Content="???"/>
+                    <ComboBox Grid.Column="0"
+                              materialDesign:HintAssist.Hint="Ngày"
+                              Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                              ItemsSource="{Binding Days}"
+                              SelectedItem="{Binding SelectedDay, UpdateSourceTrigger=PropertyChanged}"
+                              Width="100" />
+
+                    <ComboBox Grid.Column="1"
+                              materialDesign:HintAssist.Hint="Tháng"
+                              Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                              ItemsSource="{Binding Months}"
+                              SelectedItem="{Binding SelectedMonth, UpdateSourceTrigger=PropertyChanged}"
+                              Width="100" />
+
+                    <ComboBox Grid.Column="2"
+                              materialDesign:HintAssist.Hint="Năm"
+                              Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                              ItemsSource="{Binding Years}"
+                              SelectedItem="{Binding SelectedYear, UpdateSourceTrigger=PropertyChanged}"
+                              Width="100" />        
+                </Grid>
             </Grid>
 
-            <Grid Grid.Row="1">
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <ListView ItemsSource="{Binding ListWareHouse}"
-                              SelectedItem="{Binding Selected, Mode=OneWayToSource}"
+            <TabControl Grid.Row="1"
+                        Style="{StaticResource MaterialDesignTabControl}"
+                        Margin="20 0 20 0"
+                        SelectionChanged="TabItem_SelectionChanged">
+                <TabItem Header="Nguyên liệu thô"
+                         Cursor="Hand"
+                         Foreground="#791c1c">
+                    <ListView x:Name="RawIngredientsListView"
+                              SelectedIndex="0"
+                              ItemsSource="{Binding DisplayRawIngredients, UpdateSourceTrigger=PropertyChanged}"
+                              SelectedItem="{Binding SelectedRawIngredient}"
                               FontSize="16"
-                              Margin="20 0 20 20">
+                              Margin="20"
+                              IsSynchronizedWithCurrentItem="True" 
+                              HorizontalAlignment="Center"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                              VerticalAlignment="Stretch">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn DisplayMemberBinding="{Binding TenSanPham}"
+                                <GridViewColumn DisplayMemberBinding="{Binding ingredientName}"
                                                 Width="200"
                                                 Header="Tên sản phẩm" />
-                                <GridViewColumn DisplayMemberBinding="{Binding TonDu}"
-                                                Width="130"
+                                <GridViewColumn DisplayMemberBinding="{Binding remainQuantity}"
+                                                Width="200"
                                                 Header="Tồn dư" />
-                                <GridViewColumn DisplayMemberBinding="{Binding DonVi}"
-                                                Width="130"
+                                <GridViewColumn DisplayMemberBinding="{Binding unit}"
+                                                Width="200"
                                                 Header="Đơn vị" />
-                                <GridViewColumn DisplayMemberBinding="{Binding DonGia}"
-                                                Width="190"
-                                                Header="Đơn giá(VNĐ)" />
                             </GridView>
                         </ListView.View>
                     </ListView>
-                </ScrollViewer>
-            </Grid>
+                </TabItem>
+
+                <TabItem Header="Nước uống"
+                         Cursor="Hand"
+                         Foreground="#791c1c">
+                    <ListView x:Name="DrinkIngredientsListView"
+                              SelectedIndex="0"
+                              ItemsSource="{Binding DisplayDrinkIngredients, UpdateSourceTrigger=PropertyChanged}"
+                              SelectedItem="{Binding SelectedDrinkIngredient}"
+                              FontSize="16"
+                              Margin="20"
+                              IsSynchronizedWithCurrentItem="True" 
+                              HorizontalAlignment="Center"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                              VerticalAlignment="Stretch">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn DisplayMemberBinding="{Binding ingredientName}"
+                                                Width="200"
+                                                Header="Tên sản phẩm" />
+                                <GridViewColumn DisplayMemberBinding="{Binding remainQuantity}"
+                                                Width="200"
+                                                Header="Tồn dư" />
+                                <GridViewColumn DisplayMemberBinding="{Binding unit}"
+                                                Width="200"
+                                                Header="Đơn vị" />
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </TabItem>
+            </TabControl>
         </Grid>
 
         <Grid Grid.Column="1" Margin="10">
@@ -91,16 +141,65 @@
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0" Margin="10">
-                <Border Background="#EEEE" CornerRadius="20"/>
-                <Label Foreground="Black" Margin="10 20 0 0">
-                    Thông tin nhập gần đây :
-                </Label>
                 <Grid>
-                    <ComboBox materialDesign:HintAssist.Hint="Thời gian"
-                              Margin="15 60 15 0"
-                              Style="{StaticResource MaterialDesignFloatingHintComboBox}"
-                              VerticalAlignment="Top"/>
-                    <!-- Binding ItemsSource, Text, SelectedIndex-->
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="0"
+                                Background="#701c1c"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Content="Lọc lại"
+                                FontSize="16"
+                                Margin="15 0 15 0"
+                                Command="{Binding ResetFilterCommand}"/>
+
+                        <Button Grid.Column="1"
+                                Background="#701c1c"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Content="Xóa"
+                                FontSize="16" 
+                                Margin="15 0 15 0"
+                                Command="{Binding DeleteIngredientCommand}"/>
+                    </Grid>
+
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="0"
+                                Background="#701c1c"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Content="Chỉnh sửa"
+                                FontSize="16"
+                                Margin="15 0 15 0"
+                                Command="{Binding OpenEditCommand}"/>
+
+                        <Button Grid.Column="1"
+                                Background="#701c1c"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Content="Xuất PDF"
+                                FontSize="16" 
+                                Command="{Binding ExportPDFCommand}"
+                                Margin="15 0 15 0"/>        
+                    </Grid>  
                 </Grid>
             </Grid>
 
@@ -119,20 +218,20 @@
                     <Grid Grid.Row="0" Margin="0 5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBox materialDesign:HintAssist.Hint="Mã nhập"
+                        <TextBox materialDesign:HintAssist.Hint="Tên sản phẩm"
                                  Grid.Column="0"
                                  Margin="15"
-                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
-                        <!-- Binding Text -->
-
-                        <TextBox materialDesign:HintAssist.Hint="Tên sản phẩm"
-                                 Grid.Column="1"
-                                 Margin="15"
-                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
-                        <!-- Binding Text -->
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                 Text="{Binding AddedIngredient.ingredientName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                 
+                        <DatePicker materialDesign:HintAssist.Hint="Ngày nhập"
+                                    Grid.Column="1"
+                                    Margin="15"
+                                    Style="{StaticResource MaterialDesignFloatingHintDatePicker}"
+                                    SelectedDate="{Binding AddedIngredient.supplyDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/> 
                     </Grid>
 
                     <Grid Grid.Row="1" Margin="0 5">
@@ -144,14 +243,14 @@
                         <TextBox materialDesign:HintAssist.Hint="Số lượng"
                                  Grid.Column="0"
                                  Margin="15"
-                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>   
-                        <!-- Binding Text -->
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                 Text="{Binding AddedIngredient.quantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-                        <DatePicker materialDesign:HintAssist.Hint="Ngày nhập"
-                                    Grid.Column="1"
-                                    Margin="15"
-                                    Style="{StaticResource MaterialDesignFloatingHintDatePicker}"/>       
-                        <!-- Binding SelectedDate -->
+                        <TextBox materialDesign:HintAssist.Hint="Đơn vị"
+                                 Grid.Column="1"
+                                 Margin="15"
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
+                                 Text="{Binding AddedIngredient.unit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                     </Grid>
 
                     <Grid Grid.Row="2" Margin="0 5">
@@ -160,27 +259,18 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBox materialDesign:HintAssist.Hint="Giá nhập (VNĐ)"
+                        <TextBox materialDesign:HintAssist.Hint="Đơn giá"
                                  Grid.Column="0"
                                  Margin="15"
-                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>       
-                        <!-- Binding Text -->
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                 Text="{Binding AddedIngredient.unitPrice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-                        <ComboBox materialDesign:HintAssist.Hint="Đơn vị"
+                        <ComboBox materialDesign:HintAssist.Hint="Loại"
                                   Grid.Column="1"
                                   Margin="15"
-                                  Style="{StaticResource MaterialDesignFloatingHintComboBox}">
-                            <ComboBoxItem>Kg</ComboBoxItem>
-                            <ComboBoxItem>Chai</ComboBoxItem>
-                            <ComboBoxItem>Quả</ComboBoxItem>
-                            <ComboBoxItem>Gói</ComboBoxItem>
-                            <ComboBoxItem>Con</ComboBoxItem>
-                            <ComboBoxItem>Lát</ComboBoxItem>
-                            <ComboBoxItem>Cây</ComboBoxItem>
-                            <ComboBoxItem>Lon</ComboBoxItem>
-                            <ComboBoxItem>Bó</ComboBoxItem>
-                        </ComboBox>
-                        <!-- Binding Text -->
+                                  Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                                  ItemsSource="{Binding ingredientType}"
+                                  SelectedItem="{Binding SelectedIngredientType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                     </Grid>
 
                     <Grid Grid.Row="3" Margin="0 5">
@@ -192,45 +282,28 @@
                         <TextBox materialDesign:HintAssist.Hint="Nguồn nhập"
                                  Grid.Column="0"
                                  Margin="15"
-                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>   
-                        <!-- Binding Text -->
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                 Text="{Binding AddedIngredient.supplySource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>   
 
-                        <TextBox materialDesign:HintAssist.Hint="Liên lạc"
+                        <TextBox materialDesign:HintAssist.Hint="SĐT Liên lạc"
                                  Grid.Column="1"
                                  Margin="15"
-                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>     
-                        <!-- Binding Text -->
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                 Text="{Binding AddedIngredient.phoneNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>     
                     </Grid>
 
-                    <Grid Grid.Row="4" Margin="0 20">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Button Name="btnAddStaff"
-                                Grid.Column="0"
-                                Command="{Binding AddCM}"
-                                Background="#701c1c"
-                                Margin="15"
-                                Foreground="White"
-                                FontSize="16"
-                                FontFamily="Comfortaa"
-                                BorderThickness="0"
-                                Cursor="Hand"
-                                Content="Nhập"/>            
-                        <Button Name="btnEditStaff"
-                                Grid.Column="1"
-                                Command="{Binding EditCM}"
-                                Background="#701c1c"
-                                Margin="15"
-                                Foreground="White"
-                                FontSize="16"
-                                FontFamily="Comfortaa"
-                                BorderThickness="0"
-                                Cursor="Hand"
-                                Content="Sửa"/> 
-                    </Grid>
+                    <Button Grid.Row="4"
+                            Background="#701c1c"
+                            Margin="15"
+                            Foreground="White"
+                            FontSize="16"
+                            FontFamily="Comfortaa"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            Content="Nhập kho"
+                            Width="150"
+                            VerticalAlignment="Center"
+                            Command="{Binding ImportIngredientCommand}"/>    
                 </Grid>
             </Grid>
         </Grid>

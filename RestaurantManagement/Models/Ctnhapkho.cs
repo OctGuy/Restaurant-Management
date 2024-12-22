@@ -9,9 +9,9 @@ public partial class Ctnhapkho
 
     public int IdnguyenLieu { get; set; }
 
-    public int SoLuongNguyenLieu { get; set; }
+    public int? SoLuongNguyenLieu { get; set; }
 
-    public decimal GiaNguyenLieu { get; set; }
+    public decimal? GiaNguyenLieu { get; set; }
 
     public virtual Nguyenlieu IdnguyenLieuNavigation { get; set; } = null!;
 

@@ -140,7 +140,7 @@ namespace RestaurantManagement.ViewModels
         private void ShowMenu(object parameter)
         {
             var table = parameter as cTable;
-            if (table != null && table.TrangThai)
+            if (table != null && table.TrangThai==true)
             {
                 SelectedTable = table;
                 LoadBillForSelectedTable(table);
@@ -152,7 +152,7 @@ namespace RestaurantManagement.ViewModels
         private bool CanShowMenu(object parameter)
         {
             var table = parameter as cTable;
-            return table != null && table.TrangThai;
+            return table != null && table.TrangThai==true;
         }
 
 
@@ -171,7 +171,7 @@ namespace RestaurantManagement.ViewModels
                 foreach (var table in tables)
                 {
                     Tables.Add(table);
-                    if (!table.TrangThai)
+                    if (!table.TrangThai??false)
                     {
                         EmptyTables.Add(table);
                     }
@@ -221,7 +221,7 @@ namespace RestaurantManagement.ViewModels
 
         private void CalculateTotalAmount()
         {
-            TotalAmount = BillItems.Sum(item => item.Quantity * item.Price);
+            TotalAmount = BillItems.Sum(item => item.Quantity * item.Price)??0;
         }
 
         private void ProcessPayment(object parameter)
@@ -234,21 +234,21 @@ namespace RestaurantManagement.ViewModels
 
             try
             {
-                var result = MessageBox.Show("Bạn có muốn xuất hóa đơn không?", "Xuất hóa đơn", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (result == MessageBoxResult.Yes)
-                {
-                    var saveFileDialog = new SaveFileDialog
-                    {
-                        Filter = "Pdf Files (*.pdf)|*.pdf",
-                        FileName = $"HoaDon_Ban{SelectedTable.ID}_Time_{DateTime.Now:yyyyMMddHHmmss}.pdf"
-                    };
+                //var result = MessageBox.Show("Bạn có muốn xuất hóa đơn không?", "Xuất hóa đơn", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                //if (result == MessageBoxResult.Yes)
+                //{
+                //    //var saveFileDialog = new SaveFileDialog
+                //    //{
+                //    //    Filter = "Pdf Files (*.pdf)|*.pdf",
+                //    //    FileName = $"HoaDon_Ban{SelectedTable.ID}_Time_{DateTime.Now:yyyyMMddHHmmss}.pdf"
+                //    //};
 
-                    if ((saveFileDialog.ShowDialog()) == true)
-                    {
-                        // Tiến hành xuất hóa đơn ra file Excel
-                        ExportBillToPdf(saveFileDialog.FileName);
-                    }
-                }
+                //    //if ((saveFileDialog.ShowDialog()) == true)
+                //    //{
+                //    //     Tiến hành xuất hóa đơn ra file Pdf
+                //    //    ExportBillToPdf(saveFileDialog.FileName);
+                //    //}
+                //}
                 // Tiến hành thanh toán
                 var paybill = _dbContext.Hoadons
                                          .Where(h => h.Idban == SelectedTable.ID && h.IsDeleted == false)
@@ -282,10 +282,17 @@ namespace RestaurantManagement.ViewModels
                             OnPropertyChanged(nameof(SelectedTable));
                         }
 
-                        MessageBox.Show("Thanh toán thành công!");
+                        
+                        var billDetailWindow = new BillDetail
+                        {
+                            DataContext = new BillDetailViewModel(paybill.Id)
+                        };
+                        
+                        billDetailWindow.ShowDialog();
                         LoadTablesFromDatabase();
                         BillItems.Clear();
                         TotalAmount = 0;
+                        MessageBox.Show("Thanh toán thành công!");
                     }
                 }
                 else
@@ -302,88 +309,88 @@ namespace RestaurantManagement.ViewModels
 
         private void ExportBillToPdf(string filePath)
         {
-            var bill = _dbContext.Hoadons
-                                 .Where(h => h.Idban == SelectedTable.ID && h.IsDeleted == false)
-                                 .FirstOrDefault();
+            //var bill = _dbContext.Hoadons
+            //                     .Where(h => h.Idban == SelectedTable.ID && h.IsDeleted == false)
+            //                     .FirstOrDefault();
 
-            if (bill != null)
-            {
-                var billItems = _dbContext.Cthds
-                                          .Where(c => c.IdhoaDon == bill.Id)
-                                          .Join(_dbContext.Doanuongs, c => c.IddoAnUong, d => d.Id,
-                                                (c, d) => new
-                                                {
-                                                    Name = d.TenDoAnUong,
-                                                    Quantity = c.SoLuong,
-                                                    Price = c.GiaMon
-                                                }).ToList();
+            //if (bill != null)
+            //{
+            //    var billItems = _dbContext.Cthds
+            //                              .Where(c => c.IdhoaDon == bill.Id)
+            //                              .Join(_dbContext.Doanuongs, c => c.IddoAnUong, d => d.Id,
+            //                                    (c, d) => new
+            //                                    {
+            //                                        Name = d.TenDoAnUong,
+            //                                        Quantity = c.SoLuong,
+            //                                        Price = c.GiaMon
+            //                                    }).ToList();
 
-                // Create a new PDF document
-                PdfDocument pdf = new PdfDocument();
-                pdf.Info.Title = "Hóa Đơn";
+            //    // Create a new PDF document
+            //    PdfDocument pdf = new PdfDocument();
+            //    pdf.Info.Title = "Hóa Đơn";
 
-                // Create a new page
-                PdfPage page = pdf.AddPage();
-                XGraphics gfx = XGraphics.FromPdfPage(page);
+            //    // Create a new page
+            //    PdfPage page = pdf.AddPage();
+            //    XGraphics gfx = XGraphics.FromPdfPage(page);
 
-                // Define font (Make sure the font supports Vietnamese characters, e.g., Arial or Tahoma)
-                XFont vietnameseFont = new XFont("Arial", 12);
-                XFont boldFont = new XFont("Arial", 12);
+            //    // Define font (Make sure the font supports Vietnamese characters, e.g., Arial or Tahoma)
+            //    XFont vietnameseFont = new XFont("Arial", 12);
+            //    XFont boldFont = new XFont("Arial", 12);
 
-                // Set currency format
-                var vietnameseCurrencyFormat = new NumberFormatInfo
-                {
-                    CurrencySymbol = "₫",
-                    CurrencyDecimalDigits = 0,
-                    CurrencyGroupSeparator = ".",
-                    CurrencyDecimalSeparator = ","
-                };
+            //    // Set currency format
+            //    var vietnameseCurrencyFormat = new NumberFormatInfo
+            //    {
+            //        CurrencySymbol = "₫",
+            //        CurrencyDecimalDigits = 0,
+            //        CurrencyGroupSeparator = ".",
+            //        CurrencyDecimalSeparator = ","
+            //    };
 
-                // Draw the title
-                gfx.DrawString($"HÓA ĐƠN BÀN {SelectedTable.ID}", boldFont, XBrushes.Black,
-                    new XRect(0, 50, page.Width, page.Height), XStringFormats.Center);
+            //    // Draw the title
+            //    gfx.DrawString($"HÓA ĐƠN BÀN {SelectedTable.ID}", boldFont, XBrushes.Black,
+            //        new XRect(0, 50, page.Width, page.Height), XStringFormats.Center);
 
-                // Draw the current date
-                gfx.DrawString($"Ngày xuất: {DateTime.Now:dd/MM/yyyy HH:mm:ss}", vietnameseFont, XBrushes.Black,
-                    new XRect(50, 100, page.Width, page.Height), XStringFormats.TopLeft);
+            //    // Draw the current date
+            //    gfx.DrawString($"Ngày xuất: {DateTime.Now:dd/MM/yyyy HH:mm:ss}", vietnameseFont, XBrushes.Black,
+            //        new XRect(50, 100, page.Width, page.Height), XStringFormats.TopLeft);
 
-                // Draw a table-like structure
-                double yPosition = 150;
-                gfx.DrawString("Tên món", boldFont, XBrushes.Black, new XRect(50, yPosition, page.Width, page.Height), XStringFormats.TopLeft);
-                gfx.DrawString("Số lượng", boldFont, XBrushes.Black, new XRect(200, yPosition, page.Width, page.Height), XStringFormats.TopLeft);
-                gfx.DrawString("Giá", boldFont, XBrushes.Black, new XRect(300, yPosition, page.Width, page.Height), XStringFormats.TopLeft);
-                gfx.DrawString("Tổng", boldFont, XBrushes.Black, new XRect(400, yPosition, page.Width, page.Height), XStringFormats.TopLeft);
+            //    // Draw a table-like structure
+            //    double yPosition = 150;
+            //    gfx.DrawString("Tên món", boldFont, XBrushes.Black, new XRect(50, yPosition, page.Width, page.Height), XStringFormats.TopLeft);
+            //    gfx.DrawString("Số lượng", boldFont, XBrushes.Black, new XRect(200, yPosition, page.Width, page.Height), XStringFormats.TopLeft);
+            //    gfx.DrawString("Giá", boldFont, XBrushes.Black, new XRect(300, yPosition, page.Width, page.Height), XStringFormats.TopLeft);
+            //    gfx.DrawString("Tổng", boldFont, XBrushes.Black, new XRect(400, yPosition, page.Width, page.Height), XStringFormats.TopLeft);
 
-                yPosition += 20;
+            //    yPosition += 20;
 
-                foreach (var item in billItems)
-                {
-                    gfx.DrawString(item.Name, vietnameseFont, XBrushes.Black, new XRect(50, yPosition, page.Width, page.Height), XStringFormats.TopLeft);
-                    gfx.DrawString(item.Quantity.ToString(), vietnameseFont, XBrushes.Black, new XRect(200, yPosition, page.Width, page.Height), XStringFormats.TopLeft);
-                    gfx.DrawString(item.Price.ToString("C", vietnameseCurrencyFormat), vietnameseFont, XBrushes.Black, new XRect(300, yPosition, page.Width, page.Height), XStringFormats.TopLeft);
-                    gfx.DrawString((item.Quantity * item.Price).ToString("C", vietnameseCurrencyFormat), vietnameseFont, XBrushes.Black, new XRect(400, yPosition, page.Width, page.Height), XStringFormats.TopLeft);
+            //    foreach (var item in billItems)
+            //    {
+            //        gfx.DrawString(item.Name, vietnameseFont, XBrushes.Black, new XRect(50, yPosition, page.Width, page.Height), XStringFormats.TopLeft);
+            //        gfx.DrawString(item.Quantity.ToString(), vietnameseFont, XBrushes.Black, new XRect(200, yPosition, page.Width, page.Height), XStringFormats.TopLeft);
+            //        //gfx.DrawString(item.Price.ToString("C", vietnameseCurrencyFormat), vietnameseFont, XBrushes.Black, new XRect(300, yPosition, page.Width, page.Height), XStringFormats.TopLeft);
+            //        gfx.DrawString((item.Quantity * item.Price).ToString("C", vietnameseCurrencyFormat), vietnameseFont, XBrushes.Black, new XRect(400, yPosition, page.Width, page.Height), XStringFormats.TopLeft);
 
-                    yPosition += 20;
-                }
+            //        yPosition += 20;
+            //    }
 
-                // Draw total amount
-                decimal totalAmount = billItems.Sum(item => item.Quantity * item.Price);
-                gfx.DrawString($"Tổng tiền: {totalAmount.ToString("C", vietnameseCurrencyFormat)}", boldFont, XBrushes.Black,
-                    new XRect(50, yPosition, page.Width, page.Height), XStringFormats.TopLeft);
+            //    // Draw total amount
+            //    decimal totalAmount = billItems.Sum(item => item.Quantity * item.Price);
+            //    gfx.DrawString($"Tổng tiền: {totalAmount.ToString("C", vietnameseCurrencyFormat)}", boldFont, XBrushes.Black,
+            //        new XRect(50, yPosition, page.Width, page.Height), XStringFormats.TopLeft);
 
-                // Save the PDF to file
-                pdf.Save(filePath);
+            //    // Save the PDF to file
+            //    pdf.Save(filePath);
 
-                // Open the file
+            //    // Open the file
                 
-                MessageBox.Show($"Hóa đơn đã được lưu vào: {filePath}", "Thành công", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
+            //    MessageBox.Show($"Hóa đơn đã được lưu vào: {filePath}", "Thành công", MessageBoxButton.OK, MessageBoxImage.Information);
+            //}
 
-            else
-            {
-                // Handle case where bill is not found
-                MessageBox.Show("Không tìm thấy hóa đơn.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            //else
+            //{
+            //    // Handle case where bill is not found
+            //    MessageBox.Show("Không tìm thấy hóa đơn.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            //}
         }
 
 
@@ -445,14 +452,14 @@ namespace RestaurantManagement.ViewModels
     public class BillItem
     {
         public int IDDoAnUong { get; set; }
-        public string Name { get; set; }
-        public int Quantity { get; set; }
-        public decimal Price { get; set; }
+        public string? Name { get; set; }
+        public int? Quantity { get; set; }
+        public decimal? Price { get; set; }
     }
 
     public class cTable
     {
         public int ID { get; set; }
-        public bool TrangThai { get; set; } // Trạng thái: true = đã đặt, false = chưa đặt
+        public bool? TrangThai { get; set; } // Trạng thái: true = đã đặt, false = chưa đặt
     }
 }

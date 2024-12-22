@@ -1,4 +1,5 @@
-﻿using RestaurantManagement.ViewModels;
+﻿
+using RestaurantManagement.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,19 +12,21 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace RestaurantManagement.Views
 {
     /// <summary>
-    /// Interaction logic for StatisticsView.xaml
+    /// Interaction logic for BillHistory.xaml
     /// </summary>
-    public partial class StatisticsView : UserControl
+    public partial class BillHistory : UserControl
     {
-        public StatisticsView()
+        public BillHistory()
         {
             InitializeComponent();
-            this.DataContext = new StatisticsViewModel();
+            this.DataContext = new BillHistoryViewModel();
+
         }
     }
 }

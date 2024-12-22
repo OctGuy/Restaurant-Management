@@ -137,7 +137,7 @@
 
                 <!-- Lịch sử bàn -->
                 <RadioButton Style="{StaticResource sideBar}" 
-                             Command="{Binding SelectSideBarCommand}"
+                             Command="{Binding SelectViewModelCommand}"
                              CommandParameter="{x:Static nav:ViewType.TableHistory}">
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="CalendarAlt" Style="{StaticResource buttonIcon}"/>
@@ -147,7 +147,7 @@
 
                 <!-- Bếp -->
                 <RadioButton Style="{StaticResource sideBar}" 
-                             Command="{Binding SelectSideBarCommand}"
+                             Command="{Binding SelectViewModelCommand}"
                              CommandParameter="{x:Static nav:ViewType.Kitchen}">
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="KitchenSet" Style="{StaticResource buttonIcon}"/>
@@ -157,7 +157,7 @@
 
                 <!-- Kho -->
                 <RadioButton Style="{StaticResource sideBar}" 
-                             Command="{Binding SelectSideBarCommand}"
+                             Command="{Binding SelectViewModelCommand}"
                              CommandParameter="{x:Static nav:ViewType.Storage}">
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="Warehouse" Style="{StaticResource buttonIcon}"/>
@@ -167,7 +167,7 @@
 
                 <!-- Nhân viên -->
                 <RadioButton Style="{StaticResource sideBar}" 
-                             Command="{Binding SelectSideBarCommand}"
+                             Command="{Binding SelectViewModelCommand}"
                              CommandParameter="{x:Static nav:ViewType.Employee}">
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="IdBadge" Style="{StaticResource buttonIcon}"/>
@@ -177,7 +177,7 @@
 
                 <!-- Thống kê -->
                 <RadioButton Style="{StaticResource sideBar}" 
-                             Command="{Binding SelectSideBarCommand}"
+                             Command="{Binding SelectViewModelCommand}"
                              CommandParameter="{x:Static nav:ViewType.Statistics}">
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="ChartLine" Style="{StaticResource buttonIcon}"/>

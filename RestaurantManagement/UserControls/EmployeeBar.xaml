@@ -137,7 +137,7 @@
                 
                 <!-- Bếp -->
                 <RadioButton Style="{StaticResource sideBar}" 
-                             Command="{Binding SelectSideBarCommand}"
+                             Command="{Binding SelectViewModelCommand}"
                              CommandParameter="{x:Static nav:ViewType.Kitchen}">
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="KitchenSet" Style="{StaticResource buttonIcon}"/>

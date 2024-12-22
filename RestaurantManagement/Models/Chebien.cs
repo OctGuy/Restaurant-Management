@@ -11,7 +11,7 @@ public partial class Chebien
 
     public int IdhoaDon { get; set; }
 
-    public int ThoiGianChuanBi { get; set; }
+    public int? ThoiGianChuanBi { get; set; }
 
     public bool? IsDeleted { get; set; } = false;
 

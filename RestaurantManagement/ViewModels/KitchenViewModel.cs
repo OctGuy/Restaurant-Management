@@ -193,8 +193,8 @@ public class KitchenViewModel : BaseViewModel
 
 public class KitchenDish
 {
-    public string TenDoAnUong { get; set; }
-    public int SoLuong { get; set; }
-    public int IDBan { get; set; }
-    public int IdCheBien { get; set; }
+    public string? TenDoAnUong { get; set; }
+    public int? SoLuong { get; set; }
+    public int? IDBan { get; set; }
+    public int? IdCheBien { get; set; }
 }
