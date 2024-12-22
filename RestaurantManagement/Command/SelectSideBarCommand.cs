@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using RestaurantManagement.Models;
 using RestaurantManagement.State.Navigator;
 using RestaurantManagement.ViewModels;
 
@@ -21,14 +22,14 @@ namespace RestaurantManagement.Command
         {
             if (vmNavigator.AdminView == System.Windows.Visibility.Visible) // Admin
             {
-                //vmNavigator.CurrentViewModel = new FoodMenuViewModel();
+                vmNavigator.CurrentViewModel = new FoodMenuViewModel();
                 _titleNavigator.CurrentTitle = "Danh sách món ăn";
                 viewModelNavigator = vmNavigator;
                 titleNavigator = _titleNavigator;
             }
             else // Employee
             {
-                //vmNavigator.CurrentViewModel = new OrderMenuViewModel();
+                vmNavigator.CurrentViewModel = new MenuViewModel();
                 _titleNavigator.CurrentTitle = "Đặt bàn";
                 viewModelNavigator = vmNavigator;
                 titleNavigator = _titleNavigator;
