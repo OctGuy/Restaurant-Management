@@ -227,7 +227,7 @@ namespace RestaurantManagement.ViewModels
 
                 for (int day = 1; day <= daysInMonth; day++)
                 {
-                    incomeValues.Add(dailyIncomes.ContainsKey(day) ? dailyIncomes[day] : 0);
+                    incomeValues.Add(dailyIncomes.ContainsKey(day) ? dailyIncomes[day] ?? 0 : 0);
                     expenseValues.Add(dailyExpenses.ContainsKey(day) ? dailyExpenses[day] : 0);
                 }
 
@@ -349,7 +349,7 @@ namespace RestaurantManagement.ViewModels
 
                 for (int month = 1; month <= 12; month++)
                 {
-                    incomeValues.Add(monthlyIncomes.ContainsKey(month) ? monthlyIncomes[month] : 0);
+                    incomeValues.Add(monthlyIncomes.ContainsKey(month) ? monthlyIncomes[month] ?? 0 : 0 );
                     expenseValues.Add(monthlyExpenses.ContainsKey(month) ? monthlyExpenses[month] ?? 0 : 0);
 
                 }

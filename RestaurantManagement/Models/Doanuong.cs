@@ -13,11 +13,11 @@ public partial class Doanuong
 
     public string? AnhDoAnUong { get; set; }
 
-    public decimal DonGia { get; set; }
+    public decimal? DonGia { get; set; }
 
-    public bool TinhTrang { get; set; }
+    public bool? TinhTrang { get; set; }
 
-    public int ThoiGianChuanBi { get; set; }
+    public int? ThoiGianChuanBi { get; set; }
 
     public bool Loai { get; set; }
 

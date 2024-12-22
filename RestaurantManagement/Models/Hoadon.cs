@@ -15,9 +15,10 @@ public partial class Hoadon
 
     public DateTime NgayHoaDon { get; set; }
 
-    public decimal TongGia { get; set; }
+    public decimal? TongGia { get; set; }
 
     public bool? IsDeleted { get; set; }
+
 
     public virtual ICollection<Chebien> Chebiens { get; set; } = new List<Chebien>();
 

@@ -9,7 +9,7 @@ public partial class Ctmonan
 
     public int IdnguyenLieu { get; set; }
 
-    public int SoLuongNguyenLieu { get; set; }
+    public int? SoLuongNguyenLieu { get; set; }
 
     public virtual Doanuong IddoAnUongNavigation { get; set; } = null!;
 

@@ -310,6 +310,7 @@ public partial class QlnhContext : DbContext
 
             entity.HasIndex(e => e.TenTaiKhoan, "UQ__TAIKHOAN__B106EAF8E3D7169C").IsUnique();
 
+
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.IdnhanVien).HasColumnName("IDNhanVien");
             entity.Property(e => e.IsDeleted).HasDefaultValue(false);

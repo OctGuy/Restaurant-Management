@@ -9,9 +9,9 @@ public partial class Cthd
 
     public int IddoAnUong { get; set; }
 
-    public int SoLuong { get; set; }
+    public int? SoLuong { get; set; }
 
-    public decimal GiaMon { get; set; }
+    public decimal? GiaMon { get; set; }
 
     public bool? IsDeleted { get; set; }
 

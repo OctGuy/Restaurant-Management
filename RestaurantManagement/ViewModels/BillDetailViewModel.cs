@@ -108,7 +108,7 @@ namespace RestaurantManagement.ViewModels
             {
                 CustomerName = bill.IdbanNavigation?.MaBan??"Không rõ khách hàng" ;
                 BillDate = bill.NgayHoaDon;
-                TotalPrice = bill.TongGia;
+                TotalPrice = bill.TongGia??0m;
                 Employee = bill.IdnhanVienNavigation?.HoTen ?? "Hong rõ nhân viên";
                 foreach (var cthd in bill.Cthds)
                 {
@@ -138,24 +138,16 @@ namespace RestaurantManagement.ViewModels
                 PdfFont vietnameseFont = PdfFontFactory.CreateFont("c:/windows/fonts/arial.ttf", PdfEncodings.IDENTITY_H);
                 PdfFont boldFont = PdfFontFactory.CreateFont("C:/Windows/Fonts/arialbd.ttf", PdfEncodings.IDENTITY_H);
 
+                var vietnameseCurrencyFormat = new System.Globalization.CultureInfo("vi-VN");
 
-                var vietnameseCurrencyFormat = new System.Globalization.NumberFormatInfo
-                {
-                    CurrencySymbol = "₫",
-                    CurrencyDecimalDigits = 0,
-                    CurrencyGroupSeparator = ".",
-                    CurrencyDecimalSeparator = ","
-                };
-
-    
+                // Tiêu đề
                 document.Add(new Paragraph("HÓA ĐƠN")
                     .SetFont(boldFont)
                     .SetFontSize(24)
                     .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)
                     .SetMarginBottom(20));
 
-                
-
+                // Thông tin hóa đơn
                 document.Add(new Paragraph($"Mã hóa đơn: {BillId}")
                     .SetFont(vietnameseFont).SetFontSize(12).SetTextAlignment(iText.Layout.Properties.TextAlignment.LEFT));
 
@@ -165,11 +157,10 @@ namespace RestaurantManagement.ViewModels
                 document.Add(new Paragraph($"Ngày lập hóa đơn: {BillDate.ToString("dd/MM/yyyy")}")
                     .SetFont(vietnameseFont).SetFontSize(12).SetTextAlignment(iText.Layout.Properties.TextAlignment.LEFT));
 
-
-
-       
+                // Tạo bảng
                 Table table = new Table(4).UseAllAvailableWidth();
 
+                // Header bảng
                 table.AddHeaderCell(new Cell().Add(new Paragraph("Tên món").SetFont(boldFont).SetFontSize(12).SetFontColor(ColorConstants.WHITE))
                     .SetBackgroundColor(ColorConstants.DARK_GRAY).SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
                 table.AddHeaderCell(new Cell().Add(new Paragraph("Số lượng").SetFont(boldFont).SetFontSize(12).SetFontColor(ColorConstants.WHITE))
@@ -179,41 +170,49 @@ namespace RestaurantManagement.ViewModels
                 table.AddHeaderCell(new Cell().Add(new Paragraph("Thành tiền").SetFont(boldFont).SetFontSize(12).SetFontColor(ColorConstants.WHITE))
                     .SetBackgroundColor(ColorConstants.DARK_GRAY).SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
 
+                // Thêm dữ liệu vào bảng
                 foreach (var detail in BillDetails)
                 {
                     table.AddCell(new Cell().Add(new Paragraph(detail.ItemName).SetFont(vietnameseFont).SetFontSize(12))
                         .SetTextAlignment(iText.Layout.Properties.TextAlignment.LEFT));
                     table.AddCell(new Cell().Add(new Paragraph(detail.Quantity.ToString()).SetFont(vietnameseFont).SetFontSize(12))
                         .SetTextAlignment(iText.Layout.Properties.TextAlignment.RIGHT));
-                    table.AddCell(new Cell().Add(new Paragraph(detail.UnitPrice.ToString("C", vietnameseCurrencyFormat)).SetFont(vietnameseFont).SetFontSize(12))
+                    table.AddCell(new Cell().Add(new Paragraph(string.Format(vietnameseCurrencyFormat, "{0:C0}", detail.UnitPrice)).SetFont(vietnameseFont).SetFontSize(12))
                         .SetTextAlignment(iText.Layout.Properties.TextAlignment.RIGHT));
-                    table.AddCell(new Cell().Add(new Paragraph(detail.Price.ToString("C", vietnameseCurrencyFormat)).SetFont(vietnameseFont).SetFontSize(12))
+                    table.AddCell(new Cell().Add(new Paragraph(string.Format(vietnameseCurrencyFormat, "{0:C0}", detail.Price)).SetFont(vietnameseFont).SetFontSize(12))
                         .SetTextAlignment(iText.Layout.Properties.TextAlignment.RIGHT));
                 }
+
+                // Thêm bảng vào tài liệu
                 document.Add(table.SetMarginBottom(20));
 
- 
-                document.Add(new Paragraph($"Tổng giá: {TotalPrice.ToString("C", vietnameseCurrencyFormat)}")
+                // Tổng giá
+                document.Add(new Paragraph($"Tổng giá: {string.Format(vietnameseCurrencyFormat, "{0:C0}", TotalPrice)}")
                     .SetFont(boldFont).SetFontSize(14).SetTextAlignment(iText.Layout.Properties.TextAlignment.RIGHT)
                     .SetBackgroundColor(ColorConstants.LIGHT_GRAY).SetPadding(10));
-                document.Add(new Paragraph("\n***** Rất hân hạnh được phục vụ quý khách.  *****")
+
+                // Lời cảm ơn
+                document.Add(new Paragraph("\n***** Rất hân hạnh được phục vụ quý khách. *****")
                     .SetFont(boldFont)
                     .SetFontSize(12)
                     .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)
                     .SetMarginTop(30));
+
                 document.Close();
             }
 
+            // Thông báo khi hoàn thành
             MessageBox.Show($"Hóa đơn đã được xuất ra file PDF tại: {filePath}", "Xuất Hóa Đơn", MessageBoxButton.OK, MessageBoxImage.Information);
         }
-        
+
+
     }
 
     public class BillDetailModel
     {
-        public string ItemName { get; set; }
-        public int Quantity { get; set; }
-        public decimal UnitPrice { get; set; }
-        public decimal Price { get; set; }
+        public string? ItemName { get; set; }
+        public int? Quantity { get; set; }
+        public decimal? UnitPrice { get; set; }
+        public decimal? Price { get; set; }
     }
 }

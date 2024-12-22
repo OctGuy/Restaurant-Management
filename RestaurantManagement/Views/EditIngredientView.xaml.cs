@@ -10,22 +10,18 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using RestaurantManagement.ViewModels;
-using RestaurantManagement.Models;
 
 namespace RestaurantManagement.Views
 {
     /// <summary>
-    /// Interaction logic for FoodMenu.xaml
+    /// Interaction logic for EditIngredientView.xaml
     /// </summary>
-    public partial class FoodMenuView : UserControl
+    public partial class EditIngredientView : Window
     {
-        public FoodMenuView()
+        public EditIngredientView()
         {
             InitializeComponent();
-            DataContext = new FoodMenuViewModel();
         }
     }
 }

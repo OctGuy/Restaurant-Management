@@ -9,7 +9,7 @@ public partial class Kho
 
     public string? MaKho { get; set; }
 
-    public string TenKho { get; set; } = null!;
+    public string? TenKho { get; set; } = null!;
 
     public virtual ICollection<Ctkho> Ctkhos { get; set; } = new List<Ctkho>();
 

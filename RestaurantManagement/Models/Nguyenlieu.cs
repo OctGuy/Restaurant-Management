@@ -11,13 +11,13 @@ public partial class Nguyenlieu
 
     public string TenNguyenLieu { get; set; } = null!;
 
-    public string DonVi { get; set; } = null!;
+    public string? DonVi { get; set; } = null!;
 
     public decimal? DonGia { get; set; }
 
-    public bool TinhTrang { get; set; }
+    public bool? TinhTrang { get; set; }
 
-    public bool Loai { get; set; }
+    public bool? Loai { get; set; }
 
     public bool? IsDeleted { get; set; }
 
