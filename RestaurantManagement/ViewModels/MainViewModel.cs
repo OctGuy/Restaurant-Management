@@ -95,14 +95,15 @@ namespace RestaurantManagement.ViewModels
 
 
             // Xử lý logic khi đăng xuất
-            LogOutCommand = new RelayCommand<Window>(
-                (p) => true, // Điều kiện có thể thực thi
-                (p) =>
+            LogOutCommand = new RelayCommand<Window>((p) => true, (p) =>
+            {
+                if (p == null)
                 {
-                    MessageBox.Show("Đăng xuất thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-                    // Thêm logic điều hướng hoặc đóng ứng dụng tại đây
-                    p.Close();
-                });
+                    return;
+                }
+                System.Windows.Forms.Application.Restart();
+                p.Close();
+            });
         }
     }
 }
