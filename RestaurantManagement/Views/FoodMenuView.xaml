@@ -287,6 +287,12 @@
                     </Grid>
 
                     <Grid Margin="0 60 0 0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        
                         <Button Background="#701c1c" 
                                 Grid.Column="0"
                                 Content="Thêm"
@@ -295,8 +301,7 @@
                         <Button Background="#701c1c" 
                                 Grid.Column="2" 
                                 Content="Chỉnh sửa" 
-                                Command="{Binding SwitchToAddDishesViewCommand}"/>
-                        <!-- Binding Command -->
+                                Command="{Binding EditDishInfoCommand}"/>
                     </Grid>
                 </StackPanel>
             </Border>
