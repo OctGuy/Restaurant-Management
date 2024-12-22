@@ -19,7 +19,7 @@ namespace RestaurantManagement.Views
     /// <summary>
     /// Interaction logic for TinhTrangBan.xaml
     /// </summary>
-    public partial class TableState : Window
+    public partial class TableState : UserControl
     {
         public TableState()
         {

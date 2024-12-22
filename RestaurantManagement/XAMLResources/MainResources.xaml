@@ -23,5 +23,19 @@
     <DataTemplate DataType="{x:Type vm:TableStateViewModel}">
         <view:TableState/>
     </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:FoodMenuViewModel}">
+        <view:FoodMenuView/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:KitchenViewModel}">
+        <view:Kitchen/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:MenuViewModel}">
+        <view:Menu/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:EmployeeViewModel}">
+        <view:EmployeeView/>
+    </DataTemplate>
+
+
 
 </ResourceDictionary>

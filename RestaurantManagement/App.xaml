@@ -11,6 +11,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <materialDesign:CustomColorTheme BaseTheme="Light" PrimaryColor="Maroon" SecondaryColor="DarkGreen" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign3.Defaults.xaml" />
+                <ResourceDictionary Source="XAMLResources/MainResources.xaml"></ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
             <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
         </ResourceDictionary>

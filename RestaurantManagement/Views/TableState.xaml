@@ -1,4 +1,4 @@
-﻿<Window
+﻿<UserControl
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:RestaurantManagement.Views"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" x:Class="RestaurantManagement.Views.TableState"
         mc:Ignorable="d"
-        Title="TableState" Height="450" Width="800" WindowStyle="None" ResizeMode="NoResize">
+        Height="660" Width="1060" >
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="67*"/>
@@ -24,7 +24,7 @@
                     <DataTemplate>
                         <Button Width="175" Height="105" Margin="5,15,15,15" FontSize="15"
                         Content="{Binding ID, StringFormat='BÀN {0}'}" 
-                        Command="{Binding DataContext.ShowMenuCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                        Command="{Binding DataContext.ShowMenuCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                         CommandParameter="{Binding}">
                             <Button.Style>
                                 <Style TargetType="Button">
@@ -187,4 +187,4 @@
         </Border>
 
     </Grid>
-</Window>
+</UserControl>

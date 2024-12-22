@@ -20,7 +20,7 @@ namespace RestaurantManagement.Views
     /// <summary>
     /// Interaction logic for Kitchen.xaml
     /// </summary>
-    public partial class Kitchen : Window
+    public partial class Kitchen : UserControl
     {
         public Kitchen()
         {

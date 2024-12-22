@@ -1,4 +1,4 @@
-﻿<Window
+﻿<UserControl
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:RestaurantManagement.Views"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" x:Class="RestaurantManagement.Views.Kitchen"
         mc:Ignorable="d"
-        Title="Kitchen" Height="450" Width="800" WindowStyle="None" ResizeMode="NoResize">
+        d:DesignHeight="660" d:DesignWidth="1060">
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -17,7 +17,7 @@
             Width="{DynamicResource ButtonWidth}"
             Content="ĐÃ THỰC HIỆN XONG"
             Command="{Binding MarkAsDoneCommand}"
-            IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+            IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"
             Style="{StaticResource MaterialDesignRaisedButton}"
             ToolTip="Resource name: MaterialDesignRaisedButton" Margin="73,392,83,26" Background="#FF701C1C" BorderBrush="Black" Foreground="White"
   />
@@ -79,4 +79,4 @@
         <Label Grid.Column="1" Content="DANH SÁCH CÁC MÓN CẦN PHỤC VỤ:" HorizontalAlignment="Left" Height="28" Margin="27,30,0,0" VerticalAlignment="Top" Width="301" FontSize="10" Foreground="#E5000000"/>
 
     </Grid>
-</Window>
+</UserControl>

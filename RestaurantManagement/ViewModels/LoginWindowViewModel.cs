@@ -95,14 +95,7 @@ public class LoginWindowViewModel : BaseViewModel
                 Role = (user.PhanQuyen == 0) ? 0 :1;
                 ErrorMessage = "";
 
-                if (Role == 0)
-                {
-                    MessageBox.Show("Đăng nhập thành công với quyền Admin!");
-                }
-                else
-                {
-                    MessageBox.Show("Đăng nhập thành công với quyền Nhân viên!");
-                }
+                
 
                 // Đóng window login và set DialogResult
                 if (parameter is Window window)
