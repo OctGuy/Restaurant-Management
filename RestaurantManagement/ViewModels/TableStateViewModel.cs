@@ -1,15 +1,31 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Microsoft.EntityFrameworkCore;
-using RestaurantManagement.Models;
-using OfficeOpenXml; 
-using System.IO;
 using Microsoft.Win32;
+using OfficeOpenXml;
+//using iText.Kernel.Colors;
+//using iText.Kernel.Font;
+//using iText.Kernel.Pdf;
+using iText.Layout;
+using iText.Layout.Element;
+using iText.Layout.Properties;
 using System.Diagnostics;
+using RestaurantManagement.Models;
+using RestaurantManagement.Views;
+//using iText.IO.Font;
+using Org.BouncyCastle.Crypto;
+using System.Windows.Controls;
+//using iText.IO.Font.Constants;
+//using iText.Commons.Actions.Contexts;
+using PdfSharp.Pdf;
+using PdfSharp.Drawing;
 
 namespace RestaurantManagement.ViewModels
 {
@@ -17,8 +33,8 @@ namespace RestaurantManagement.ViewModels
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private ObservableCollection<Table> _tables;
-        public ObservableCollection<Table> Tables
+        private ObservableCollection<cTable> _tables;
+        public ObservableCollection<cTable> Tables
         {
             get => _tables;
             set
@@ -46,8 +62,8 @@ namespace RestaurantManagement.ViewModels
             set
             {
                 _billItems = value;
-                OnPropertyChanged(nameof(BillItems));
                 CalculateTotalAmount();
+                OnPropertyChanged(nameof(BillItems));
             }
         }
 
@@ -62,9 +78,9 @@ namespace RestaurantManagement.ViewModels
             }
         }
 
-        private Table _selectedTable;
+        private cTable _selectedTable;
 
-        public Table SelectedTable
+        public cTable SelectedTable
         {
             get { return _selectedTable; }
             set
@@ -77,8 +93,8 @@ namespace RestaurantManagement.ViewModels
             }
         }
 
-        private ObservableCollection<Table> _emptyTables;
-        public ObservableCollection<Table> EmptyTables
+        private ObservableCollection<cTable> _emptyTables;
+        public ObservableCollection<cTable> EmptyTables
         {
             get => _emptyTables;
             set
@@ -88,8 +104,8 @@ namespace RestaurantManagement.ViewModels
             }
         }
 
-        private Table _targetTable;
-        public Table TargetTable
+        private cTable _targetTable;
+        public cTable TargetTable
         {
             get => _targetTable;
             set
@@ -113,8 +129,8 @@ namespace RestaurantManagement.ViewModels
             _dbContext = dbContext;
             TitleOfBill = SelectedTable != null ? "Hóa đơn bàn " + SelectedTable.ID : "CHỌN 1 BÀN";
             BillItems = new ObservableCollection<BillItem>();
-            Tables = new ObservableCollection<Table>();
-            EmptyTables = new ObservableCollection<Table>();
+            Tables = new ObservableCollection<cTable>();
+            EmptyTables = new ObservableCollection<cTable>();
             LoadTablesFromDatabase();
             ProcessPaymentCommand = new RelayCommand(ProcessPayment, CanExecuteCommands);
             TransferTableCommand = new RelayCommand(TransferTable, CanExecuteCommands);
@@ -123,7 +139,7 @@ namespace RestaurantManagement.ViewModels
 
         private void ShowMenu(object parameter)
         {
-            var table = parameter as Table;
+            var table = parameter as cTable;
             if (table != null && table.TrangThai)
             {
                 SelectedTable = table;
@@ -135,7 +151,7 @@ namespace RestaurantManagement.ViewModels
 
         private bool CanShowMenu(object parameter)
         {
-            var table = parameter as Table;
+            var table = parameter as cTable;
             return table != null && table.TrangThai;
         }
 
@@ -144,7 +160,7 @@ namespace RestaurantManagement.ViewModels
         {
             try
             {
-                var tables = _dbContext.Bans.Select(b => new Table
+                var tables = _dbContext.Bans.Select(b => new cTable
                 {
                     ID = b.Id,
                     TrangThai = b.TrangThai
@@ -157,7 +173,7 @@ namespace RestaurantManagement.ViewModels
                     Tables.Add(table);
                     if (!table.TrangThai)
                     {
-                        EmptyTables.Add(table); 
+                        EmptyTables.Add(table);
                     }
                 }
             }
@@ -168,7 +184,7 @@ namespace RestaurantManagement.ViewModels
         }
 
 
-        private void LoadBillForSelectedTable(Table selectedTable)
+        private void LoadBillForSelectedTable(cTable selectedTable)
         {
             var bill = _dbContext.Hoadons
                                   .Where(h => h.Idban == selectedTable.ID && h.IsDeleted == false)
@@ -190,9 +206,9 @@ namespace RestaurantManagement.ViewModels
                 BillItems.Clear();
                 foreach (var item in billItems)
                 {
-                    BillItems.Add(item);  
+                    BillItems.Add(item);
                 }
-                CalculateTotalAmount();  
+                CalculateTotalAmount();
             }
             else
             {
@@ -219,27 +235,25 @@ namespace RestaurantManagement.ViewModels
             try
             {
                 var result = MessageBox.Show("Bạn có muốn xuất hóa đơn không?", "Xuất hóa đơn", MessageBoxButton.YesNo, MessageBoxImage.Question);
-
                 if (result == MessageBoxResult.Yes)
                 {
                     var saveFileDialog = new SaveFileDialog
                     {
-                        Filter = "Excel Files (*.xlsx)|*.xlsx",
-                        FileName = $"HoaDon_Ban{SelectedTable.ID}_Time_{DateTime.Now:yyyyMMddHHmmss}.xlsx"
+                        Filter = "Pdf Files (*.pdf)|*.pdf",
+                        FileName = $"HoaDon_Ban{SelectedTable.ID}_Time_{DateTime.Now:yyyyMMddHHmmss}.pdf"
                     };
 
                     if ((saveFileDialog.ShowDialog()) == true)
                     {
                         // Tiến hành xuất hóa đơn ra file Excel
-                        ExportBillToExcel(saveFileDialog.FileName);
+                        ExportBillToPdf(saveFileDialog.FileName);
                     }
                 }
-
                 // Tiến hành thanh toán
                 var paybill = _dbContext.Hoadons
                                          .Where(h => h.Idban == SelectedTable.ID && h.IsDeleted == false)
                                          .FirstOrDefault();
-                var exbill = _dbContext.Hoadons
+                var exbill = _dbContext.Hoadons     
                                          .Where(h => h.Idban == SelectedTable.ID)
                                          .FirstOrDefault();
 
@@ -278,6 +292,7 @@ namespace RestaurantManagement.ViewModels
                 {
                     MessageBox.Show("Không có hóa đơn chưa thanh toán.");
                 }
+                
             }
             catch (Exception ex)
             {
@@ -285,7 +300,7 @@ namespace RestaurantManagement.ViewModels
             }
         }
 
-        private void ExportBillToExcel(string filePath)
+        private void ExportBillToPdf(string filePath)
         {
             var bill = _dbContext.Hoadons
                                  .Where(h => h.Idban == SelectedTable.ID && h.IsDeleted == false)
@@ -296,89 +311,110 @@ namespace RestaurantManagement.ViewModels
                 var billItems = _dbContext.Cthds
                                           .Where(c => c.IdhoaDon == bill.Id)
                                           .Join(_dbContext.Doanuongs, c => c.IddoAnUong, d => d.Id,
-                                                (c, d) => new BillItem
+                                                (c, d) => new
                                                 {
                                                     Name = d.TenDoAnUong,
                                                     Quantity = c.SoLuong,
                                                     Price = c.GiaMon
                                                 }).ToList();
 
-                try
+                // Create a new PDF document
+                PdfDocument pdf = new PdfDocument();
+                pdf.Info.Title = "Hóa Đơn";
+
+                // Create a new page
+                PdfPage page = pdf.AddPage();
+                XGraphics gfx = XGraphics.FromPdfPage(page);
+
+                // Define font (Make sure the font supports Vietnamese characters, e.g., Arial or Tahoma)
+                XFont vietnameseFont = new XFont("Arial", 12);
+                XFont boldFont = new XFont("Arial", 12);
+
+                // Set currency format
+                var vietnameseCurrencyFormat = new NumberFormatInfo
                 {
-                    using (var package = new ExcelPackage(new FileInfo(filePath)))
-                    {
-                        var worksheet = package.Workbook.Worksheets.Add("Hóa đơn");
+                    CurrencySymbol = "₫",
+                    CurrencyDecimalDigits = 0,
+                    CurrencyGroupSeparator = ".",
+                    CurrencyDecimalSeparator = ","
+                };
 
-                        // Thêm ngày giờ xuất hóa đơn
-                        worksheet.Cells[1, 1].Value = $"Hóa đơn bàn {SelectedTable.ID}";
-                        worksheet.Cells[2, 1].Value = $"Ngày xuất: {DateTime.Now:dd/MM/yyyy HH:mm:ss}";
-                        worksheet.Cells[3, 1].Value = "Tên món";
-                        worksheet.Cells[3, 2].Value = "Số lượng";
-                        worksheet.Cells[3, 3].Value = "Giá";
-                        worksheet.Cells[3, 4].Value = "Tổng";
+                // Draw the title
+                gfx.DrawString($"HÓA ĐƠN BÀN {SelectedTable.ID}", boldFont, XBrushes.Black,
+                    new XRect(0, 50, page.Width, page.Height), XStringFormats.Center);
 
-                        decimal totalAmount = 0;
-                        int row = 4;
+                // Draw the current date
+                gfx.DrawString($"Ngày xuất: {DateTime.Now:dd/MM/yyyy HH:mm:ss}", vietnameseFont, XBrushes.Black,
+                    new XRect(50, 100, page.Width, page.Height), XStringFormats.TopLeft);
 
-                        // Dữ liệu hóa đơn
-                        foreach (var item in billItems)
-                        {
-                            worksheet.Cells[row, 1].Value = item.Name;
-                            worksheet.Cells[row, 2].Value = item.Quantity;
-                            worksheet.Cells[row, 3].Value = item.Price;
-                            worksheet.Cells[row, 4].Value = item.Quantity * item.Price;
-                            totalAmount += item.Quantity * item.Price;
-                            row++;
-                        }
+                // Draw a table-like structure
+                double yPosition = 150;
+                gfx.DrawString("Tên món", boldFont, XBrushes.Black, new XRect(50, yPosition, page.Width, page.Height), XStringFormats.TopLeft);
+                gfx.DrawString("Số lượng", boldFont, XBrushes.Black, new XRect(200, yPosition, page.Width, page.Height), XStringFormats.TopLeft);
+                gfx.DrawString("Giá", boldFont, XBrushes.Black, new XRect(300, yPosition, page.Width, page.Height), XStringFormats.TopLeft);
+                gfx.DrawString("Tổng", boldFont, XBrushes.Black, new XRect(400, yPosition, page.Width, page.Height), XStringFormats.TopLeft);
 
-                        // Tổng tiền
-                        worksheet.Cells[row, 3].Value = "Tổng tiền";
-                        worksheet.Cells[row, 4].Value = totalAmount;
+                yPosition += 20;
 
-                        // Lưu file Excel
-                        package.Save();
-                    }
-
-                    MessageBox.Show($"Hóa đơn đã được lưu vào: {filePath}", "Thành công", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                catch (Exception ex)
+                foreach (var item in billItems)
                 {
-                    MessageBox.Show($"Lỗi khi xuất hóa đơn: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    gfx.DrawString(item.Name, vietnameseFont, XBrushes.Black, new XRect(50, yPosition, page.Width, page.Height), XStringFormats.TopLeft);
+                    gfx.DrawString(item.Quantity.ToString(), vietnameseFont, XBrushes.Black, new XRect(200, yPosition, page.Width, page.Height), XStringFormats.TopLeft);
+                    gfx.DrawString(item.Price.ToString("C", vietnameseCurrencyFormat), vietnameseFont, XBrushes.Black, new XRect(300, yPosition, page.Width, page.Height), XStringFormats.TopLeft);
+                    gfx.DrawString((item.Quantity * item.Price).ToString("C", vietnameseCurrencyFormat), vietnameseFont, XBrushes.Black, new XRect(400, yPosition, page.Width, page.Height), XStringFormats.TopLeft);
+
+                    yPosition += 20;
                 }
+
+                // Draw total amount
+                decimal totalAmount = billItems.Sum(item => item.Quantity * item.Price);
+                gfx.DrawString($"Tổng tiền: {totalAmount.ToString("C", vietnameseCurrencyFormat)}", boldFont, XBrushes.Black,
+                    new XRect(50, yPosition, page.Width, page.Height), XStringFormats.TopLeft);
+
+                // Save the PDF to file
+                pdf.Save(filePath);
+
+                // Open the file
+                
+                MessageBox.Show($"Hóa đơn đã được lưu vào: {filePath}", "Thành công", MessageBoxButton.OK, MessageBoxImage.Information);
             }
+
             else
             {
-                MessageBox.Show("Không có hóa đơn để xuất.");
+                // Handle case where bill is not found
+                MessageBox.Show("Không tìm thấy hóa đơn.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
+
+
         private void TransferTable(object parameter)
         {
-            if (parameter is Table targetTable && SelectedTable != null)
+            if (parameter is cTable targetTable && SelectedTable != null)
             {
                 var bill = _dbContext.Hoadons
                                      .FirstOrDefault(h => h.Idban == SelectedTable.ID && h.IsDeleted == false);
 
-                if (bill != null && targetTable.TrangThai == false) 
+                if (bill != null && targetTable.TrangThai == false)
                 {
                     bill.Idban = targetTable.ID;
                     var oldTable = _dbContext.Bans.FirstOrDefault(b => b.Id == SelectedTable.ID);
                     if (oldTable != null)
                     {
-                        oldTable.TrangThai = false;  
-                        _dbContext.Bans.Update(oldTable);  
+                        oldTable.TrangThai = false;
+                        _dbContext.Bans.Update(oldTable);
                     }
 
                     var targetBan = _dbContext.Bans.FirstOrDefault(b => b.Id == targetTable.ID);
                     if (targetBan != null)
                     {
-                        targetBan.TrangThai = true;  
-                        _dbContext.Bans.Update(targetBan); 
+                        targetBan.TrangThai = true;
+                        _dbContext.Bans.Update(targetBan);
                     }
 
-                    _dbContext.SaveChanges(); 
+                    _dbContext.SaveChanges();
 
-                    LoadTablesFromDatabase(); 
+                    LoadTablesFromDatabase();
                     MessageBox.Show($"Chuyển bàn thành công từ bàn {SelectedTable.ID} sang bàn {targetTable.ID}!");
                 }
                 else
@@ -397,7 +433,7 @@ namespace RestaurantManagement.ViewModels
 
         private bool CanExecuteCommands(object parameter)
         {
-            return SelectedTable != null; 
+            return SelectedTable != null;
         }
 
         private void OnPropertyChanged(string propertyName)
@@ -414,7 +450,7 @@ namespace RestaurantManagement.ViewModels
         public decimal Price { get; set; }
     }
 
-    public class Table
+    public class cTable
     {
         public int ID { get; set; }
         public bool TrangThai { get; set; } // Trạng thái: true = đã đặt, false = chưa đặt

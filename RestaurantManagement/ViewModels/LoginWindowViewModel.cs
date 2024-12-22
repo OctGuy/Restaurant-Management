@@ -10,6 +10,7 @@ using RestaurantManagement.Models;
 using System.Windows;
 using System.Text.RegularExpressions;
 using RestaurantManagement.ViewModels;
+using System.Data;
 
 public class LoginWindowViewModel : INotifyPropertyChanged
 {
@@ -17,7 +18,7 @@ public class LoginWindowViewModel : INotifyPropertyChanged
     private string _password;
     private string _errorMessage;
     private readonly QlnhContext _context;
-
+    private bool _role;
     public string Username
     {
         get => _username;
@@ -28,7 +29,7 @@ public class LoginWindowViewModel : INotifyPropertyChanged
             (LoginCommand as RelayCommand)?.RaiseCanExecuteChanged();
         }
     }
-
+    
     public string Password
     {
         get => _password;
@@ -46,6 +47,15 @@ public class LoginWindowViewModel : INotifyPropertyChanged
         set
         {
             _errorMessage = value;
+            OnPropertyChanged();
+        }
+    }
+    public bool Role
+    {
+        get => _role;
+        set
+        {
+            _role = value;
             OnPropertyChanged();
         }
     }
@@ -78,8 +88,17 @@ public class LoginWindowViewModel : INotifyPropertyChanged
 
             if (user != null)
             {
+                Role = (user.PhanQuyen == 0);
+
                 ErrorMessage = "";
-                MessageBox.Show("Đăng nhập thành công!");
+                if (Role)
+                {
+                    MessageBox.Show("Đăng nhập thành công với quyền Admin!");
+                }
+                else
+                {
+                    MessageBox.Show("Đăng nhập thành công với quyền Nhân viên!");
+                }
             }
             else
             {

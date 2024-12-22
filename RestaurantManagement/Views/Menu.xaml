@@ -177,7 +177,7 @@
         </StackPanel>
         <Separator Margin="35,340,30,48" Grid.Column="1"/>
         <TextBlock Grid.Column="1" HorizontalAlignment="Left" Height="20" Margin="17,382,0,0" TextWrapping="Wrap" Text="Tổng" VerticalAlignment="Top" Width="126"/>
-        <TextBlock Grid.Column="1" HorizontalAlignment="Left" Height="20" Margin="147,383,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="129" Text="{Binding SUM, StringFormat='Tổng: {0:N0} VND'}"/>
+        <TextBlock Grid.Column="1" HorizontalAlignment="Left" Height="20" Margin="147,383,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="129" Text="{Binding SUM, StringFormat='Tổng: {0:N0} VND'}" />
         <TextBlock TextWrapping="Wrap" Text="Bàn" Width="82" RenderTransformOrigin="0,0" HorizontalAlignment="Left" Margin="157,58,0,355" Grid.Column="1" FontSize="14" Foreground="#FFFFF2F2"/>
         <ComboBox Grid.Column="1" HorizontalAlignment="Left" Height="26" Margin="185,58,0,0" VerticalAlignment="Top" Width="65" ItemsSource="{Binding DanhSachBan}" DisplayMemberPath="Id" SelectedItem="{Binding SelectedTable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         <Border BorderBrush="Black" Grid.Column="1" HorizontalAlignment="Center" Height="36" Margin="0,406,0,0" VerticalAlignment="Top" Width="246">

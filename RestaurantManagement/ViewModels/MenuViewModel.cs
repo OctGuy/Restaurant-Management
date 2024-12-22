@@ -8,6 +8,7 @@ using RestaurantManagement.Models;
 using static RestaurantManagement.ViewModels.MenuViewModel;
 using System.Windows;
 using Microsoft.EntityFrameworkCore;
+using System.Windows.Media.Imaging;
 
 
 namespace RestaurantManagement.ViewModels
@@ -30,6 +31,37 @@ namespace RestaurantManagement.ViewModels
             NotifyCookingCommand = new RelayCommand(NotifyCooking, CanExecuteNotify);
             SelectedItems = new ObservableCollection<SelectedItem>();
 
+        }
+        public void LoadMenuItems()
+        {
+            using (var context = new QlnhContext())
+            {
+                var menuItems = context.Doanuongs.ToList();
+                var linkAnhDoAnUong = new ObservableCollection<BitmapImage>();
+                MenuItemCollection = new ObservableCollection<Doanuong>(menuItems);
+
+                foreach (var dish in menuItems)
+                {
+                    BitmapImage image = new BitmapImage();
+
+                    if (!string.IsNullOrEmpty(dish.AnhDoAnUong))
+                    {
+
+                        image.BeginInit();
+                        image.UriSource = new Uri(dish.AnhDoAnUong, UriKind.Absolute);
+                        image.EndInit();
+                    }
+                    else
+                    {
+                        image.BeginInit();
+                        image.UriSource = new Uri("https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/800px-No_image_available.svg.png?fbclid=IwZXh0bgNhZW0CM...oXkgwfg", UriKind.Absolute);
+                        image.EndInit();
+                    }
+
+                    linkAnhDoAnUong.Add(image);  
+                }
+            }
+            InitializeMenuView();
         }
 
         //SEARCH
@@ -77,6 +109,17 @@ namespace RestaurantManagement.ViewModels
                 }
             }
         }
+        private ObservableCollection<BitmapImage> _anhDoAnUong;
+
+        public ObservableCollection<BitmapImage> AnhDoAnUong
+        {
+            get => _anhDoAnUong;
+            set
+            {
+                _anhDoAnUong = value;
+                OnPropertyChanged(nameof(AnhDoAnUong));
+            }
+        }
 
         private void UpdateSum()
         {
@@ -119,15 +162,7 @@ namespace RestaurantManagement.ViewModels
         //Menu Items
         public ObservableCollection<Doanuong> MenuItemCollection { get; set; }
 
-        public void LoadMenuItems()
-        {
-            using (var context = new QlnhContext())
-            {
-                var menuItems = context.Doanuongs.ToList();
-                MenuItemCollection = new ObservableCollection<Doanuong>(menuItems);
-            }
-            InitializeMenuView();
-        }
+       
         //Day
         public string Day
         {
@@ -276,6 +311,29 @@ namespace RestaurantManagement.ViewModels
                 Console.WriteLine($"Error loading data: {ex.Message}");
             }
         }
+        ////ADD IMAGES
+        private void LoadImageFromUri(string imagePath, string defaultImg)
+        {
+            try
+            {
+                Uri uri = new Uri(imagePath, UriKind.Absolute);
+                BitmapImage bmi = new BitmapImage();
+                bmi.BeginInit();
+                bmi.UriSource = uri;
+                bmi.EndInit();
+                AnhDoAnUong.Add(bmi);  // Assuming you want to store the BitmapImage
+            }
+            catch (UriFormatException)
+            {
+                Uri defaultUri = new Uri(defaultImg, UriKind.Absolute);
+                BitmapImage bmi = new BitmapImage();
+                bmi.BeginInit();
+                bmi.UriSource = defaultUri;
+                bmi.EndInit();
+                AnhDoAnUong.Add(bmi); // Add default image if URL is invalid
+            }
+        }
+
 
         //DELETE
 
@@ -376,8 +434,37 @@ namespace RestaurantManagement.ViewModels
                 {
                     using (var context = new QlnhContext())
                     {
+                        // Check for available stock of ingredients for each selected item
+                        foreach (var item in SelectedItems)
+                        {
+                            var doAnUong = context.Doanuongs.FirstOrDefault(d => d.Id == item.IdDoAnUong);
+                            if (doAnUong != null)
+                            {
+                                var ingredients = context.Ctmonans
+                                    .Where(ct => ct.IddoAnUong == doAnUong.Id)
+                                    .ToList();
+
+                                foreach (var ingredient in ingredients)
+                                {
+                                    var nguyenLieu = context.Nguyenlieus.FirstOrDefault(nl => nl.Id == ingredient.IdnguyenLieu && nl.IsDeleted == false);
+
+                                    if (nguyenLieu != null)
+                                    {
+                                        var stock = context.Ctkhos
+                                            .FirstOrDefault(k => k.IdnguyenLieu == nguyenLieu.Id && k.IsDeleted == false);
+
+                                        if (stock != null && stock.SoLuongTonDu <= 0)
+                                        {
+                                            MessageBox.Show($"Nguyên liệu {nguyenLieu.TenNguyenLieu} hết hàng, không thể đặt món.", "Không thể đặt món", MessageBoxButton.OK, MessageBoxImage.Warning);
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        // Continue with existing logic
                         var table = context.Bans.FirstOrDefault(b => b.Id == SelectedTable.Id);
-                        //MessageBox.Show(table.Id.ToString() + SelectedTable.Id.ToString());
                         table.TrangThai = true;
                         context.Bans.Update(table);
 
@@ -385,15 +472,15 @@ namespace RestaurantManagement.ViewModels
                         if (hoaDon == null)
                         {
                             hoaDon = new Hoadon
-                            { 
+                            {
                                 Idban = SelectedTable.Id,
-                                IdnhanVien = 1,
+                                IdnhanVien = 2,
                                 NgayHoaDon = DateTime.Now,
                                 TongGia = SUM,
                                 IsDeleted = false,
                             };
-                            context.Hoadons.Add(hoaDon);  
-                            context.SaveChanges(); 
+                            context.Hoadons.Add(hoaDon);
+                            context.SaveChanges();
                         }
                         else
                         {
@@ -409,8 +496,6 @@ namespace RestaurantManagement.ViewModels
                             };
                             context.Chebiens.Add(cheBien);
                         }
-
-
 
                         foreach (var item in SelectedItems)
                         {
@@ -432,7 +517,7 @@ namespace RestaurantManagement.ViewModels
                                 }
                                 else
                                 {
-                                    existingDish.SoLuong += item.SoLuong; 
+                                    existingDish.SoLuong += item.SoLuong;
                                 }
                             }
                         }
@@ -454,6 +539,7 @@ namespace RestaurantManagement.ViewModels
                 MessageBox.Show("Vui lòng chọn bàn và ít nhất một món để gửi thông báo chế biến.", "Cảnh báo", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
+
 
 
         private bool _controlsEnabled;
