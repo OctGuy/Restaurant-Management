@@ -1,9 +1,7 @@
 ﻿using RestaurantManagement.Models;
-using RestaurantManagement.ViewModels;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using System.Collections.Generic;
 
 namespace RestaurantManagement.ViewModels
 {
@@ -50,59 +48,35 @@ namespace RestaurantManagement.ViewModels
             ListOrder = new ObservableCollection<KitchenDish>();
             ListDone = new ObservableCollection<KitchenDish>();
 
-            LoadData();
+            // Khởi tạo các lệnh
             MarkAsDoneCommand = new RelayCommand<object>(CanExecuteMarkAsDone, ExecuteMarkAsDone);
             ServeDishCommand = new RelayCommand<object>(CanExecuteServeDish, ExecuteServeDish);
+
+            // Tải dữ liệu khi khởi tạo
+            LoadData();
         }
 
         private void LoadData()
         {
-            //Lấy danh sách món đang chế biến
-            //var orders = (from cthd in _context.Cthds
-            //              join hd in _context.Hoadons on cthd.IdhoaDon equals hd.Id
-            //              join da in _context.Doanuongs on cthd.IddoAnUong equals da.Id
-            //              join b in _context.Bans on hd.Idban equals b.Id
-            //              join cb in _context.Chebiens on hd.Id equals cb.IdhoaDon
-            //              where cb.IsDeleted == false
-            //              select new KitchenDish
-            //              {
-            //                  TenDoAnUong = da.TenDoAnUong,
-            //                  IDBan = b.Id,
-            //                  SoLuong = cthd.SoLuong,
-            //                  IdCheBien = cb.Id
-            //              }).Distinct().ToList();
-
-            //ListOrder = new ObservableCollection<KitchenDish>(orders);
-
+            // Lấy danh sách các món đang chế biến (ListOrder) chỉ hiển thị các món chưa phục vụ
             var orders = (from cthd in _context.Cthds
                           join hd in _context.Hoadons on cthd.IdhoaDon equals hd.Id
                           join da in _context.Doanuongs on cthd.IddoAnUong equals da.Id
                           join b in _context.Bans on hd.Idban equals b.Id
                           join cb in _context.Chebiens on hd.Id equals cb.IdhoaDon
-                          where cb.IsDeleted == false
+                          where cb.IsDeleted == false 
                           select new KitchenDish
                           {
                               TenDoAnUong = da.TenDoAnUong,
                               IDBan = b.Id,
                               SoLuong = cthd.SoLuong,
                               IdCheBien = cb.Id
-                          })
-                      .Distinct()
-                      .ToList();
+                          }).ToList();
 
+            // Cập nhật lại ListOrder mà không làm mất các món đã phục vụ
+            ListOrder = new ObservableCollection<KitchenDish>(orders);
 
-            var uniqueOrders = orders
-                .GroupBy(x => new { x.TenDoAnUong, x.IDBan })
-                .Select(g => g.First())
-                .Distinct()
-                .ToList();
-
-            ListOrder = new ObservableCollection<KitchenDish>(uniqueOrders);
-            orders = null;
-            uniqueOrders = null;
-
-
-            // Lấy danh sách món đã hoàn thành
+            // Lấy danh sách các món đã hoàn thành (ListDone)
             var doneDishes = (from cthd in _context.Cthds
                               join hd in _context.Hoadons on cthd.IdhoaDon equals hd.Id
                               join da in _context.Doanuongs on cthd.IddoAnUong equals da.Id
@@ -119,16 +93,15 @@ namespace RestaurantManagement.ViewModels
                               }).ToList();
 
             ListDone = new ObservableCollection<KitchenDish>(doneDishes);
-            doneDishes = null;
         }
 
 
+        // Thực hiện đánh dấu món ăn là đã hoàn thành
         private void ExecuteMarkAsDone(object parameter)
         {
             if (OrderSelected == null) return;
 
             var cb_dish = _context.Chebiens.FirstOrDefault(cb => cb.Id == OrderSelected.IdCheBien);
-
             if (cb_dish != null)
             {
                 cb_dish.IsDeleted = true;
@@ -140,6 +113,7 @@ namespace RestaurantManagement.ViewModels
             }
         }
 
+        // Thực hiện phục vụ món ăn
         private void ExecuteServeDish(object parameter)
         {
             if (DoneSelected == null) return;
@@ -171,27 +145,32 @@ namespace RestaurantManagement.ViewModels
                         }
                     }
 
+                    // Xóa món đã phục vụ khỏi cơ sở dữ liệu và ListDone
                     dish.IsDeleted = true;
                     _context.SaveChanges();
 
                     ListDone.Remove(DoneSelected);
+                    // Cập nhật lại ListOrder, xóa món đã phục vụ khỏi danh sách
+                    ListOrder.Remove(DoneSelected);
                 }
             }
         }
 
 
+        // Kiểm tra điều kiện thực thi lệnh "Đánh dấu là đã hoàn thành"
         private bool CanExecuteMarkAsDone(object parameter)
         {
             return OrderSelected != null;
         }
 
+        // Kiểm tra điều kiện thực thi lệnh "Phục vụ món ăn"
         private bool CanExecuteServeDish(object parameter)
         {
             return DoneSelected != null;
         }
     }
 
-
+    // Lớp đại diện cho món ăn trong bếp
     public class KitchenDish
     {
         public string? TenDoAnUong { get; set; }

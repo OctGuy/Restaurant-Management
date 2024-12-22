@@ -434,7 +434,7 @@ namespace RestaurantManagement.ViewModels
                 {
                     using (var context = new QlnhContext())
                     {
-                        // Check for available stock of ingredients for each selected item
+                        // Kiểm tra tồn kho nguyên liệu cho các món được chọn
                         foreach (var item in SelectedItems)
                         {
                             var doAnUong = context.Doanuongs.FirstOrDefault(d => d.Id == item.IdDoAnUong);
@@ -446,7 +446,8 @@ namespace RestaurantManagement.ViewModels
 
                                 foreach (var ingredient in ingredients)
                                 {
-                                    var nguyenLieu = context.Nguyenlieus.FirstOrDefault(nl => nl.Id == ingredient.IdnguyenLieu && nl.IsDeleted == false);
+                                    var nguyenLieu = context.Nguyenlieus
+                                        .FirstOrDefault(nl => nl.Id == ingredient.IdnguyenLieu && nl.IsDeleted == false);
 
                                     if (nguyenLieu != null)
                                     {
@@ -462,80 +463,97 @@ namespace RestaurantManagement.ViewModels
                                 }
                             }
                         }
-
-                        // Continue with existing logic
                         var table = context.Bans.FirstOrDefault(b => b.Id == SelectedTable.Id);
                         table.TrangThai = true;
                         context.Bans.Update(table);
-
+                        // Kiểm tra và xử lý hóa đơn (Hóa đơn mới hoặc đã tồn tại)
                         var hoaDon = context.Hoadons.FirstOrDefault(h => h.Idban == SelectedTable.Id && h.IsDeleted == false);
+
                         if (hoaDon == null)
                         {
+                            // Tạo mới hóa đơn
                             hoaDon = new Hoadon
                             {
                                 Idban = SelectedTable.Id,
-                                IdnhanVien = 2,
+                                IdnhanVien = 2, // Ví dụ: ID nhân viên được mặc định là 2
                                 NgayHoaDon = DateTime.Now,
                                 TongGia = SUM,
                                 IsDeleted = false,
                             };
                             context.Hoadons.Add(hoaDon);
                             context.SaveChanges();
+
+                            // Tạo Chebien khi hóa đơn mới được tạo
+                            if (hoaDon.Id > 0)
+                            {
+                                var cheBien = new Chebien
+                                {
+                                    IdhoaDon = hoaDon.Id,
+                                    ThoiGianChuanBi = 0
+                                };
+                                context.Chebiens.Add(cheBien);
+                                context.SaveChanges();
+                            }
                         }
                         else
                         {
-                            hoaDon.TongGia = SUM;
+                            // Nếu hóa đơn đã tồn tại, cộng thêm tổng giá
+                            hoaDon.TongGia += SUM;
+                            context.SaveChanges();
                         }
 
-                        if (hoaDon.Id > 0)
-                        {
-                            var cheBien = new Chebien
-                            {
-                                IdhoaDon = hoaDon.Id,
-                                ThoiGianChuanBi = 0
-                            };
-                            context.Chebiens.Add(cheBien);
-                        }
-
+                        // Thêm chi tiết hóa đơn cho từng món ăn trong SelectedItems
                         foreach (var item in SelectedItems)
                         {
                             var doAnUong = context.Doanuongs.FirstOrDefault(d => d.Id == item.IdDoAnUong);
-
                             if (doAnUong != null)
                             {
                                 var existingDish = context.Cthds.FirstOrDefault(e => e.IdhoaDon == hoaDon.Id && e.IddoAnUong == doAnUong.Id);
+
                                 if (existingDish == null)
                                 {
+                                    // Nếu món ăn chưa có trong chi tiết hóa đơn, tạo mới
                                     var chiTietHoaDon = new Cthd
                                     {
                                         IdhoaDon = hoaDon.Id,
                                         IddoAnUong = doAnUong.Id,
                                         SoLuong = item.SoLuong,
-                                        GiaMon = item.GiaMon
+                                        GiaMon = item.GiaMon,
+                                        IsDeleted = false
                                     };
                                     context.Cthds.Add(chiTietHoaDon);
                                 }
                                 else
                                 {
+                                    // Nếu món ăn đã có trong chi tiết hóa đơn, tăng số lượng
                                     existingDish.SoLuong += item.SoLuong;
                                 }
                             }
                         }
 
+                        // Lưu lại thay đổi vào cơ sở dữ liệu
                         context.SaveChanges();
+
+                        // Cập nhật lại dữ liệu trong giao diện
                         LoadDataFromDatabase();
+
+                        // Thông báo thành công
                         MessageBox.Show($"Đã gửi thông báo chế biến cho bàn {SelectedTable.Id}!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                        // Xóa danh sách các món đã chọn và cập nhật tổng
                         SelectedItems.Clear();
                         UpdateSum();
                     }
                 }
                 catch (Exception ex)
                 {
+                    // Hiển thị lỗi nếu có vấn đề xảy ra
                     MessageBox.Show($"Có lỗi xảy ra khi gửi chế biến: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             else
             {
+                // Thông báo nếu không chọn bàn hoặc món
                 MessageBox.Show("Vui lòng chọn bàn và ít nhất một món để gửi thông báo chế biến.", "Cảnh báo", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
