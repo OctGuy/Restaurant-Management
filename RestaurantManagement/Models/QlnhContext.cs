@@ -45,6 +45,14 @@ public partial class QlnhContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Data Source=TDTPC;Initial Catalog=QLNH;Integrated Security=True;Trust Server Certificate=True");
+        
+////#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+//        => optionsBuilder.UseSqlServer("Server=KIARH\\MSSQLSERVER02;Database=QLNH;Trusted_Connection=True;TrustServerCertificate=True;");
+//        //{
+//        //    optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["QLNH"].ConnectionString);
+//        //}
+    
+//>>>>>>> 33802daa6047956bf1fea91f3530ce181efe9868
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -307,8 +315,7 @@ public partial class QlnhContext : DbContext
         {
             entity.ToTable("TAIKHOAN");
 
-            entity.HasIndex(e => e.TenTaiKhoan, "UQ__TAIKHOAN__B106EAF8E3D7169C").IsUnique();
-
+            entity.HasIndex(e => e.TenTaiKhoan, "UQ__TAIKHOAN__B106EAF8508F8E65").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.IdnhanVien).HasColumnName("IDNhanVien");

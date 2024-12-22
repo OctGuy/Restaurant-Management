@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:RestaurantManagement.Views"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" x:Class="RestaurantManagement.Views.Kitchen"
         mc:Ignorable="d"
-        Title="Kitchen" Height="450" Width="800" WindowStyle="None">
+        Title="Kitchen" Height="450" Width="800" WindowStyle="None" ResizeMode="NoResize">
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -16,24 +16,28 @@
         <Button
             Width="{DynamicResource ButtonWidth}"
             Content="ĐÃ THỰC HIỆN XONG"
+            Command="{Binding MarkAsDoneCommand}"
             IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
             Style="{StaticResource MaterialDesignRaisedButton}"
             ToolTip="Resource name: MaterialDesignRaisedButton" Margin="73,392,83,26" Background="#FF701C1C" BorderBrush="Black" Foreground="White"
   />
-        <Border BorderBrush="Black" HorizontalAlignment="Center" Height="346" Margin="0,13,0,0" VerticalAlignment="Top" Width="372" CornerRadius="15,15,15,15" Background="#FFF1F0EE">
-            <ScrollViewer HorizontalAlignment="Center" Width="370" Margin="0,40,0,0" Height="304" VerticalAlignment="Top" HorizontalScrollBarVisibility="Visible">
-                <ListView Height="304" Width="370" d:ItemsSource="{d:SampleData ItemCount=5}" IsSynchronizedWithCurrentItem="True" Foreground="#E5120101" BorderBrush="#7F6F3333">
+        <Border x:Name="OrderView" BorderBrush="Black" HorizontalAlignment="Center" Height="346" Margin="0,13,0,0" VerticalAlignment="Top" Width="372" CornerRadius="15,15,15,15" Background="#FFF1F0EE" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+            <ScrollViewer HorizontalAlignment="Center" Width="370" Margin="0,40,0,0" Height="304" VerticalAlignment="Top" VerticalScrollBarVisibility="Disabled">
+                <ListView ItemsSource="{Binding ListOrder}" SelectedItem="{Binding OrderSelected}" Height="304" Width="370" d:ItemsSource="{d:SampleData ItemCount=5}" IsSynchronizedWithCurrentItem="True" Foreground="#E5120101" BorderBrush="#7F6F3333" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center" ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Visible">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn 
-                                            Width="220"
-                                            Header="Tên món" />
-                            <GridViewColumn 
+                            <GridViewColumn
                                             Width="140"
-                                            Header="Số lượng" />
+                                            Header="Tên món" 
+                                            DisplayMemberBinding="{Binding TenDoAnUong}" />
                             <GridViewColumn 
-                                            Width="130"
-                                            Header="Số bàn" />
+                                            Width="120"
+                                            Header="Số lượng"
+                                            DisplayMemberBinding="{Binding SoLuong}"/>
+                            <GridViewColumn 
+                                            Width="120"
+                                            Header="Số bàn" 
+                                            DisplayMemberBinding="{Binding IDBan}"/>
                         </GridView>
                     </ListView.View>
                 </ListView>
@@ -42,24 +46,31 @@
 
         <materialDesign:Flipper Grid.Column="1" HorizontalAlignment="Left" Margin="608,130,0,0" VerticalAlignment="Top"/>
         <Border BorderBrush="Black" Grid.Column="1" HorizontalAlignment="Left" Height="343" Margin="12,15,0,0" VerticalAlignment="Top" Width="372" CornerRadius="15,15,15,15" Background="#FFF1F0EE">
-            <ListView HorizontalAlignment="Center" Height="305" Margin="0,37,0,0" VerticalAlignment="Top" Width="372" d:ItemsSource="{d:SampleData ItemCount=5}" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False" IsSynchronizedWithCurrentItem="True" Foreground="#E5150101" BorderBrush="#7F712828">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn 
-                                        Width="220"
-                                        Header="Tên món" />
-                        <GridViewColumn 
+            <ScrollViewer HorizontalAlignment="Center" Width="370" Height="344" VerticalAlignment="Center" VerticalScrollBarVisibility="Disabled">
+                <ListView ItemsSource="{Binding ListDone}" SelectedItem="{Binding DoneSelected}" Height="308" Margin="0,37,0,0" Width="372" d:ItemsSource="{d:SampleData ItemCount=5}" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="False" IsSynchronizedWithCurrentItem="True" Foreground="#E5150101" BorderBrush="#7F712828">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn 
                                         Width="140"
-                                        Header="Số lượng" />
-                        <GridViewColumn 
-                                        Width="130"
-                                        Header="Số bàn" />
-                    </GridView>
-                </ListView.View>
-            </ListView>
+                                        Header="Tên món"
+                                        DisplayMemberBinding="{Binding TenDoAnUong}"/>
+
+                            <GridViewColumn 
+                                        Width="120"
+                                        Header="Số lượng" 
+                                        DisplayMemberBinding="{Binding SoLuong}"/>
+                            <GridViewColumn 
+                                        Width="120"
+                                        Header="Số bàn" 
+                                        DisplayMemberBinding="{Binding IDBan}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </ScrollViewer>
         </Border>
         <Button
             Content="ĐÃ PHỤC VỤ CHO KHÁCH"
+            Command="{Binding ServeDishCommand}"
             IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource AncestorType={x:Type Window}, Mode=FindAncestor}}"
             Style="{StaticResource MaterialDesignRaisedButton}"
             ToolTip="Resource name: MaterialDesignRaisedButton" Margin="73,392,83,26" Grid.Column="1" Background="#FF701C1C" Foreground="White" BorderBrush="Black"

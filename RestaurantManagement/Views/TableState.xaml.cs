@@ -1,4 +1,6 @@
-﻿using System;
+﻿using RestaurantManagement.Models;
+using RestaurantManagement.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,6 +24,7 @@ namespace RestaurantManagement.Views
         public TableState()
         {
             InitializeComponent();
+            DataContext = new TableStateViewModel(new QlnhContext());
         }
     }
 }

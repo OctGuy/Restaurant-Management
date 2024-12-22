@@ -11,7 +11,7 @@ public partial class Ban
 
     public int? SucChua { get; set; }
 
-    public bool? TrangThai { get; set; }
+    public bool TrangThai { get; set; }
 
     public virtual ICollection<Hoadon> Hoadons { get; set; } = new List<Hoadon>();
 }

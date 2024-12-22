@@ -6,60 +6,176 @@
         xmlns:local="clr-namespace:RestaurantManagement.Views"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" x:Class="RestaurantManagement.Views.TableState"
         mc:Ignorable="d"
-        Title="TableState" Height="450" Width="800" WindowStyle="None">
+        Title="TableState" Height="450" Width="800" WindowStyle="None" ResizeMode="NoResize">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="67*"/>
             <ColumnDefinition Width="33*"/>
         </Grid.ColumnDefinitions>
-        <!--DATA-->
-        <ScrollViewer HorizontalAlignment="Left" Height="450" VerticalAlignment="Center" Width="515" Margin="2,0,0,0" Background="#FFFFF2F2"/>
+        <!-- Danh sách các bàn -->
+        <ScrollViewer HorizontalAlignment="Left" Height="450" VerticalAlignment="Center" Width="515" Margin="2,0,0,0" Background="#FFFFF2F2">
+            <ItemsControl x:Name="item" ItemsSource="{Binding Tables, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Width="175" Height="105" Margin="5,15,15,15" FontSize="15"
+                        Content="{Binding ID, StringFormat='BÀN {0}'}" 
+                        Command="{Binding DataContext.ShowMenuCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                        CommandParameter="{Binding}">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Style.Triggers>
+                                        <!-- Red color for booked tables (TrangThai = true) -->
+                                        <DataTrigger Binding="{Binding TrangThai}" Value="True">
+                                            <DataTrigger.Setters>
+                                                <Setter Property="Background" Value="Red"/>
+                                            </DataTrigger.Setters>
+                                        </DataTrigger>
+                                        <!-- Green color for available tables (TrangThai = false) -->
+                                        <DataTrigger Binding="{Binding TrangThai}" Value="False">
+                                            <DataTrigger.Setters>
+                                                <Setter Property="Background" Value="#FF9A7548"/>
+                                                <!-- Adjust the color as needed -->
+                                            </DataTrigger.Setters>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
         <Border BorderBrush="Black" BorderThickness="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="452" Margin="518,0,0,0" VerticalAlignment="Center" Width="281">
             <Grid HorizontalAlignment="Center" Height="452" Margin="0,-2,0,0" VerticalAlignment="Top" Width="286">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="29*"/>
                     <RowDefinition Height="119*"/>
                 </Grid.RowDefinitions>
-                <!--TABLE LIST-->
+
                 <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Center" Height="61" Margin="0,26,0,0" VerticalAlignment="Top" Width="242" Background="#FF701C1C">
                     <Grid>
-                        <TextBlock HorizontalAlignment="Center"
+                        <TextBlock
                            Foreground="#fff" 
                            FontWeight="SemiBold" 
-                           FontSize="35"
-                           Text="{Binding TitleOfBill}" Width="130">        
-                        </TextBlock>
+                           FontSize="19"
+                           Text="{Binding TitleOfBill}" Width="130" VerticalAlignment="Center"/>
                     </Grid>
                 </Border>
-                <ScrollViewer Margin="24,1,23,119" Grid.Row="1">
-                    <ListView Height="271" Width="241" RenderTransformOrigin="0.685,0.497">
-                        <ListView.View>
-                            <GridView/>
-                        </ListView.View>
-                    </ListView>
+
+                <ScrollViewer Margin="23,3,25,116" Grid.Row="1" VerticalScrollBarVisibility="Disabled">
+                    <StackPanel Orientation="Vertical" x:Name="border" Width="238">
+                        <!-- Header của bảng -->
+                        <Border BorderThickness="0,0,0,1" BorderBrush="#1C3879" Background="#F1F1F1" Height="30" Width="240">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80"/>
+                                    <!-- Tên món -->
+                                    <ColumnDefinition Width="60"/>
+                                    <!-- Số lượng -->
+                                    <ColumnDefinition Width="*"/>
+                                    <!-- Thành tiền -->
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Header Tên món -->
+                                <TextBlock Grid.Column="0" 
+                           Text="Tên món" 
+                           TextAlignment="Left" 
+                           VerticalAlignment="Center" 
+                           FontWeight="Bold" HorizontalAlignment="Center"/>
+
+                                <!-- Header Số lượng -->
+                                <TextBlock Grid.Column="1" 
+                           Text="Số lượng" 
+                           TextAlignment="Center" 
+                           VerticalAlignment="Center" 
+                           FontWeight="Bold" HorizontalAlignment="Center"/>
+
+                                <!-- Header Thành tiền -->
+                                <TextBlock Grid.Column="2" 
+                           Text="Thành tiền" 
+                           TextAlignment="Right" 
+                           VerticalAlignment="Center" 
+                           FontWeight="Bold" HorizontalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <!-- Danh sách các item -->
+                        <ItemsControl ItemsSource="{Binding BillItems, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderThickness="0,0,0,1" BorderBrush="#1C3879" Width="{Binding ActualWidth, ElementName=border}" Height="50">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="70"/>
+                                                <!-- Tên món -->
+                                                <ColumnDefinition Width="30"/>
+                                                <!-- Số lượng -->
+                                                <ColumnDefinition Width="*"/>
+                                                <!-- Thành tiền -->
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- Cột Tên món -->
+                                            <TextBlock Grid.Column="0"  
+                                       TextAlignment="Left" 
+                                       VerticalAlignment="Center" 
+                                       FontSize="12" 
+                                       FontWeight="SemiBold"
+                                       Text="{Binding Name}"/>
+
+                                            <!-- Cột Số lượng -->
+                                            <TextBlock Grid.Column="1"  
+                                       TextAlignment="Center" 
+                                       FontSize="12" 
+                                       FontWeight="SemiBold" 
+                                       VerticalAlignment="Center"
+                                       Text="{Binding Quantity}"/>
+
+                                            <!-- Cột Thành tiền -->
+                                            <TextBlock Grid.Column="2"  
+                                       TextAlignment="Right" 
+                                       VerticalAlignment="Center" 
+                                       FontSize="12" 
+                                       FontWeight="SemiBold" 
+                                       Text="{Binding Price, StringFormat=' {0:N0} VND'}"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
                 </ScrollViewer>
+
+
+
+
                 <!--PAYMENT-->
                 <StackPanel HorizontalAlignment="Center" Height="120" Margin="0,243,0,0" Grid.Row="1" VerticalAlignment="Top" Width="250">
                     <Separator Margin="20 10"/>
                     <StackPanel Height="30" Width="253" Orientation="Horizontal">
-                        <Label Content="Tổng" Height="29" Width="50" HorizontalAlignment="Left" FontWeight="Bold" Foreground="#E5000000" Margin="10,7,0,0"/>
-                        <TextBlock Height="26" TextWrapping="Wrap" Width="191"/>
+                        <Label Content="Tổng" Height="29" Width="50" HorizontalAlignment="Left" FontWeight="Bold" Foreground="#E5000000" Margin="10,0,0,0"/>
+                        <TextBlock Text="{Binding TotalAmount, StringFormat=N0}" FontSize="16" FontWeight="Bold" Foreground="Red" Height="28" Width="193" />
                     </StackPanel>
                     <StackPanel Height="30" Width="248" Orientation="Horizontal" HorizontalAlignment="Right">
                         <Button
                             Width="{DynamicResource ButtonWidth}"
                             Content="THANH TOÁN"
-                            IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                            Command="{Binding ProcessPaymentCommand}"
                             Style="{StaticResource MaterialDesignFlatMidBgButton}"
                             ToolTip="MaterialDesignFlatMidButton" FontSize="11" Height="24" Background="#FF8A464F" Foreground="White"
   />
-                        <ComboBox Height="30" Width="123" Margin="20,0,0,0"/>
+                        <ComboBox Height="30" Width="123" Margin="20,0,0,0" ItemsSource="{Binding EmptyTables}" SelectedItem="{Binding TargetTable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="ID"/>
                     </StackPanel>
                     <StackPanel Height="30" Width="249" Orientation="Horizontal">
                         <Button
                           Width="105"
                           Content="CHUYỂN BÀN"
-                          IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                          Command="{Binding TransferTableCommand}"
+                          CommandParameter="{Binding TargetTable}"
                           Style="{StaticResource MaterialDesignFlatMidBgButton}"
                           ToolTip="MaterialDesignFlatMidButton" FontSize="11" Height="24" Background="#FF8A464F" Foreground="White"
 />

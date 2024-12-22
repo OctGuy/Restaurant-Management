@@ -9,7 +9,6 @@
         mc:Ignorable="d"
         Title="LoginWindow" Height="450" Width="800"
     
-TextElement.Foreground="#1C3879"
 TextElement.FontWeight="Regular"
 TextElement.FontSize="18"
 TextOptions.TextFormattingMode="Ideal"
@@ -36,26 +35,41 @@ WindowStartupLocation="CenterScreen">
                     <RowDefinition/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
-                <TextBox materialDesign:HintAssist.Hint="Tên đăng nhập"
+                <TextBox x:Name="Username" Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" materialDesign:HintAssist.Hint="Tên đăng nhập"
                  Margin="0,88,27,0"
                  Grid.Row="0"
                  Style="{StaticResource MaterialDesignFloatingHintTextBox}" Grid.RowSpan="2" Height="43" VerticalAlignment="Top" HorizontalAlignment="Right" Width="292" Background="#00000000" BorderBrush="#7F000000" />
-                <PasswordBox materialDesign:HintAssist.Hint="Mật khẩu"
+                <PasswordBox  materialDesign:HintAssist.Hint="Mật khẩu"
                      x:Name="pwBox"
                      Grid.Row="1"
                      Margin="26,66,27,4"
-                     Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" BorderBrush="#7F000000" >
+                     Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" BorderBrush="#7F000000" PasswordChanged="pwBox_PasswordChanged" >
 
                 </PasswordBox>
                 <Button Grid.Row="2"
-                Margin="33,51,31,30"
+                Margin="33,47,31,42"
                 Content="Đăng nhập"
-                Background="#8a4646" FontSize="16" Foreground="White"/>
+                Background="#8a4646" FontSize="16" Foreground="White"
+                Command="{Binding LoginCommand}"/>
+                <TextBlock HorizontalAlignment="Center"
+           Height="27"
+           Margin="0,12,0,0"
+           Grid.Row="2"
+           Text="{Binding ErrorMessage}"
+           VerticalAlignment="Top"
+           Width="310"
+           Foreground="Red"
+           FontSize="12"
+           Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"
+           RenderTransformOrigin="0.492,-0.167"/>
+
+
             </Grid>
         </Border>
-        <TextBox HorizontalAlignment="Left" Height="73" Margin="550,85,0,0" TextWrapping="Wrap" Text="LOGIN" VerticalAlignment="Top" Width="112" FontSize="36" FontFamily="Algerian" IsReadOnly="True"/>
+        <TextBlock HorizontalAlignment="Left" Height="73" Margin="537,79,0,0" Text="LOGIN" VerticalAlignment="Top" Width="146" FontSize="42" FontFamily="Algerian" Foreground="#FF93181C"/>
         <Border BorderBrush="Black" BorderThickness="1,1,1,1" Margin="-16,-18,-14,-19" CornerRadius="30,30,30,30" Background="#FFADEAFF" Panel.ZIndex="-5" RenderTransformOrigin="0.5,0.5">
-            <materialDesign:PackIcon Kind="Power" Background="#00000000" Height="76" Width="83" Margin="714,13,0,0" RenderTransformOrigin="0.813,0.433" MouseDown="PackIcon_MouseDown" Foreground="#FF701C1C" />
+            <materialDesign:PackIcon Kind="Power" Background="#00000000" Height="55" Width="73" Margin="728,14,0,0" RenderTransformOrigin="0.813,0.433" MouseDown="PackIcon_MouseDown" Foreground="#FF701C1C" Cursor="Hand" />
         </Border>
+        <Image Source="/Images/logo.png" Margin="-15,-18,383,-17" Panel.ZIndex="10" Width="434" Height="347" />
     </Grid>
 </Window>

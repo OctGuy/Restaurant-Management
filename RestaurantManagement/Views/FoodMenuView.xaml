@@ -44,9 +44,12 @@
                         Content="Xóa món"
                         Width="120"
                         Command="{Binding DeleteDishesCommand}"/>
+                <!-- Command Remove, CommandParameter -->
             </StackPanel>
 
-            <ListView FontSize="15"
+            <ListView x:Name="Dishes_ListView"
+                      SelectedIndex="0"
+                      FontSize="15"
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                       Margin="20"
                       Grid.Row="1"
@@ -287,8 +290,13 @@
                         <Button Background="#701c1c" 
                                 Grid.Column="0"
                                 Content="Thêm"
-                                Command="{Binding AddDishesCommand}"
-                                Width="150"/>
+                                Command="{Binding AddDishesCommand}"/>
+
+                        <Button Background="#701c1c" 
+                                Grid.Column="2" 
+                                Content="Chỉnh sửa" 
+                                Command="{Binding SwitchToAddDishesViewCommand}"/>
+                        <!-- Binding Command -->
                     </Grid>
                 </StackPanel>
             </Border>

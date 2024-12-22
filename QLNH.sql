@@ -319,10 +319,15 @@ VALUES
 (2, 9, 5),
 (2, 10, 5)
 
-SELect * from CTMONAN
+Insert into [BAN] (SucChua, TrangThai)
+values
+(2,0),
+(4,0),
+(8,0)
 
-select * from DOANUONG
-update DOANUONG
-set AnhDoAnUong = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/800px-No_image_available.svg.png?fbclid=IwZXh0bgNhZW0CMTEAAR3HmVFzh45Ckm3scd4gjRC0ZsaUr87zn14IsZ07-fKfsdHZUnNXY9FyGh4_aem_wkm0VmC8XQ3-paBoXkgwfg'
+INSERT INTO [HOADON] (IDBan, IDNhanVien, NgayHoaDon, TongGia, IsDeleted)
+VALUES (1, 2, '2024-12-19', 100000, 0)
 
-
+INSERT INTO [NHANVIEN] (HoTen, SDT, DiaChi, NgaySinh, CongViec, NgayVaoLam, LoaiNhanVien, LuongThang, LuongTheoGio, SoNgayLamViec, IsDeleted)
+VALUES 
+('Nguyen Van A', '0123456789', '123 Street, City', '1990-01-01', 'Quản lý', '2024-01-01', 'Full-time', 50000, NULL, NULL, 0);

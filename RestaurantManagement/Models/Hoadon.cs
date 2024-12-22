@@ -17,8 +17,7 @@ public partial class Hoadon
 
     public decimal? TongGia { get; set; }
 
-    public bool? IsDeleted { get; set; }
-
+    public bool? IsDeleted { get; set; } = false;
 
     public virtual ICollection<Chebien> Chebiens { get; set; } = new List<Chebien>();
 
