@@ -10,7 +10,7 @@ using RestaurantManagement.ViewModels;
 
 namespace RestaurantManagement.Command
 {
-    public class SelectSideBarCommand : ICommand
+    public class SelectViewModelCommand : ICommand
     {
         public event EventHandler? CanExecuteChanged;
 
@@ -18,7 +18,7 @@ namespace RestaurantManagement.Command
         private readonly INavigator titleNavigator;
 
         // Set the MENU screen as default when logging in for admin or employee via constructor
-        public SelectSideBarCommand(INavigator vmNavigator, INavigator _titleNavigator)
+        public SelectViewModelCommand(INavigator vmNavigator, INavigator _titleNavigator)
         {
             if (vmNavigator.AdminView == System.Windows.Visibility.Visible) // Admin
             {
@@ -50,6 +50,7 @@ namespace RestaurantManagement.Command
                 switch(viewType)
                 {
                     case ViewType.Employee:
+                    
                         viewModelNavigator.CurrentViewModel = new EmployeeViewModel();
                         titleNavigator.CurrentTitle = "Nhân viên";
                         break;

@@ -91,6 +91,6 @@ namespace RestaurantManagement.State.Navigator
             EmployeeView = VerifiedAuthorization.EmployeeView; // employee or Employee ???
         }
 
-        public ICommand SelectViewModelCommand => new SelectSideBarCommand(this, this);
+        public ICommand SelectViewModelCommand => new SelectViewModelCommand(this, this);
     }
 }

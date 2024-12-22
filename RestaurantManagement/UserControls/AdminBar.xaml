@@ -117,7 +117,7 @@
                 <!-- Danh sách món ăn (Menu dành cho admin) -->
                 <RadioButton IsChecked="True"
                              Style="{StaticResource sideBar}"
-                             Command="{Binding SelectSideBarCommand}"
+                             Command="{Binding SelectViewModelCommand}"
                              CommandParameter="{x:Static nav:ViewType.FoodMenu}">
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="BookOpen" Style="{StaticResource buttonIcon}"/>
@@ -127,7 +127,7 @@
 
                 <!-- Tình trạng bàn -->
                 <RadioButton Style="{StaticResource sideBar}" 
-                             Command="{Binding SelectSideBarCommand}"
+                             Command="{Binding SelectViewModelCommand}"
                              CommandParameter="{x:Static nav:ViewType.TableStatus}">
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="CheckCircle" Style="{StaticResource buttonIcon}"/>
@@ -141,7 +141,7 @@
                              CommandParameter="{x:Static nav:ViewType.TableHistory}">
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="CalendarAlt" Style="{StaticResource buttonIcon}"/>
-                        <TextBlock Text="Lịch sử hóa đơn" Style="{StaticResource buttonText}"/>
+                        <TextBlock Text="Lịch sử bàn" Style="{StaticResource buttonText}"/>
                     </StackPanel>
                 </RadioButton>
 
