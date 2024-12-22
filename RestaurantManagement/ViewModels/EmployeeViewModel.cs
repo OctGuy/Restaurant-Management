@@ -360,9 +360,6 @@ namespace RestaurantManagement.ViewModels
             }
             return true;
         }
-
-        
-
     }
 
 
