@@ -14,7 +14,7 @@ public class KitchenViewModel : BaseViewModel
     public ObservableCollection<KitchenDish> ListOrder
     {
         get => _ListOrder;
-        set { _ListOrder = value; OnPropertyChanged(nameof(ListOrder)); }
+        set { _ListOrder = value; OnPropertyChanged(); }
     }
 
     // Danh sách các món đã hoàn thành
@@ -22,21 +22,21 @@ public class KitchenViewModel : BaseViewModel
     public ObservableCollection<KitchenDish>? ListDone
     {
         get => _ListDone;
-        set { _ListDone = value; OnPropertyChanged(nameof(ListDone)); }
+        set { _ListDone = value; OnPropertyChanged(); }
     }
 
     private KitchenDish? _OrderSelected;
     public KitchenDish? OrderSelected
     {
         get => _OrderSelected;
-        set { _OrderSelected = value; OnPropertyChanged(nameof(OrderSelected)); }
+        set { _OrderSelected = value; OnPropertyChanged(); }
     }
 
     private KitchenDish? _DoneSelected;
     public KitchenDish? DoneSelected
     {
         get => _DoneSelected;
-        set { _DoneSelected = value; OnPropertyChanged(nameof(DoneSelected)); }
+        set { _DoneSelected = value; OnPropertyChanged(); }
     }
 
     public ICommand MarkAsDoneCommand { get; set; }
