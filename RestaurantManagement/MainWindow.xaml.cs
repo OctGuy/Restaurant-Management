@@ -26,12 +26,5 @@ namespace RestaurantManagement
             InitializeComponent();
             this.DataContext = new MainViewModel();
         }
-
-        //private void ShowUser_Click(object sender, RoutedEventArgs e)
-        //{
-        //    UserInfo userSettingPage = new UserInfo();
-        //    userSettingPage.DataContext = new UserInfoViewModel()
-        //    userSettingPage.ShowDialog();
-        //}
     }
 }

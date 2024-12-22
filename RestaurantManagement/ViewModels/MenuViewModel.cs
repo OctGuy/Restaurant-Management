@@ -484,7 +484,7 @@ namespace RestaurantManagement.ViewModels
                         }
                         else
                         {
-                            hoaDon.TongGia = SUM;
+                            hoaDon.TongGia += SUM;
                         }
 
                         if (hoaDon.Id > 0)
