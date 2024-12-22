@@ -6,11 +6,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RestaurantManagement.View"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:vm="clr-namespace:RestaurantManagement.ViewModels"
+        d:DataContext="{d:DesignInstance Type=vm:UserInfoViewModel}"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
-        Title="UserInfo" Height="650" Width="800"
+        Title="UserInfo" Height="580" Width="800"
         WindowStyle="None"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        x:Name="Window">
     <Grid Margin="5" Background="White">
         <Grid.Resources>
             <Style x:Key="txtBox" TargetType="Border">
@@ -40,7 +43,7 @@
         </Grid.Resources>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="160" />
+            <RowDefinition Height="40" />
             <RowDefinition Height="20" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
@@ -53,35 +56,6 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <StackPanel>
-                <Border VerticalAlignment="Center"
-                        Width="130"
-                        Height="130"
-                        CornerRadius="100"
-                        Background="Transparent"
-                        Grid.Column="0"
-                        BorderThickness="2"
-                        BorderBrush="#791c1c">
-                    <Ellipse Height="120" Width="120">
-                        <Ellipse.Fill>
-                            <ImageBrush Stretch="Uniform" />
-                            <!-- Image Binding -->
-                        </Ellipse.Fill>
-                    </Ellipse>
-                </Border>
-
-                <Button Background="Transparent"
-                        Width="60"
-                        BorderThickness="0"
-                        ToolTip="Đổi ảnh đại diện">
-                    <fa:IconImage Icon="Edit"
-                                  HorizontalAlignment="Center"
-                                  VerticalAlignment="Center"
-                                  Foreground="#791c1c" />
-                    <!-- Binding Command -->
-                </Button>
-            </StackPanel>
-
             <StackPanel Grid.Column="1">
                 <TextBlock Height="60"
                            FontSize="30"
@@ -89,11 +63,10 @@
                            VerticalAlignment="Center"
                            HorizontalAlignment="Left"
                            Margin="0 20 0 0" />
-                <!-- Binding Text HoTen -->
+
                 <TextBlock Height="60"
                            FontStyle="Italic"
                            FontSize="22" />
-                <!-- Binding Text Role -->
             </StackPanel>
 
             <Canvas Grid.Column="3">
@@ -101,31 +74,12 @@
                         BorderThickness="0"
                         Canvas.Left="165"
                         HorizontalAlignment="Center"
-                        VerticalAlignment="Top">
-                    <!-- Command, Command Parameter -->
+                        VerticalAlignment="Top"
+                        Click="CloseUserInfoWindow">
+
                     <fa:IconImage Icon="PowerOff" />
                 </Button>
             </Canvas>
-
-            <StackPanel Grid.Column="3" 
-                        Orientation="Horizontal"
-                        VerticalAlignment="Bottom"
-                        Margin="0 0 0 10">
-                <Button Content="Hủy"
-                        Width="90"
-                        BorderBrush="#791c1c"
-                        Background="Transparent"
-                        Foreground="Black" />
-                <!-- Command Cancel -->
-
-                <Button Content="Lưu"
-                        Width="90"
-                        Foreground="White"
-                        Background="#791c1c"
-                        BorderBrush="#791c1c"
-                        Margin="20 0 0 0" />
-                <!-- Command UpdateInfo -->
-            </StackPanel>
         </Grid>
 
         <Separator Grid.Row="1" Margin="20 0 20 0" Background="#791c1c" />
@@ -152,7 +106,9 @@
                             <StackPanel Margin="0 5 0 20">
                                 <Label Content="Họ và tên" Style="{StaticResource propertyName}" />
                                 <Border Style="{StaticResource txtBox}">
-                                    <TextBox Style="{StaticResource displayInfo}" />
+                                    <TextBox Style="{StaticResource displayInfo}" 
+                                             Text="{Binding NhanVien.HoTen}"
+                                             IsReadOnly="True"/>
                                     <!-- Binding name -->
                                 </Border>
                             </StackPanel>
@@ -163,7 +119,9 @@
                                     <DatePicker Height="45"
                                                 FontSize="20"
                                                 Foreground="#413F42"
-                                                Margin="10 0"/>
+                                                Margin="10 0"
+                                                Text="{Binding NhanVien.NgaySinh}"
+                                               />
                                     <!-- Binding Birthday -->
                                 </Border>
                             </StackPanel>
@@ -174,7 +132,8 @@
                                     <DatePicker Height="45"
                                                 FontSize="20"
                                                 Foreground="#413F42"
-                                                Margin="10 0"/>
+                                                Margin="10 0"
+                                                Text="{Binding NhanVien.NgayVaoLam}"/>
                                     <!-- Binding NGVL -->
                                 </Border>
                             </StackPanel>
@@ -182,7 +141,9 @@
                             <StackPanel Margin="0 0 0 20">
                                 <Label Content="Địa chỉ" Style="{StaticResource propertyName}" />
                                 <Border Style="{StaticResource txtBox}">
-                                    <TextBox Style="{StaticResource displayInfo}" />
+                                    <TextBox Style="{StaticResource displayInfo}" 
+                                             Text="{Binding NhanVien.DiaChi}"
+                                             IsReadOnly="True"/>
                                     <!-- Binding Address -->
                                 </Border>
                             </StackPanel>
@@ -193,7 +154,8 @@
                                 <Label Content="Mã số nhân viên" Style="{StaticResource propertyName}" />
                                 <Border Style="{StaticResource txtBox}">
                                     <TextBox Style="{StaticResource displayInfo}"
-                                             IsReadOnly="True" />
+                                             IsReadOnly="True" 
+                                             Text="{Binding NhanVien.MaNhanVien}"/>
                                     <!-- Binding MaNV -->
                                 </Border>
                             </StackPanel>
@@ -202,7 +164,8 @@
                                 <Label Content="Chức vụ" Style="{StaticResource propertyName}" />
                                 <Border Style="{StaticResource txtBox}">
                                     <TextBox Style="{StaticResource displayInfo}"
-                                             IsReadOnly="True" />
+                                             IsReadOnly="True" 
+                                             Text="{Binding NhanVien.CongViec}"/>
                                     <!-- Binding Chucvu -->
                                 </Border>
                             </StackPanel>
@@ -210,7 +173,9 @@
                             <StackPanel Margin="0 0 0 20">
                                 <Label Content="Số điện thoại" Style="{StaticResource propertyName}" />
                                 <Border Style="{StaticResource txtBox}">
-                                    <TextBox Style="{StaticResource displayInfo}" />
+                                    <TextBox Style="{StaticResource displayInfo}" 
+                                             Text="{Binding NhanVien.Sdt}"
+                                             IsReadOnly="True"/>
                                     <!-- Binding SDT -->
                                 </Border>
                             </StackPanel>
@@ -219,125 +184,13 @@
                                 <Label Content="Loại nhân viên" Style="{StaticResource propertyName}" />
                                 <Border Style="{StaticResource txtBox}">
                                     <TextBox Style="{StaticResource displayInfo}" 
-                                             IsReadOnly="True" />
+                                             IsReadOnly="True" 
+                                             Text="{Binding NhanVien.LoaiNhanVien}"/>
                                     <!-- Binding LoaiNV -->
                                 </Border>
                             </StackPanel>
                         </StackPanel>
                     </Grid>
-                </Grid>
-            </TabItem>
-
-            <TabItem Header="Đổi mật khẩu" 
-                     Cursor="Hand"
-                     Foreground="#701c1c">
-                <Grid x:Name="Container">
-                    <StackPanel Orientation="Vertical" 
-                                HorizontalAlignment="Center" 
-                                VerticalAlignment="Center">
-                        <StackPanel Orientation="Horizontal"
-                                    Margin="10 10">
-                            <Grid>
-                                <PasswordBox x:Name="currentPassword"
-                                             Width="220"
-                                             FontSize="20"
-                                             materialDesign:HintAssist.Hint="Mật khẩu hiện tại"
-                                             Foreground="#701c1c"
-                                             Style="{StaticResource MaterialDesignFloatingHintPasswordBox}">
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="PasswordChanged" >
-                                            <!-- Binding -->
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                </PasswordBox>
-                                <TextBox x:Name="currentPassword_Displayed"
-                                         Width="220"
-                                         materialDesign:HintAssist.Hint="Mật khẩu hiện tại"
-                                         FontSize="20"
-                                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                                         Visibility="Collapsed" />
-                            </Grid>
-                            <CheckBox Content="Hiện"
-                                      Margin="10" 
-                                      Name="showCurrentPassword" 
-                                      Unchecked="ShowCurrentPassword_Unchecked"  
-                                      Checked="ShowCurrentPassword_Checked" 
-                                      HorizontalAlignment="Center" 
-                                      VerticalAlignment="Center"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal"
-                                    Margin="10 10">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="23*"/>
-                                    <ColumnDefinition Width="21*"/>
-                                </Grid.ColumnDefinitions>
-                                <PasswordBox Name="newPassword"
-                                             Width="220"
-                                             FontSize="20"
-                                             materialDesign:HintAssist.Hint="Mật khẩu mới"
-                                             Foreground="#701c1c"
-                                             Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" 
-                                             Grid.ColumnSpan="2">
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="PasswordChanged" >
-                                            <!-- Binding -->
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                </PasswordBox>
-                                <TextBox x:Name="newPassword_Displayed"
-                                         Width="220"
-                                         FontSize="20"
-                                         materialDesign:HintAssist.Hint="Mật khẩu mới"
-                                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                                         Visibility="Collapsed" 
-                                         Grid.ColumnSpan="2" />
-                            </Grid>
-                            <CheckBox Margin="10" 
-                                      Content="Hiện"
-                                      Name="showNewPassword" 
-                                      Unchecked="ShowNewPassword_Unchecked"  
-                                      Checked="ShowNewPassword_Checked" 
-                                      HorizontalAlignment="Center" 
-                                      VerticalAlignment="Center"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal"
-                                    Margin="10 10">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="9*"/>
-                                    <ColumnDefinition Width="11*"/>
-                                </Grid.ColumnDefinitions>
-                                <PasswordBox Name="confirmPassword"
-                                             Width="220"
-                                             FontSize="20"
-                                             materialDesign:HintAssist.Hint="Xác nhận mật khẩu"
-                                             Foreground="#701c1c"
-                                             Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" 
-                                             Grid.ColumnSpan="2">
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="PasswordChanged" >
-                                            <!-- Binding -->
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                </PasswordBox>
-                                <TextBox Name="confirmPassword_Displayed"
-                                         Width="220"
-                                         FontSize="20"
-                                         materialDesign:HintAssist.Hint="Xác nhận mật khẩu"
-                                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                                         Visibility="Collapsed" 
-                                         Grid.ColumnSpan="2" />
-                            </Grid>
-                            <CheckBox Margin="10"
-                                      Content="Hiện"
-                                      Name="showConfirmPassword" 
-                                      Unchecked="ShowConfirmPassword_Unchecked"  
-                                      Checked="ShowConfirmPassword_Checked" 
-                                      HorizontalAlignment="Center" 
-                                      VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </StackPanel>
                 </Grid>
             </TabItem>
         </TabControl>

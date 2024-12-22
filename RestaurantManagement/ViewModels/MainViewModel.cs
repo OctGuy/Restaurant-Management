@@ -21,11 +21,22 @@ using RestaurantManagement.Views;
 using System.Windows;
 using System.Windows.Input;
 using RestaurantManagement.ViewModels;
+using RestaurantManagement.View;
 
 namespace RestaurantManagement.ViewModels
 {
     public class MainViewModel : BaseViewModel
     {
+        private UserInfoViewModel userInfo;
+        public UserInfoViewModel UserInfo
+        {
+            get => userInfo;
+            set
+            {
+                userInfo = value;
+                OnPropertyChanged(nameof(UserInfo));
+            }
+        }
         // Thuộc tính cho Navigator
         private Navigator navigator;
         public Navigator Navigator
@@ -62,6 +73,7 @@ namespace RestaurantManagement.ViewModels
 
         // Command để đăng xuất
         public ICommand LogOutCommand { get; }
+        public ICommand OpenUserInfoCommand { get; }
 
         public MainViewModel()
         {
@@ -80,6 +92,7 @@ namespace RestaurantManagement.ViewModels
                     if (loginVM != null && loginVM.Role != -1)
                     {
                         Navigator = new Navigator(loginVM.Role);
+                        UserInfo = new UserInfoViewModel(loginVM.MANV);
                         p.Show(); // Show lại MainWindow
                     }
                     else
@@ -104,6 +117,17 @@ namespace RestaurantManagement.ViewModels
                 System.Windows.Forms.Application.Restart();
                 p.Close();
             });
+
+            OpenUserInfoCommand = new RelayCommand(UserInfoWindow);
+        }
+
+        private void UserInfoWindow(object? parameter)
+        {
+            var userInfo = new UserInfo();
+            var userInfoVM = new UserInfoViewModel(UserInfo.NhanVien.MaNhanVien);
+
+            userInfo.DataContext = userInfoVM;
+            userInfo.ShowDialog();
         }
     }
 }

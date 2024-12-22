@@ -195,8 +195,8 @@ namespace RestaurantManagement.ViewModels
 
                 // Thêm mã QR
                 var qrPay = QRPay.InitVietQR(
-                    bankBin: BankApp.BanksObject[BankKey.VIETCOMBANK].bin,
-                    bankNumber: "1038172542",
+                    bankBin: BankApp.BanksObject[BankKey.VIETCOMBANK].bin, //ngan hang nhan tien
+                    bankNumber: "1038172542", //tai khoan nhan tien
                     amount: TotalPrice.ToString(),
                     purpose: $"Thanh toan ban {CustomerName}"
                 );
