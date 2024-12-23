@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using Microsoft.EntityFrameworkCore;
 using RestaurantManagement.Models;
@@ -211,7 +212,7 @@ namespace RestaurantManagement.ViewModels
                         IdnhanVien = newEmployee.Id, 
                         TenTaiKhoan = SelectedEmployee.TenTaiKhoan,
                         MatKhau = SelectedEmployee.MatKhau,
-                        PhanQuyen = 1, 
+                        PhanQuyen = 1,  // SỬA LẠI PHÂN QUYỀN LÀ 1 
                         IsDeleted = false 
                     };
 
@@ -253,8 +254,9 @@ namespace RestaurantManagement.ViewModels
                 employee.LuongThang=SelectedEmployee.LuongCoBan;
                 
                 _context.Nhanviens.Update(employee);
+                _context.SaveChanges();
 
-                var account = _context.Taikhoans.FirstOrDefault(a => a.Id == employee.Id);
+                var account = _context.Taikhoans.FirstOrDefault(a => a.IdnhanVien == employee.Id);
                 if (account != null)
                 {
                     account.TenTaiKhoan = SelectedEmployee.TenTaiKhoan;
@@ -263,6 +265,8 @@ namespace RestaurantManagement.ViewModels
                 }
 
                 _context.SaveChanges();
+
+                MessageBox.Show("CẬP NHẬT THÔNG TIN NHÂN VIÊN THÀNH CÔNG");
 
                 Refresh();
                 

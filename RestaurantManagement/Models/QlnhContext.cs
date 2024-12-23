@@ -109,7 +109,7 @@ public partial class QlnhContext : DbContext
             entity.HasKey(e => new { e.IdhoaDon, e.IddoAnUong });
 
             entity.ToTable("CTHD");
-
+            entity.Property(e => e.IsReady).HasDefaultValue(false);
             entity.Property(e => e.IdhoaDon).HasColumnName("IDHoaDon");
             entity.Property(e => e.IddoAnUong).HasColumnName("IDDoAnUong");
             entity.Property(e => e.GiaMon).HasColumnType("decimal(18, 0)");
@@ -176,7 +176,7 @@ public partial class QlnhContext : DbContext
 
             entity.Property(e => e.IdnhapKho).HasColumnName("IDNhapKho");
             entity.Property(e => e.IdnguyenLieu).HasColumnName("IDNguyenLieu");
-            entity.Property(e => e.GiaNguyenLieu).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.GiaNguyenLieu).HasColumnType("decimal(18, 2)");
 
             entity.HasOne(d => d.IdnguyenLieuNavigation).WithMany(p => p.Ctnhapkhos)
                 .HasForeignKey(d => d.IdnguyenLieu)

@@ -111,7 +111,7 @@ namespace RestaurantManagement.ViewModels
                 CustomerName = bill.IdbanNavigation?.MaBan ?? "Không rõ khách hàng";
                 BillDate = bill.NgayHoaDon;
                 TotalPrice = bill.TongGia ?? 0m;
-                Employee = bill.IdnhanVienNavigation?.HoTen ?? "Hong rõ nhân viên";
+                Employee = bill.IdnhanVienNavigation?.HoTen ?? "Không rõ nhân viên";
                 foreach (var cthd in bill.Cthds)
                 {
                     var billDetail = new BillDetailModel
@@ -153,7 +153,7 @@ namespace RestaurantManagement.ViewModels
                 document.Add(new Paragraph($"Mã hóa đơn: {BillId}")
                     .SetFont(vietnameseFont).SetFontSize(12).SetTextAlignment(iText.Layout.Properties.TextAlignment.LEFT));
 
-                document.Add(new Paragraph($"Tên khách hàng: {CustomerName}")
+                document.Add(new Paragraph($"Mã số bàn: {CustomerName}")
                     .SetFont(vietnameseFont).SetFontSize(12).SetTextAlignment(iText.Layout.Properties.TextAlignment.LEFT));
 
                 document.Add(new Paragraph($"Ngày lập hóa đơn: {BillDate.ToString("dd/MM/yyyy")}")

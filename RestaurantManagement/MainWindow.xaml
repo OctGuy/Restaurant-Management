@@ -213,11 +213,6 @@
 
                             <StackPanel Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Center" Orientation="Horizontal" Height="60" Margin="0 0 50 0">
                                 <StackPanel VerticalAlignment="Center">
-                                    <Canvas Background="White">
-                                        <Border Background="Red" Width="20" Height="20" CornerRadius="100" Canvas.Left="45" Canvas.Top="-10">
-                                            <TextBlock Text="{Binding NumberOfDishesNeedServing}" Foreground="White" TextAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                                        </Border>
-                                    </Canvas>
                                     <Button Style="{StaticResource HeaderButton}" Margin="30 0 20 0" BorderThickness="0">
                                         <fa:IconImage Icon="Bell" />
                                     </Button>
@@ -229,7 +224,7 @@
                                     </StackPanel>
                                 </Button>
 
-                                <Button Width="40" Style="{StaticResource HeaderButton}" Margin="20 0 20 0" BorderThickness="0" Command="{Binding HeaderViewModel.CloseWindowCommand}" CommandParameter="{Binding ElementName=HeaderControl}" HorizontalAlignment="Right">
+                                <Button Width="40" Style="{StaticResource HeaderButton}" Margin="20 0 20 0" BorderThickness="0" Command="{Binding Header.CloseWindowCommand}" CommandParameter="{Binding ElementName=HeaderControl}" HorizontalAlignment="Right">
                                     <fa:IconImage Icon="PowerOff" />
                                 </Button>
                             </StackPanel>
