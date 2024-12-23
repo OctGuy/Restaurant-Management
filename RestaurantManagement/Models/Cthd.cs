@@ -14,6 +14,7 @@ public partial class Cthd
     public decimal? GiaMon { get; set; }
 
     public bool? IsDeleted { get; set; } = false;
+    public bool? IsReady { get; set; }
 
     public virtual Doanuong IddoAnUongNavigation { get; set; } = null!;
 

@@ -100,8 +100,8 @@
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="50"/>
-                                            <ColumnDefinition Width="150*"/>
-                                            <ColumnDefinition Width="50*"/>
+                                            <ColumnDefinition Width="75*"/>
+                                            <ColumnDefinition Width="30*"/>
                                             <ColumnDefinition Width="50*"/>
                                         </Grid.ColumnDefinitions>
 
@@ -177,8 +177,8 @@
         <Grid Margin="13,0,11,11" Grid.Column="1" VerticalAlignment="Bottom">
             <StackPanel>
                 <StackPanel Orientation="Horizontal" Height="45" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock TextWrapping="Wrap" Text="Tổng" FontSize="22" Grid.ColumnSpan="1" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="50"/>
-                    <TextBlock TextWrapping="Wrap" Text="{Binding SUM, StringFormat=' {0:N0} VND'}" RenderTransformOrigin="0.5,0.5" Width="279" FontSize="22" Foreground="Red" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="50" >
+                    <TextBlock TextWrapping="Wrap" Text="Tổng" FontSize="22" Grid.ColumnSpan="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20,0,0,0"/>
+                    <TextBlock TextWrapping="Wrap" Text="{Binding SUM, StringFormat=' {0:N0} VND'}" RenderTransformOrigin="0.5,0.5" Width="279" FontSize="22" Foreground="Red" HorizontalAlignment="Center" VerticalAlignment="Center" >
                         <TextBlock.RenderTransform>
                             <TransformGroup>
                                 <ScaleTransform ScaleY="1"/>
@@ -197,7 +197,7 @@
                     IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource AncestorType={x:Type UserControl}, Mode=FindAncestor}}"
                     Style="{StaticResource MaterialDesignRaisedButton}"
                     Command="{Binding DeleteAllCommand}"
-                    ToolTip="Resource name: MaterialDesignRaisedButton" FontSize="16" Padding="0,4,0,4" Background="#FF701C1C" Foreground="#FFF7F0F0" Width="138" MinWidth="300"
+                    ToolTip="Resource name: MaterialDesignRaisedButton" FontSize="16" Padding="0,4,0,4" Background="#FF701C1C" Foreground="#FFF7F0F0" Width="128"
 />
                             <Button
                     Content="Báo chế biến"
@@ -205,7 +205,7 @@
                     Style="{StaticResource MaterialDesignRaisedButton}"
                     Command="{Binding NotifyCookingCommand}"
                     CommandParameter="{Binding SelectedTable}"
-                    ToolTip="Resource name: MaterialDesignRaisedButton" Margin="20,0,0,0" FontSize="16" Background="#FF701C1C" Foreground="#FFF7F4F4" Width="167" MinWidth="300"
+                    ToolTip="Resource name: MaterialDesignRaisedButton" Margin="20,0,0,0" FontSize="16" Background="#FF701C1C" Foreground="#FFF7F4F4" Width="148"
 />
                         </StackPanel>
                     </Border>

@@ -109,7 +109,7 @@ public partial class QlnhContext : DbContext
             entity.HasKey(e => new { e.IdhoaDon, e.IddoAnUong });
 
             entity.ToTable("CTHD");
-
+            entity.Property(e => e.IsReady).HasDefaultValue(false);
             entity.Property(e => e.IdhoaDon).HasColumnName("IDHoaDon");
             entity.Property(e => e.IddoAnUong).HasColumnName("IDDoAnUong");
             entity.Property(e => e.GiaMon).HasColumnType("decimal(18, 0)");

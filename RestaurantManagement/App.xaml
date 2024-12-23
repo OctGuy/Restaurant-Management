@@ -4,11 +4,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" 
              xmlns:local="clr-namespace:RestaurantManagement"
              xmlns:converters="clr-namespace:RestaurantManagement"
-<<<<<<< HEAD
              StartupUri="MainWindow.xaml">
-=======
-             StartupUri="Views/Kitchen.xaml">
->>>>>>> 042240a5f6af1a517a3e8c2200f9822d38164f77
 
     <Application.Resources>
         <ResourceDictionary>

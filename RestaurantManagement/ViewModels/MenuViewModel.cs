@@ -27,7 +27,7 @@ namespace RestaurantManagement.ViewModels
             ControlsEnabled = true;
             OrderCommand = new RelayCommand(OrderDish, CanExecute);
             DeleteSelectedItemCommand = new RelayCommand(DeleteSelectedItem, CanExecuteDelete);
-            DeleteAllCommand = new RelayCommand(DeleteAll, CanExecuteDelete);
+            DeleteAllCommand = new RelayCommand(DeleteAllSelectedItems, CanExecuteDelete);
             NotifyCookingCommand = new RelayCommand(NotifyCooking, CanExecuteNotify);
             SelectedItems = new ObservableCollection<SelectedItem>();
 
@@ -527,6 +527,11 @@ namespace RestaurantManagement.ViewModels
                                 {
                                     // Nếu món ăn đã có trong chi tiết hóa đơn, tăng số lượng
                                     existingDish.SoLuong += item.SoLuong;
+                                    var cheBien = context.Chebiens.FirstOrDefault(cb => cb.IdhoaDon == hoaDon.Id);
+                                    if (cheBien != null)
+                                    {
+                                        cheBien.IsDeleted = false;
+                                    }
                                 }
                             }
                         }
