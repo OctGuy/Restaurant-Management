@@ -27,8 +27,6 @@ public partial class Nhanvien
 
     public decimal? LuongTheoGio { get; set; }
 
-    public int? SoNgayLamViec { get; set; }
-
     public bool? IsDeleted { get; set; }
 
     public virtual ICollection<Chamcong> Chamcongs { get; set; } = new List<Chamcong>();

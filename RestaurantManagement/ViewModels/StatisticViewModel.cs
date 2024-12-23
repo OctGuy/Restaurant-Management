@@ -196,8 +196,7 @@ namespace RestaurantManagement.ViewModels
 
                 var dailyIncomes = await _context.Hoadons
                     .Where(h => h.NgayHoaDon >= startDate &&
-                               h.NgayHoaDon < endDate 
-                               )
+                               h.NgayHoaDon < endDate)
                     .GroupBy(h => h.NgayHoaDon.Day)
                     .Select(g => new
                     {
@@ -256,8 +255,7 @@ namespace RestaurantManagement.ViewModels
 
                 var monthlyIncomes = await _context.Hoadons
                     .Where(h => h.NgayHoaDon >= startDate &&
-                                h.NgayHoaDon < endDate &&
-                                h.IsDeleted == false)
+                                h.NgayHoaDon < endDate)
                     .GroupBy(h => h.NgayHoaDon.Month)
                     .Select(g => new
                     {
