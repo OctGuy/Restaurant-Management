@@ -139,6 +139,10 @@ namespace RestaurantManagement.ViewModels
                 // Tìm chi tiết hóa đơn tương ứng
                 var dish = _context.Cthds.FirstOrDefault(x =>
                     x.IsReady==true && DoneSelected.Iddau == x.IddoAnUong && x.IsDeleted == false);
+<<<<<<< HEAD
+=======
+                //MessageBox.Show(dish.IddoAnUong.ToString() + " " + doAn.Id.ToString() + " " + dish.IsDeleted);
+>>>>>>> d59d3554fdeba878c8e184b79a47dcaf5d8e2bc4
                 dish.IsDeleted = true;
                 _context.SaveChanges();
                 if (dish != null)
