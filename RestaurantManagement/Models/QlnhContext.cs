@@ -176,7 +176,7 @@ public partial class QlnhContext : DbContext
 
             entity.Property(e => e.IdnhapKho).HasColumnName("IDNhapKho");
             entity.Property(e => e.IdnguyenLieu).HasColumnName("IDNguyenLieu");
-            entity.Property(e => e.GiaNguyenLieu).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.GiaNguyenLieu).HasColumnType("decimal(18, 2)");
 
             entity.HasOne(d => d.IdnguyenLieuNavigation).WithMany(p => p.Ctnhapkhos)
                 .HasForeignKey(d => d.IdnguyenLieu)
