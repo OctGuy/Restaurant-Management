@@ -211,7 +211,7 @@ namespace RestaurantManagement.ViewModels
                         IdnhanVien = newEmployee.Id, 
                         TenTaiKhoan = SelectedEmployee.TenTaiKhoan,
                         MatKhau = SelectedEmployee.MatKhau,
-                        PhanQuyen = 0, 
+                        PhanQuyen = 1, 
                         IsDeleted = false 
                     };
 
