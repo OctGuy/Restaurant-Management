@@ -29,6 +29,7 @@ using iText.IO.Font;
 using iText.Kernel.Font;
 using iText.Kernel.Colors;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
+using System.Text.RegularExpressions;
 
 namespace RestaurantManagement.ViewModels
 {
@@ -468,6 +469,11 @@ namespace RestaurantManagement.ViewModels
             }
         }
 
+        private bool IsValidDecimalString(string input)
+        {
+            return Regex.IsMatch(input, @"^[0-9.]+$");
+        }
+
         private void ImportIngredient(object? parameter)
         {
             try
@@ -507,9 +513,9 @@ namespace RestaurantManagement.ViewModels
                     }
                 }
 
-                if (!int.TryParse(AddedIngredient.quantity?.ToString(), out var quantity) || quantity <= 0)
+                if (string.IsNullOrWhiteSpace(AddedIngredient.quantity?.ToString()) || !int.TryParse(AddedIngredient.quantity?.ToString(), out var sl) || sl <= 0)
                 {
-                    System.Windows.Forms.MessageBox.Show("Vui lòng nhập lại số lượng");
+                    System.Windows.Forms.MessageBox.Show("Số lượng không hợp lệ: không được để trống, chứa chữ cái, ký tự đặc biệt, và phải lớn hơn 0.");
                     return;
                 }
 
@@ -519,9 +525,9 @@ namespace RestaurantManagement.ViewModels
                     return;
                 }
 
-                if (!decimal.TryParse(AddedIngredient.unitPrice?.ToString(), out var unitPrice) || unitPrice <= 0)
+                if (string.IsNullOrWhiteSpace(AddedIngredient.unitPrice?.ToString()) || !decimal.TryParse(AddedIngredient.unitPrice?.ToString(), out var donGia) || donGia <= 0)
                 {
-                    System.Windows.Forms.MessageBox.Show("Vui lòng nhập lại đơn giá");
+                    System.Windows.Forms.MessageBox.Show("Số lượng không hợp lệ: không được để trống, chứa chữ cái, ký tự đặc biệt, và phải lớn hơn 0.");
                     return;
                 }
 

@@ -21,6 +21,7 @@ using System.Windows.Media;
 using System.Windows.Data;
 using System.ComponentModel;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 
 namespace RestaurantManagement.ViewModels
 {
@@ -255,6 +256,11 @@ namespace RestaurantManagement.ViewModels
             AddView = Visibility.Visible;
         }
 
+        private bool IsValidDecimalString(string input)
+        {
+            return Regex.IsMatch(input, @"^[0-9.]+$");
+        }
+
         private void AddDishes(object? parameter)
         {
             try
@@ -273,15 +279,15 @@ namespace RestaurantManagement.ViewModels
                     return;
                 }
 
-                if (!decimal.TryParse(AddedDish.DonGia?.ToString(), out var unitPrice) || unitPrice <= 0)
+                if (string.IsNullOrWhiteSpace(AddedDish.DonGia?.ToString()) || !decimal.TryParse(AddedDish.DonGia?.ToString(), out var unitPrice) || unitPrice <= 0)
                 {
-                    System.Windows.Forms.MessageBox.Show("Vui lòng nhập lại đơn giá");
+                    System.Windows.Forms.MessageBox.Show("Đơn giá không hợp lệ: không được để trống, chứa chữ cái, ký tự đặc biệt, và phải lớn hơn 0.");
                     return;
                 }
 
-                if (!decimal.TryParse(AddedDish.ThoiGianChuanBi?.ToString(), out var prepareTime) || prepareTime <= 0)
+                if (string.IsNullOrWhiteSpace(AddedDish.ThoiGianChuanBi?.ToString()) || !decimal.TryParse(AddedDish.ThoiGianChuanBi?.ToString(), out var prepareTime) || prepareTime <= 0)
                 {
-                    System.Windows.Forms.MessageBox.Show("Vui lòng nhập lại thời gian chuẩn bị");
+                    System.Windows.Forms.MessageBox.Show("Thời gian chuẩn bị không hợp lệ: không được để trống, chứa chữ cái, ký tự đặc biệt, và phải lớn hơn 0.");
                     return;
                 }
 

@@ -141,7 +141,7 @@
                              CommandParameter="{x:Static nav:ViewType.TableHistory}">
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="CalendarAlt" Style="{StaticResource buttonIcon}"/>
-                        <TextBlock Text="Lịch sử bàn" Style="{StaticResource buttonText}"/>
+                        <TextBlock Text="Lịch sử hóa đơn" Style="{StaticResource buttonText}"/>
                     </StackPanel>
                 </RadioButton>
 
